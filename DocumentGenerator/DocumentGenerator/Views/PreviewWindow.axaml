@@ -1,0 +1,47 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
+        x:Class="DocumentGenerator.PreviewWindow"
+        x:DataType="vm:PreviewViewModel"
+        Title="Предпросмотр документа" Width="600" Height="700">
+	<Design.DataContext>
+		<vm:PreviewViewModel />
+	</Design.DataContext>
+	<StackPanel Margin="20" Spacing="10">
+		<TextBlock Text="Готовый документ" FontSize="18" FontWeight="Bold" />
+		<TextBlock TextWrapping="Wrap" Margin="0,10">
+			<Run Text="ФИО: " />
+			<Run Text="{Binding FullName}" />
+			<LineBreak />
+			<Run Text="Должность: " />
+			<Run Text="{Binding Position}" />
+			<LineBreak />
+			<Run Text="Возраст: " />
+			<Run Text="{Binding Age}" />
+			<LineBreak />
+			<Run Text="Пол: " />
+			<Run Text="{Binding Gender}" />
+			<LineBreak />
+			<Run Text="Пункт приказа: " />
+			<Run Text="{Binding OrderClause}" />
+			<LineBreak />
+			<Run Text="СНИЛС: " />
+			<Run Text="{Binding Snils}" />
+			<LineBreak />
+			<Run Text="Паспорт: " />
+			<Run Text="{Binding PassportSeries}" />
+			<Run Text=" " />
+			<Run Text="{Binding PassportNumber}" />
+			<LineBreak />
+			<Run Text="Дата выдачи паспорта: " />
+			<Run Text="{Binding PassportIssueDate}" />
+			<LineBreak />
+			<Run Text="Кем выдан: " />
+			<Run Text="{Binding PassportIssuedBy}" />
+			<LineBreak />
+			<Run Text="Полис ОМС: " />
+			<Run Text="{Binding MedicalPolicy}" />
+		</TextBlock>
+		<Button Content="Сохранить в PDF" Click="SaveToPdf_Click" HorizontalAlignment="Center" Margin="10" />
+	</StackPanel>
+</Window>

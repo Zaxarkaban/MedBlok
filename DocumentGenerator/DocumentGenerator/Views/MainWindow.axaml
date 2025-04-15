@@ -1,0 +1,81 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
+        x:Class="DocumentGenerator.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Document Generator" Width="600" Height="700">
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
+	<ScrollViewer>
+		<StackPanel Margin="20" Spacing="10">
+			<TextBlock Text="ФИО" />
+			<TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="FullName_TextChanged"
+                     Watermark="Введите ФИО" />
+			<TextBlock Text="{Binding FullNameError}" Foreground="Red" />
+
+			<TextBlock Text="Должность" />
+			<TextBox Text="{Binding Position, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="Position_TextChanged"
+                     Watermark="Введите должность" />
+			<TextBlock Text="{Binding PositionError}" Foreground="Red" />
+
+			<TextBlock Text="Дата рождения (ДД.ММ.ГГГГ)" />
+			<TextBox Text="{Binding DateOfBirth, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="DateOfBirth_TextChanged"
+                     Watermark="ДД.ММ.ГГГГ" />
+			<TextBlock Text="{Binding DateOfBirthError}" Foreground="Red" />
+
+			<TextBlock Text="Пол" />
+			<ComboBox SelectedItem="{Binding Gender}"
+                      SelectionChanged="Gender_SelectionChanged"
+                      ItemsSource="{Binding GenderOptions}" />
+			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
+
+			<TextBlock Text="Пункты по приказу" />
+			<ComboBox SelectedItem="{Binding OrderClause}"
+                      SelectionChanged="OrderClause_SelectionChanged"
+                      ItemsSource="{Binding OrderClauses}" />
+			<TextBlock Text="{Binding OrderClauseError}" Foreground="Red" />
+
+			<TextBlock Text="СНИЛС (XXX-XXX-XXX XX)" />
+			<TextBox Text="{Binding Snils, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="Snils_TextChanged"
+                     Watermark="XXX-XXX-XXX XX" />
+			<TextBlock Text="{Binding SnilsError}" Foreground="Red" />
+
+			<TextBlock Text="Серия паспорта (XX XX)" />
+			<TextBox Text="{Binding PassportSeries, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="PassportSeries_TextChanged"
+                     Watermark="XX XX" />
+			<TextBlock Text="{Binding PassportSeriesError}" Foreground="Red" />
+
+			<TextBlock Text="Номер паспорта (XXXXXX)" />
+			<TextBox Text="{Binding PassportNumber, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="PassportNumber_TextChanged"
+                     Watermark="XXXXXX" />
+			<TextBlock Text="{Binding PassportNumberError}" Foreground="Red" />
+
+			<TextBlock Text="Дата выдачи паспорта (ДД.ММ.ГГГГ)" />
+			<TextBox Text="{Binding PassportIssueDate, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="PassportIssueDate_TextChanged"
+                     Watermark="ДД.ММ.ГГГГ" />
+			<TextBlock Text="{Binding PassportIssueDateError}" Foreground="Red" />
+
+			<TextBlock Text="Кем выдан паспорт" />
+			<TextBox Text="{Binding PassportIssuedBy, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="PassportIssuedBy_TextChanged"
+                     Watermark="Введите кем выдан" />
+			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
+
+			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
+			<TextBox Text="{Binding MedicalPolicy, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="MedicalPolicy_TextChanged"
+                     Watermark="16 цифр" />
+			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
+
+			<Button Content="Сохранить" Click="Save_Click" HorizontalAlignment="Center" Margin="10" />
+		</StackPanel>
+	</ScrollViewer>
+</Window>
