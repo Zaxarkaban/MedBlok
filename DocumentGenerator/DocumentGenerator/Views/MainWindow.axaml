@@ -3,12 +3,12 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Document Generator" Width="600" Height="700">
+        Title="Document Generator" Width="600" Height="800">
 	<Design.DataContext>
 		<vm:MainWindowViewModel />
 	</Design.DataContext>
 	<ScrollViewer>
-		<StackPanel Margin="20" Spacing="10">
+		<StackPanel Margin="20">
 			<TextBlock Text="ФИО" />
 			<TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
                      TextChanged="FullName_TextChanged"

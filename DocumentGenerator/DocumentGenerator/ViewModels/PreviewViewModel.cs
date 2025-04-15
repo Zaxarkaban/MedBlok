@@ -7,6 +7,8 @@ using iText.Layout.Element;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
+using iText.Kernel.Font;
+using iText.IO.Font;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -54,17 +56,56 @@ namespace DocumentGenerator.ViewModels
                 using (var pdf = new PdfDocument(writer))
                 using (var document = new Document(pdf))
                 {
-                    document.Add(new Paragraph("Готовый документ"));
-                    document.Add(new Paragraph($"ФИО: {FullName ?? "Не указано"}"));
-                    document.Add(new Paragraph($"Должность: {Position ?? "Не указана"}"));
-                    document.Add(new Paragraph($"Возраст: {Age}"));
-                    document.Add(new Paragraph($"Пол: {Gender ?? "Не указан"}"));
-                    document.Add(new Paragraph($"Пункт приказа: {OrderClause ?? "Не указан"}"));
-                    document.Add(new Paragraph($"СНИЛС: {Snils ?? "Не указан"}"));
-                    document.Add(new Paragraph($"Паспорт: {(PassportSeries ?? "Не указана")} {(PassportNumber ?? "Не указан")}"));
-                    document.Add(new Paragraph($"Дата выдачи паспорта: {PassportIssueDate ?? "Не указана"}"));
-                    document.Add(new Paragraph($"Кем выдан: {PassportIssuedBy ?? "Не указано"}"));
-                    document.Add(new Paragraph($"Полис ОМС: {MedicalPolicy ?? "Не указан"}"));
+                    // Загружаем шрифт Arial
+                    PdfFont font = PdfFontFactory.CreateFont("C:/Windows/Fonts/arial.ttf", PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
+                    // Заголовок
+                    document.Add(new Paragraph("Готовый документ")
+                        .SetFont(font)
+                        .SetFontSize(16)
+                        .SetMarginBottom(20));
+
+                    // Данные
+                    document.Add(new Paragraph($"ФИО: {FullName ?? "Не указано"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Должность: {Position ?? "Не указана"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Возраст: {Age}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Пол: {Gender ?? "Не указан"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Пункт приказа: {OrderClause ?? "Не указан"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"СНИЛС: {Snils ?? "Не указан"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Паспорт: {(PassportSeries ?? "Не указана")} {(PassportNumber ?? "Не указан")}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Дата выдачи паспорта: {PassportIssueDate ?? "Не указана"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Кем выдан: {PassportIssuedBy ?? "Не указано"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Полис ОМС: {MedicalPolicy ?? "Не указан"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
                 }
 
                 await MessageBox.Show(parentWindow, $"PDF успешно сохранён по пути:\n{filePath}", "Успех", MessageBox.MessageBoxButtons.Ok);
@@ -96,14 +137,14 @@ namespace DocumentGenerator.ViewModels
                         Margin = new Avalonia.Thickness(10),
                         Spacing = 10,
                         Children =
-                {
-                    new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
-                    new Button
-                    {
-                        Content = "OK",
-                        HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                    }
-                }
+                        {
+                            new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
+                            new Button
+                            {
+                                Content = "OK",
+                                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+                            }
+                        }
                     }
                 };
 
