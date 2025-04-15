@@ -52,7 +52,7 @@ namespace DocumentGenerator.ViewModels
 
                 if (file == null)
                 {
-                    await MessageBox.Show(parentWindow, "Сохранение отменено.", "Информация", MessageBox.MessageBoxButtons.Ok);
+                    await ShowMessageBox(parentWindow, "Сохранение отменено.", "Информация");
                     return;
                 }
 
@@ -130,57 +130,49 @@ namespace DocumentGenerator.ViewModels
                     }
                 }
 
-                await MessageBox.Show(parentWindow, $"PDF успешно сохранён по пути:\n{filePath}", "Успех", MessageBox.MessageBoxButtons.Ok);
+                await ShowMessageBox(parentWindow, $"PDF успешно сохранён по пути:\n{filePath}", "Успех");
             }
             catch (Exception ex)
             {
-                await MessageBox.Show(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                await ShowMessageBox(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка");
             }
         }
 
-        private class MessageBox
+        private async Task ShowMessageBox(Window parent, string message, string title)
         {
-            public enum MessageBoxButtons
+            var dialog = new Window
             {
-                Ok
-            }
-
-            public static async Task Show(Window parent, string message, string title, MessageBoxButtons buttons)
-            {
-                var dialog = new Window
+                Title = title,
+                Width = 300,
+                Height = 150,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                CanResize = false,
+                Content = new StackPanel
                 {
-                    Title = title,
-                    Width = 300,
-                    Height = 150,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    CanResize = false,
-                    Content = new StackPanel
+                    Margin = new Avalonia.Thickness(10),
+                    Spacing = 10,
+                    Children =
                     {
-                        Margin = new Avalonia.Thickness(10),
-                        Spacing = 10,
-                        Children =
+                        new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
+                        new Button
                         {
-                            new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
-                            new Button
-                            {
-                                Content = "OK",
-                                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                            }
+                            Content = "OK",
+                            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
                         }
                     }
-                };
-
-                var stackPanel = dialog.Content as StackPanel;
-                if (stackPanel != null)
-                {
-                    var okButton = stackPanel.Children[1] as Button;
-                    if (okButton != null)
-                    {
-                        okButton.Click += (sender, e) => dialog.Close();
-                    }
                 }
-                await dialog.ShowDialog(parent);
+            };
+
+            var stackPanel = dialog.Content as StackPanel;
+            if (stackPanel != null)
+            {
+                var okButton = stackPanel.Children[1] as Button;
+                if (okButton != null)
+                {
+                    okButton.Click += (sender, e) => dialog.Close();
+                }
             }
+            await dialog.ShowDialog(parent);
         }
     }
 }

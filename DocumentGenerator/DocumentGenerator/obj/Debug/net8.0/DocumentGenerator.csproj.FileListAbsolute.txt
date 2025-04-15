@@ -75,7 +75,6 @@ C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\SQLitePCLR
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.IO.Pipelines.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Reactive.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
-C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Text.Encodings.Web.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Text.Json.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\Tmds.DBus.Protocol.dll
@@ -120,7 +119,6 @@ C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\w
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
-C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.AssemblyReference.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Avalonia\Resources.Inputs.cache
@@ -138,3 +136,9 @@ C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\refint\Ava
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Document.A0662DA9.Up2Date
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.genruntimeconfig.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\ref\DocumentGenerator.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\EPPlus.System.Drawing.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\System.Drawing.Common.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
+C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.Pkcs.dll

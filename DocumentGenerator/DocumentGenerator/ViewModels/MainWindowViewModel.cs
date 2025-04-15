@@ -572,6 +572,11 @@ namespace DocumentGenerator.ViewModels
         {
             try
             {
+                Console.WriteLine($"Метод LoadFromExcel вызван с файлом: {filePath}");
+
+                // Указываем лицензию для EPPlus
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     var worksheet = package.Workbook.Worksheets[0]; // Первый лист
@@ -581,20 +586,32 @@ namespace DocumentGenerator.ViewModels
                     // Начинаем со второй строки (первая строка — заголовки)
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        // Пропускаем строки, где все ячейки пустые
+                        bool isRowEmpty = true;
+                        for (int col = 1; col <= 14; col++)
+                        {
+                            if (!string.IsNullOrWhiteSpace(worksheet.Cells[row, col].Text))
+                            {
+                                isRowEmpty = false;
+                                break;
+                            }
+                        }
+                        if (isRowEmpty) continue;
+
                         var record = new ExcelDataViewModel.Record
                         {
-                            FullName = worksheet.Cells[row, 1].Text,        // ФИО
-                            Position = worksheet.Cells[row, 2].Text,        // Должность
-                            DateOfBirth = worksheet.Cells[row, 3].Text,     // Дата рождения
-                            Age = int.TryParse(worksheet.Cells[row, 4].Text, out int age) ? age : 0, // Возраст
-                            Gender = worksheet.Cells[row, 5].Text,          // Пол
-                            OrderClause = worksheet.Cells[row, 6].Text,     // Пункты по приказу
-                            Snils = worksheet.Cells[row, 7].Text,           // СНИЛС
-                            MedicalPolicy = worksheet.Cells[row, 8].Text,   // Полис ОМС
-                            PassportSeries = worksheet.Cells[row, 9].Text,  // Серия паспорта
-                            PassportNumber = worksheet.Cells[row, 10].Text, // Номер паспорта
-                            PassportIssueDate = worksheet.Cells[row, 11].Text, // Дата выдачи паспорта
-                            PassportIssuedBy = worksheet.Cells[row, 12].Text   // Кем выдан
+                            FullName = worksheet.Cells[row, 2].Text,        // Сотрудник (ФИО)
+                            Position = worksheet.Cells[row, 3].Text,        // Должность
+                            DateOfBirth = ConvertExcelDateToString(worksheet.Cells[row, 5].Text), // Дата рождения
+                            Age = int.TryParse(worksheet.Cells[row, 6].Text, out int age) ? age : 0, // Возраст
+                            Gender = worksheet.Cells[row, 7].Text,          // Пол
+                            OrderClause = worksheet.Cells[row, 8].Text,     // Пункты по приказу
+                            Snils = worksheet.Cells[row, 9].Text,           // СНИЛС
+                            MedicalPolicy = worksheet.Cells[row, 10].Text,  // Полис ОМС
+                            PassportSeries = worksheet.Cells[row, 11].Text, // Серия паспорта
+                            PassportNumber = worksheet.Cells[row, 12].Text, // Номер паспорта
+                            PassportIssueDate = ConvertExcelDateToString(worksheet.Cells[row, 13].Text), // Дата выдачи паспорта
+                            PassportIssuedBy = worksheet.Cells[row, 14].Text // Кем выдан
                         };
 
                         records.Add(record);
@@ -606,7 +623,7 @@ namespace DocumentGenerator.ViewModels
                         return;
                     }
 
-                    // Открываем новое окно для отображения данных из Excel
+                    // Открываем окно с таблицей
                     var excelDataWindow = new ExcelDataWindow
                     {
                         DataContext = new ExcelDataViewModel
@@ -614,6 +631,7 @@ namespace DocumentGenerator.ViewModels
                             Records = records
                         }
                     };
+                    Console.WriteLine("Окно ExcelDataWindow создано и готово к открытию.");
                     excelDataWindow.Show();
                 }
             }
@@ -621,6 +639,29 @@ namespace DocumentGenerator.ViewModels
             {
                 Console.WriteLine($"Ошибка при загрузке Excel: {ex.Message}");
             }
+        }
+
+        // Метод для преобразования даты из числового формата Excel (например, 28618) в строку "ДД.ММ.ГГГГ"
+        private string ConvertExcelDateToString(string excelDateStr)
+        {
+            if (string.IsNullOrWhiteSpace(excelDateStr))
+                return "";
+
+            if (int.TryParse(excelDateStr, out int excelDate))
+            {
+                try
+                {
+                    // Преобразуем число в дату (Excel отсчитывает дни от 01.01.1900)
+                    DateTime date = DateTime.FromOADate(excelDate);
+                    return date.ToString("dd.MM.yyyy");
+                }
+                catch
+                {
+                    return excelDateStr; // Если не удалось преобразовать, возвращаем исходное значение
+                }
+            }
+
+            return excelDateStr;
         }
     }
 }

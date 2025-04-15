@@ -3,7 +3,9 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Document Generator" Width="600" Height="800">
+        Title="Генератор документов"
+        Width="600"
+        Height="800">
 	<Design.DataContext>
 		<vm:MainWindowViewModel />
 	</Design.DataContext>
@@ -96,7 +98,7 @@
                      TextChanged="HandleTextChanged"
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
-                     Watermark="Введите кем выдан" />
+                     Watermark="В вами кем выдан" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
 
 			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
@@ -107,12 +109,14 @@
                      KeyDown="RestrictKeyDown"
                      Watermark="16 цифр" />
 			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
+
 			<Button Name="LoadFromExcelButton"
                     Content="Загрузить из Excel"
                     Click="LoadFromExcel_Click"
                     HorizontalAlignment="Center"
                     Margin="10"
                     KeyDown="LoadFromExcelButton_KeyDown" />
+
 			<Button Name="SaveButton"
                     Content="Сохранить"
                     Click="Save_Click"
