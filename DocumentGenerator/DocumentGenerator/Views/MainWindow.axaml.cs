@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using System;
+using Avalonia.Platform.Storage;
 
 namespace DocumentGenerator
 {
@@ -127,7 +128,6 @@ namespace DocumentGenerator
                         textBox.Text = filteredText;
                         textBox.CaretIndex = filteredText.Length;
 
-                        // Проверяем, достиг ли текст максимальной длины после вставки
                         int maxLength = GetMaxLengthForField(name);
                         if (filteredText.Length == maxLength)
                         {
@@ -359,6 +359,36 @@ namespace DocumentGenerator
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 
+        private async void LoadFromExcel_Click(object sender, RoutedEventArgs e)
+        {
+            var storageProvider = StorageProvider;
+            var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Выберите Excel-файл",
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("Excel Files") { Patterns = new[] { "*.xlsx", "*.xls" } },
+                    new FilePickerFileType("All Files") { Patterns = new[] { "*" } }
+                },
+                AllowMultiple = false
+            });
+
+            if (file != null && file.Count > 0)
+            {
+                var filePath = file[0].Path.LocalPath;
+                await ViewModel.LoadFromExcel(filePath);
+            }
+        }
+
+        private void LoadFromExcelButton_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoadFromExcel_Click(sender, new RoutedEventArgs());
+                e.Handled = true;
+            }
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e) => ViewModel.OnSave();
 
         private void SaveButton_KeyDown(object sender, KeyEventArgs e)
@@ -420,7 +450,7 @@ namespace DocumentGenerator
 
             for (int i = start; moveNext ? i < end : i >= end; i += step)
             {
-                if (children[i] is TextBox or ComboBox)
+                if (children[i] is TextBox or ComboBox or Button)
                 {
                     var nextControl = (Control)children[i];
                     nextControl.Focus();

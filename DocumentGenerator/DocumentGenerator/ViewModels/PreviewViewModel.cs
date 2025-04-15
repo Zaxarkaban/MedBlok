@@ -65,7 +65,7 @@ namespace DocumentGenerator.ViewModels
                         .SetFontSize(16)
                         .SetMarginBottom(20));
 
-                    // Данные
+                    // Данные записи
                     document.Add(new Paragraph($"ФИО: {FullName ?? "Не указано"}")
                         .SetFont(font)
                         .SetFontSize(12)
@@ -82,11 +82,15 @@ namespace DocumentGenerator.ViewModels
                         .SetFont(font)
                         .SetFontSize(12)
                         .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Пункт приказа: {OrderClause ?? "Не указан"}")
+                    document.Add(new Paragraph($"Пункты по приказу: {OrderClause ?? "Не указан"}")
                         .SetFont(font)
                         .SetFontSize(12)
                         .SetMarginBottom(5));
                     document.Add(new Paragraph($"СНИЛС: {Snils ?? "Не указан"}")
+                        .SetFont(font)
+                        .SetFontSize(12)
+                        .SetMarginBottom(5));
+                    document.Add(new Paragraph($"Полис ОМС: {MedicalPolicy ?? "Не указан"}")
                         .SetFont(font)
                         .SetFontSize(12)
                         .SetMarginBottom(5));
@@ -99,10 +103,6 @@ namespace DocumentGenerator.ViewModels
                         .SetFontSize(12)
                         .SetMarginBottom(5));
                     document.Add(new Paragraph($"Кем выдан: {PassportIssuedBy ?? "Не указано"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Полис ОМС: {MedicalPolicy ?? "Не указан"}")
                         .SetFont(font)
                         .SetFontSize(12)
                         .SetMarginBottom(5));

@@ -5,6 +5,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
+using OfficeOpenXml;
+using System.Threading.Tasks;
+using System.IO;
+using DocumentGenerator;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -25,7 +29,6 @@ namespace DocumentGenerator.ViewModels
             {
                 if (_fullName != value)
                 {
-                    // Ограничиваем длину до 1000 символов
                     if (value != null && value.Length > 1000)
                         value = value.Substring(0, 1000);
 
@@ -58,7 +61,6 @@ namespace DocumentGenerator.ViewModels
             {
                 if (_position != value)
                 {
-                    // Ограничиваем длину до 1000 символов
                     if (value != null && value.Length > 1000)
                         value = value.Substring(0, 1000);
 
@@ -294,7 +296,6 @@ namespace DocumentGenerator.ViewModels
             {
                 if (_passportIssuedBy != value)
                 {
-                    // Ограничиваем длину до 1000 символов
                     if (value != null && value.Length > 1000)
                         value = value.Substring(0, 1000);
 
@@ -409,8 +410,8 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportSeries))
                 PassportSeriesError = "Серия паспорта не может быть пустой";
-            else if (!Regex.IsMatch(PassportSeries, @"^\d{4}$"))
-                PassportSeriesError = "Серия паспорта должна содержать ровно 4 цифры";
+            else if (!Regex.IsMatch(PassportSeries, @"^[A-Z]{2}\d{2}$"))
+                PassportSeriesError = "Серия паспорта должна быть в формате XXXX (например, AB12)";
             else
                 PassportSeriesError = "";
         }
@@ -515,6 +516,7 @@ namespace DocumentGenerator.ViewModels
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         FullName TEXT,
                         Position TEXT,
+                        DateOfBirth TEXT,
                         Age INTEGER,
                         Gender TEXT,
                         OrderClause TEXT,
@@ -528,10 +530,11 @@ namespace DocumentGenerator.ViewModels
                 command.ExecuteNonQuery();
 
                 command.CommandText = @"
-                    INSERT INTO Documents (FullName, Position, Age, Gender, OrderClause, Snils, PassportSeries, PassportNumber, PassportIssueDate, PassportIssuedBy, MedicalPolicy)
-                    VALUES (@fullName, @position, @age, @gender, @orderClause, @snils, @passportSeries, @passportNumber, @passportIssueDate, @passportIssuedBy, @medicalPolicy)";
+                    INSERT INTO Documents (FullName, Position, DateOfBirth, Age, Gender, OrderClause, Snils, PassportSeries, PassportNumber, PassportIssueDate, PassportIssuedBy, MedicalPolicy)
+                    VALUES (@fullName, @position, @dateOfBirth, @age, @gender, @orderClause, @snils, @passportSeries, @passportNumber, @passportIssueDate, @passportIssuedBy, @medicalPolicy)";
                 command.Parameters.AddWithValue("@fullName", FullName ?? "");
                 command.Parameters.AddWithValue("@position", Position ?? "");
+                command.Parameters.AddWithValue("@dateOfBirth", DateOfBirth ?? "");
                 command.Parameters.AddWithValue("@age", age);
                 command.Parameters.AddWithValue("@gender", Gender ?? "");
                 command.Parameters.AddWithValue("@orderClause", OrderClause ?? "");
@@ -563,6 +566,61 @@ namespace DocumentGenerator.ViewModels
             };
             Console.WriteLine("PreviewWindow создан и DataContext установлен");
             previewWindow.Show();
+        }
+
+        public async Task LoadFromExcel(string filePath)
+        {
+            try
+            {
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets[0]; // Первый лист
+                    var rowCount = worksheet.Dimension.Rows;
+                    var records = new List<ExcelDataViewModel.Record>();
+
+                    // Начинаем со второй строки (первая строка — заголовки)
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var record = new ExcelDataViewModel.Record
+                        {
+                            FullName = worksheet.Cells[row, 1].Text,        // ФИО
+                            Position = worksheet.Cells[row, 2].Text,        // Должность
+                            DateOfBirth = worksheet.Cells[row, 3].Text,     // Дата рождения
+                            Age = int.TryParse(worksheet.Cells[row, 4].Text, out int age) ? age : 0, // Возраст
+                            Gender = worksheet.Cells[row, 5].Text,          // Пол
+                            OrderClause = worksheet.Cells[row, 6].Text,     // Пункты по приказу
+                            Snils = worksheet.Cells[row, 7].Text,           // СНИЛС
+                            MedicalPolicy = worksheet.Cells[row, 8].Text,   // Полис ОМС
+                            PassportSeries = worksheet.Cells[row, 9].Text,  // Серия паспорта
+                            PassportNumber = worksheet.Cells[row, 10].Text, // Номер паспорта
+                            PassportIssueDate = worksheet.Cells[row, 11].Text, // Дата выдачи паспорта
+                            PassportIssuedBy = worksheet.Cells[row, 12].Text   // Кем выдан
+                        };
+
+                        records.Add(record);
+                    }
+
+                    if (records.Count == 0)
+                    {
+                        Console.WriteLine("В Excel-файле нет корректных данных.");
+                        return;
+                    }
+
+                    // Открываем новое окно для отображения данных из Excel
+                    var excelDataWindow = new ExcelDataWindow
+                    {
+                        DataContext = new ExcelDataViewModel
+                        {
+                            Records = records
+                        }
+                    };
+                    excelDataWindow.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при загрузке Excel: {ex.Message}");
+            }
         }
     }
 }

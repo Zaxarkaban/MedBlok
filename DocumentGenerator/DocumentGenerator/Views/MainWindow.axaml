@@ -107,7 +107,12 @@
                      KeyDown="RestrictKeyDown"
                      Watermark="16 цифр" />
 			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
-
+			<Button Name="LoadFromExcelButton"
+                    Content="Загрузить из Excel"
+                    Click="LoadFromExcel_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    KeyDown="LoadFromExcelButton_KeyDown" />
 			<Button Name="SaveButton"
                     Content="Сохранить"
                     Click="Save_Click"
