@@ -1,366 +1,360 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using ReactiveUI;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
-using OfficeOpenXml;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.IO;
-using DocumentGenerator;
+using System.Linq;
 
 namespace DocumentGenerator.ViewModels
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : ReactiveObject
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null!)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private string? _fullName;
-        public string? FullName
-        {
-            get => _fullName;
-            set
-            {
-                if (_fullName != value)
-                {
-                    if (value != null && value.Length > 1000)
-                        value = value.Substring(0, 1000);
-
-                    _fullName = value;
-                    OnPropertyChanged();
-                    ValidateFullName();
-                }
-            }
-        }
+        private string _fullName = "";
+        private string _position = "";
+        private string _dateOfBirth = "";
+        private string _gender = "";
+        private string _snils = "";
+        private string _passportSeries = "";
+        private string _passportNumber = "";
+        private string _passportIssueDate = "";
+        private string _passportIssuedBy = "";
+        private string _medicalPolicy = "";
+        private string _address = "";
+        private string _phone = "";
+        private string _medicalOrganization = "";
+        private string _medicalFacility = "";
+        private string _workplace = "";
+        private string _ownershipForm = "";
+        private string _okved = "";
+        private string _workExperience = "";
 
         private string _fullNameError = "";
-        public string FullNameError
-        {
-            get => _fullNameError;
-            set
-            {
-                if (_fullNameError != value)
-                {
-                    _fullNameError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _position;
-        public string? Position
-        {
-            get => _position;
-            set
-            {
-                if (_position != value)
-                {
-                    if (value != null && value.Length > 1000)
-                        value = value.Substring(0, 1000);
-
-                    _position = value;
-                    OnPropertyChanged();
-                    ValidatePosition();
-                }
-            }
-        }
-
         private string _positionError = "";
-        public string PositionError
-        {
-            get => _positionError;
-            set
-            {
-                if (_positionError != value)
-                {
-                    _positionError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _dateOfBirth;
-        public string? DateOfBirth
-        {
-            get => _dateOfBirth;
-            set
-            {
-                if (_dateOfBirth != value)
-                {
-                    _dateOfBirth = value?.Replace(',', '.');
-                    OnPropertyChanged();
-                    ValidateDateOfBirth();
-                }
-            }
-        }
-
         private string _dateOfBirthError = "";
-        public string DateOfBirthError
-        {
-            get => _dateOfBirthError;
-            set
-            {
-                if (_dateOfBirthError != value)
-                {
-                    _dateOfBirthError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _gender;
-        public string? Gender
-        {
-            get => _gender;
-            set
-            {
-                if (_gender != value)
-                {
-                    _gender = value;
-                    OnPropertyChanged();
-                    ValidateGender();
-                }
-            }
-        }
-
         private string _genderError = "";
-        public string GenderError
-        {
-            get => _genderError;
-            set
-            {
-                if (_genderError != value)
-                {
-                    _genderError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _orderClause;
-        public string? OrderClause
-        {
-            get => _orderClause;
-            set
-            {
-                if (_orderClause != value)
-                {
-                    _orderClause = value;
-                    OnPropertyChanged();
-                    ValidateOrderClause();
-                }
-            }
-        }
-
-        private string _orderClauseError = "";
-        public string OrderClauseError
-        {
-            get => _orderClauseError;
-            set
-            {
-                if (_orderClauseError != value)
-                {
-                    _orderClauseError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _snils;
-        public string? Snils
-        {
-            get => _snils;
-            set
-            {
-                if (_snils != value)
-                {
-                    _snils = value;
-                    OnPropertyChanged();
-                    ValidateSnils();
-                }
-            }
-        }
-
         private string _snilsError = "";
-        public string SnilsError
-        {
-            get => _snilsError;
-            set
-            {
-                if (_snilsError != value)
-                {
-                    _snilsError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _passportSeries;
-        public string? PassportSeries
-        {
-            get => _passportSeries;
-            set
-            {
-                if (_passportSeries != value)
-                {
-                    _passportSeries = value;
-                    OnPropertyChanged();
-                    ValidatePassportSeries();
-                }
-            }
-        }
-
         private string _passportSeriesError = "";
-        public string PassportSeriesError
-        {
-            get => _passportSeriesError;
-            set
-            {
-                if (_passportSeriesError != value)
-                {
-                    _passportSeriesError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _passportNumber;
-        public string? PassportNumber
-        {
-            get => _passportNumber;
-            set
-            {
-                if (_passportNumber != value)
-                {
-                    _passportNumber = value;
-                    OnPropertyChanged();
-                    ValidatePassportNumber();
-                }
-            }
-        }
-
         private string _passportNumberError = "";
-        public string PassportNumberError
-        {
-            get => _passportNumberError;
-            set
-            {
-                if (_passportNumberError != value)
-                {
-                    _passportNumberError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _passportIssueDate;
-        public string? PassportIssueDate
-        {
-            get => _passportIssueDate;
-            set
-            {
-                if (_passportIssueDate != value)
-                {
-                    _passportIssueDate = value?.Replace(',', '.');
-                    OnPropertyChanged();
-                    ValidatePassportIssueDate();
-                }
-            }
-        }
-
         private string _passportIssueDateError = "";
-        public string PassportIssueDateError
-        {
-            get => _passportIssueDateError;
-            set
-            {
-                if (_passportIssueDateError != value)
-                {
-                    _passportIssueDateError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _passportIssuedBy;
-        public string? PassportIssuedBy
-        {
-            get => _passportIssuedBy;
-            set
-            {
-                if (_passportIssuedBy != value)
-                {
-                    if (value != null && value.Length > 1000)
-                        value = value.Substring(0, 1000);
-
-                    _passportIssuedBy = value;
-                    OnPropertyChanged();
-                    ValidatePassportIssuedBy();
-                }
-            }
-        }
-
         private string _passportIssuedByError = "";
-        public string PassportIssuedByError
-        {
-            get => _passportIssuedByError;
-            set
-            {
-                if (_passportIssuedByError != value)
-                {
-                    _passportIssuedByError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string? _medicalPolicy;
-        public string? MedicalPolicy
-        {
-            get => _medicalPolicy;
-            set
-            {
-                if (_medicalPolicy != value)
-                {
-                    _medicalPolicy = value;
-                    OnPropertyChanged();
-                    ValidateMedicalPolicy();
-                }
-            }
-        }
-
         private string _medicalPolicyError = "";
-        public string MedicalPolicyError
-        {
-            get => _medicalPolicyError;
-            set
-            {
-                if (_medicalPolicyError != value)
-                {
-                    _medicalPolicyError = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        private string _addressError = "";
+        private string _phoneError = "";
+        private string _medicalOrganizationError = "";
+        private string _medicalFacilityError = "";
+        private string _workplaceError = "";
+        private string _ownershipFormError = "";
+        private string _okvedError = "";
+        private string _workExperienceError = "";
+        private string _selectedOrderClausesError = "";
 
-        public List<string> GenderOptions { get; }
-        public List<string> OrderClauses { get; }
+        // Список всех пунктов приказа из базы данных
+        private ObservableCollection<string> _orderClauses;
+        // Список выбранных пунктов
+        private ObservableCollection<string> _selectedOrderClauses;
 
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
-            OrderClauses = Enumerable.Range(1, 27).Select(i => $"Пункт {i}").ToList();
+            OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
+            _orderClauses = new ObservableCollection<string>();
+            _selectedOrderClauses = new ObservableCollection<string>();
+            LoadOrderClauses();
         }
 
+        // Загрузка пунктов из базы данных с обработкой ошибок
+        private void LoadOrderClauses()
+        {
+            string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "OrderClauses.db");
+            if (!File.Exists(dbPath))
+            {
+                // Логика для обработки случая, если файл базы данных отсутствует
+                // Например, можно выбросить исключение или добавить пустые данные
+                return; // Или инициализировать вручную, если нужно
+            }
+
+            try
+            {
+                using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = "SELECT ClauseText FROM OrderClauses";
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            _orderClauses.Add(reader.GetString(0));
+                        }
+                    }
+                }
+            }
+            catch (SqliteException ex)
+            {
+                // Логирование ошибки (в реальном проекте используйте ILogger)
+                Console.WriteLine($"Ошибка загрузки данных из базы: {ex.Message}");
+            }
+        }
+
+        // Свойства
+        public string FullName
+        {
+            get => _fullName;
+            set => this.RaiseAndSetIfChanged(ref _fullName, value);
+        }
+
+        public string Position
+        {
+            get => _position;
+            set => this.RaiseAndSetIfChanged(ref _position, value);
+        }
+
+        public string DateOfBirth
+        {
+            get => _dateOfBirth;
+            set => this.RaiseAndSetIfChanged(ref _dateOfBirth, value);
+        }
+
+        public string Gender
+        {
+            get => _gender;
+            set => this.RaiseAndSetIfChanged(ref _gender, value);
+        }
+
+        public string Snils
+        {
+            get => _snils;
+            set => this.RaiseAndSetIfChanged(ref _snils, value);
+        }
+
+        public string PassportSeries
+        {
+            get => _passportSeries;
+            set => this.RaiseAndSetIfChanged(ref _passportSeries, value);
+        }
+
+        public string PassportNumber
+        {
+            get => _passportNumber;
+            set => this.RaiseAndSetIfChanged(ref _passportNumber, value);
+        }
+
+        public string PassportIssueDate
+        {
+            get => _passportIssueDate;
+            set => this.RaiseAndSetIfChanged(ref _passportIssueDate, value);
+        }
+
+        public string PassportIssuedBy
+        {
+            get => _passportIssuedBy;
+            set => this.RaiseAndSetIfChanged(ref _passportIssuedBy, value);
+        }
+
+        public string MedicalPolicy
+        {
+            get => _medicalPolicy;
+            set => this.RaiseAndSetIfChanged(ref _medicalPolicy, value);
+        }
+
+        public string Address
+        {
+            get => _address;
+            set => this.RaiseAndSetIfChanged(ref _address, value);
+        }
+
+        public string Phone
+        {
+            get => _phone;
+            set => this.RaiseAndSetIfChanged(ref _phone, value);
+        }
+
+        public string MedicalOrganization
+        {
+            get => _medicalOrganization;
+            set => this.RaiseAndSetIfChanged(ref _medicalOrganization, value);
+        }
+
+        public string MedicalFacility
+        {
+            get => _medicalFacility;
+            set => this.RaiseAndSetIfChanged(ref _medicalFacility, value);
+        }
+
+        public string Workplace
+        {
+            get => _workplace;
+            set => this.RaiseAndSetIfChanged(ref _workplace, value);
+        }
+
+        public string OwnershipForm
+        {
+            get => _ownershipForm;
+            set => this.RaiseAndSetIfChanged(ref _ownershipForm, value);
+        }
+
+        public string Okved
+        {
+            get => _okved;
+            set => this.RaiseAndSetIfChanged(ref _okved, value);
+        }
+
+        public string WorkExperience
+        {
+            get => _workExperience;
+            set => this.RaiseAndSetIfChanged(ref _workExperience, value);
+        }
+
+        // Свойства для пунктов приказа
+        public ObservableCollection<string> OrderClauses
+        {
+            get => _orderClauses;
+            set => this.RaiseAndSetIfChanged(ref _orderClauses, value);
+        }
+
+        public ObservableCollection<string> SelectedOrderClauses
+        {
+            get => _selectedOrderClauses;
+            set => this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value);
+        }
+
+        // Свойства ошибок
+        public string FullNameError
+        {
+            get => _fullNameError;
+            set => this.RaiseAndSetIfChanged(ref _fullNameError, value);
+        }
+
+        public string PositionError
+        {
+            get => _positionError;
+            set => this.RaiseAndSetIfChanged(ref _positionError, value);
+        }
+
+        public string DateOfBirthError
+        {
+            get => _dateOfBirthError;
+            set => this.RaiseAndSetIfChanged(ref _dateOfBirthError, value);
+        }
+
+        public string GenderError
+        {
+            get => _genderError;
+            set => this.RaiseAndSetIfChanged(ref _genderError, value);
+        }
+
+        public string SnilsError
+        {
+            get => _snilsError;
+            set => this.RaiseAndSetIfChanged(ref _snilsError, value);
+        }
+
+        public string PassportSeriesError
+        {
+            get => _passportSeriesError;
+            set => this.RaiseAndSetIfChanged(ref _passportSeriesError, value);
+        }
+
+        public string PassportNumberError
+        {
+            get => _passportNumberError;
+            set => this.RaiseAndSetIfChanged(ref _passportNumberError, value);
+        }
+
+        public string PassportIssueDateError
+        {
+            get => _passportIssueDateError;
+            set => this.RaiseAndSetIfChanged(ref _passportIssueDateError, value);
+        }
+
+        public string PassportIssuedByError
+        {
+            get => _passportIssuedByError;
+            set => this.RaiseAndSetIfChanged(ref _passportIssuedByError, value);
+        }
+
+        public string MedicalPolicyError
+        {
+            get => _medicalPolicyError;
+            set => this.RaiseAndSetIfChanged(ref _medicalPolicyError, value);
+        }
+
+        public string AddressError
+        {
+            get => _addressError;
+            set => this.RaiseAndSetIfChanged(ref _addressError, value);
+        }
+
+        public string PhoneError
+        {
+            get => _phoneError;
+            set => this.RaiseAndSetIfChanged(ref _phoneError, value);
+        }
+
+        public string MedicalOrganizationError
+        {
+            get => _medicalOrganizationError;
+            set => this.RaiseAndSetIfChanged(ref _medicalOrganizationError, value);
+        }
+
+        public string MedicalFacilityError
+        {
+            get => _medicalFacilityError;
+            set => this.RaiseAndSetIfChanged(ref _medicalFacilityError, value);
+        }
+
+        public string WorkplaceError
+        {
+            get => _workplaceError;
+            set => this.RaiseAndSetIfChanged(ref _workplaceError, value);
+        }
+
+        public string OwnershipFormError
+        {
+            get => _ownershipFormError;
+            set => this.RaiseAndSetIfChanged(ref _ownershipFormError, value);
+        }
+
+        public string OkvedError
+        {
+            get => _okvedError;
+            set => this.RaiseAndSetIfChanged(ref _okvedError, value);
+        }
+
+        public string WorkExperienceError
+        {
+            get => _workExperienceError;
+            set => this.RaiseAndSetIfChanged(ref _workExperienceError, value);
+        }
+
+        public string SelectedOrderClausesError
+        {
+            get => _selectedOrderClausesError;
+            set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
+        }
+
+        // Списки для ComboBox
+        public List<string> GenderOptions { get; }
+        public List<string> OwnershipFormOptions { get; }
+
+        // Методы валидации
         public void ValidateFullName()
         {
-            FullNameError = string.IsNullOrWhiteSpace(FullName) ? "ФИО не может быть пустым" : "";
+            if (string.IsNullOrWhiteSpace(FullName))
+            {
+                FullNameError = "ФИО не может быть пустым";
+                return;
+            }
+
+            var parts = FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 2)
+            {
+                FullNameError = "ФИО должно содержать минимум два слова";
+                return;
+            }
+
+            FullNameError = "";
         }
 
         public void ValidatePosition()
@@ -370,114 +364,239 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidateDateOfBirth()
         {
-            if (string.IsNullOrWhiteSpace(DateOfBirth) || DateOfBirth.Replace("_", "").Replace(".", "").Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(DateOfBirth))
             {
                 DateOfBirthError = "Дата рождения не может быть пустой";
                 return;
             }
 
-            if (!Regex.IsMatch(DateOfBirth, @"^\d{2}\.\d{2}\.\d{4}$") || !DateTime.TryParseExact(DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var dob) || dob > DateTime.Now)
-                DateOfBirthError = "Дата рождения должна быть в формате ДД.ММ.ГГГГ и не позднее текущей даты";
-            else
-                DateOfBirthError = "";
+            if (!DateTime.TryParseExact(DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
+            {
+                DateOfBirthError = "Дата рождения должна быть в формате ДД.ММ.ГГГГ";
+                return;
+            }
+
+            if (DateTime.Now.Year - date.Year < 14)
+            {
+                DateOfBirthError = "Возраст должен быть не менее 14 лет";
+                return;
+            }
+
+            DateOfBirthError = "";
         }
 
         public void ValidateGender()
         {
-            GenderError = string.IsNullOrEmpty(Gender) ? "Выберите пол" : "";
-        }
-
-        public void ValidateOrderClause()
-        {
-            OrderClauseError = string.IsNullOrEmpty(OrderClause) ? "Выберите пункт приказа" : "";
+            GenderError = string.IsNullOrWhiteSpace(Gender) ? "Пол должен быть выбран" : "";
         }
 
         public void ValidateSnils()
         {
-            if (string.IsNullOrWhiteSpace(Snils) || Snils.Replace("_", "").Replace("-", "").Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(Snils))
             {
                 SnilsError = "СНИЛС не может быть пустым";
                 return;
             }
 
-            if (!Regex.IsMatch(Snils, @"^\d{3}-\d{3}-\d{3} \d{2}$"))
-                SnilsError = "СНИЛС должен быть в формате XXX-XXX-XXX XX";
-            else
-                SnilsError = "";
+            var digits = Snils.Replace("-", "").Replace(" ", "");
+            if (digits.Length != 11 || !digits.All(char.IsDigit))
+            {
+                SnilsError = "СНИЛС должен содержать 11 цифр";
+                return;
+            }
+
+            int checksum = int.Parse(digits.Substring(9, 2));
+            int sum = 0;
+            for (int i = 0; i < 9; i++)
+            {
+                sum += int.Parse(digits[i].ToString()) * (9 - i);
+            }
+            int expectedChecksum = sum % 101;
+            if (expectedChecksum == 100) expectedChecksum = 0;
+
+            SnilsError = checksum == expectedChecksum ? "" : "Неверная контрольная сумма СНИЛС";
         }
 
         public void ValidatePassportSeries()
         {
             if (string.IsNullOrWhiteSpace(PassportSeries))
+            {
                 PassportSeriesError = "Серия паспорта не может быть пустой";
-            else if (!Regex.IsMatch(PassportSeries, @"^[A-Z]{2}\d{2}$"))
-                PassportSeriesError = "Серия паспорта должна быть в формате XXXX (например, AB12)";
-            else
-                PassportSeriesError = "";
+                return;
+            }
+
+            PassportSeriesError = PassportSeries.Length == 4 && PassportSeries.All(char.IsDigit)
+                ? ""
+                : "Серия паспорта должна содержать 4 цифры";
         }
 
         public void ValidatePassportNumber()
         {
             if (string.IsNullOrWhiteSpace(PassportNumber))
+            {
                 PassportNumberError = "Номер паспорта не может быть пустым";
-            else if (!Regex.IsMatch(PassportNumber, @"^\d{6}$"))
-                PassportNumberError = "Номер паспорта должен содержать ровно 6 цифр";
-            else
-                PassportNumberError = "";
+                return;
+            }
+
+            PassportNumberError = PassportNumber.Length == 6 && PassportNumber.All(char.IsDigit)
+                ? ""
+                : "Номер паспорта должен содержать 6 цифр";
         }
 
         public void ValidatePassportIssueDate()
         {
-            if (string.IsNullOrWhiteSpace(PassportIssueDate) || PassportIssueDate.Replace("_", "").Replace(".", "").Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(PassportIssueDate))
             {
                 PassportIssueDateError = "Дата выдачи паспорта не может быть пустой";
                 return;
             }
 
-            if (!Regex.IsMatch(PassportIssueDate, @"^\d{2}\.\d{2}\.\d{4}$") || !DateTime.TryParseExact(PassportIssueDate, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var issueDate) || issueDate > DateTime.Now)
-                PassportIssueDateError = "Дата выдачи должна быть в формате ДД.ММ.ГГГГ и не позднее текущей даты";
-            else
-                PassportIssueDateError = "";
+            if (!DateTime.TryParseExact(PassportIssueDate, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
+            {
+                PassportIssueDateError = "Дата выдачи паспорта должна быть в формате ДД.ММ.ГГГГ";
+                return;
+            }
+
+            if (date > DateTime.Now)
+            {
+                PassportIssueDateError = "Дата выдачи паспорта не может быть в будущем";
+                return;
+            }
+
+            PassportIssueDateError = "";
         }
 
         public void ValidatePassportIssuedBy()
         {
-            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Поле 'Кем выдан' не может быть пустым" : "";
+            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Кем выдан паспорт не может быть пустым" : "";
         }
 
         public void ValidateMedicalPolicy()
         {
-            if (!string.IsNullOrWhiteSpace(MedicalPolicy) && !Regex.IsMatch(MedicalPolicy, @"^\d{16}$"))
-                MedicalPolicyError = "Полис ОМС должен содержать ровно 16 цифр";
-            else
+            if (string.IsNullOrWhiteSpace(MedicalPolicy))
+            {
                 MedicalPolicyError = "";
+                return;
+            }
+
+            MedicalPolicyError = MedicalPolicy.Length == 16 && MedicalPolicy.All(char.IsDigit)
+                ? ""
+                : "Полис ОМС должен содержать 16 цифр";
         }
 
-        private bool IsValid()
+        public void ValidateAddress()
         {
-            ValidateFullName();
-            ValidatePosition();
-            ValidateDateOfBirth();
-            ValidateGender();
-            ValidateOrderClause();
-            ValidateSnils();
-            ValidatePassportSeries();
-            ValidatePassportNumber();
-            ValidatePassportIssueDate();
-            ValidatePassportIssuedBy();
-            ValidateMedicalPolicy();
+            if (string.IsNullOrWhiteSpace(Address))
+            {
+                AddressError = "Адрес не может быть пустым";
+                return;
+            }
 
-            return string.IsNullOrEmpty(FullNameError) &&
-                   string.IsNullOrEmpty(PositionError) &&
-                   string.IsNullOrEmpty(DateOfBirthError) &&
-                   string.IsNullOrEmpty(GenderError) &&
-                   string.IsNullOrEmpty(OrderClauseError) &&
-                   string.IsNullOrEmpty(SnilsError) &&
-                   string.IsNullOrEmpty(PassportSeriesError) &&
-                   string.IsNullOrEmpty(PassportNumberError) &&
-                   string.IsNullOrEmpty(PassportIssueDateError) &&
-                   string.IsNullOrEmpty(PassportIssuedByError) &&
-                   string.IsNullOrEmpty(MedicalPolicyError);
+            var parts = Address.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 3)
+            {
+                AddressError = "Адрес должен содержать город, улицу и дом (например, Москва, ул. Ленина, д. 5)";
+                return;
+            }
+
+            AddressError = "";
+        }
+
+        public void ValidatePhone()
+        {
+            if (string.IsNullOrWhiteSpace(Phone))
+            {
+                PhoneError = "Телефон не может быть пустым";
+                return;
+            }
+
+            var digits = Phone.Replace("+", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
+            if (digits.Length != 11 || !digits.All(char.IsDigit) || (digits[0] != '7' && digits[0] != '8'))
+            {
+                PhoneError = "Телефон должен быть в формате +X (XXX) XXX-XX-XX, начинаться с +7 или +8";
+                return;
+            }
+
+            PhoneError = "";
+        }
+
+        public void ValidateMedicalOrganization()
+        {
+            MedicalOrganizationError = string.IsNullOrWhiteSpace(MedicalOrganization)
+                ? "Наименование страховой медицинской организации не может быть пустым"
+                : "";
+        }
+
+        public void ValidateMedicalFacility()
+        {
+            MedicalFacilityError = string.IsNullOrWhiteSpace(MedicalFacility)
+                ? "Наблюдается ЛПУ должен быть указан"
+                : "";
+        }
+
+        public void ValidateWorkplace()
+        {
+            WorkplaceError = string.IsNullOrWhiteSpace(Workplace)
+                ? "Место работы не может быть пустым"
+                : "";
+        }
+
+        public void ValidateOwnershipForm()
+        {
+            OwnershipFormError = string.IsNullOrWhiteSpace(OwnershipForm)
+                ? "Форма собственности должна быть выбрана"
+                : "";
+        }
+
+        public void ValidateOkved()
+        {
+            if (string.IsNullOrWhiteSpace(Okved))
+            {
+                OkvedError = "ОКВЭД не может быть пустым";
+                return;
+            }
+
+            var parts = Okved.Split('.');
+            if (parts.Length < 2 || parts.Length > 3 || !parts.All(p => p.Length == 2 && p.All(char.IsDigit)))
+            {
+                OkvedError = "ОКВЭД должен быть в формате XX.XX или XX.XX.XX";
+                return;
+            }
+
+            int firstPart = int.Parse(parts[0]);
+            int secondPart = int.Parse(parts[1]);
+            if (firstPart == 0 || secondPart == 0)
+            {
+                OkvedError = "ОКВЭД не может содержать нулевые части (XX и XX должны быть от 01 до 99)";
+                return;
+            }
+
+            OkvedError = "";
+        }
+
+        public void ValidateWorkExperience()
+        {
+            if (string.IsNullOrWhiteSpace(WorkExperience))
+            {
+                WorkExperienceError = "Стаж работы не может быть пустым";
+                return;
+            }
+
+            var digits = WorkExperience.Replace(" лет", "");
+            if (!int.TryParse(digits, out int years) || years < 0 || years > 80)
+            {
+                WorkExperienceError = "Стаж работы должен быть числом от 0 до 80 лет";
+                return;
+            }
+
+            WorkExperienceError = "";
+        }
+
+        public void ValidateSelectedOrderClauses()
+        {
+            SelectedOrderClausesError = SelectedOrderClauses == null || !SelectedOrderClauses.Any()
+                ? "Необходимо выбрать хотя бы один пункт приказа"
+                : "";
         }
 
         public void OnSave()
@@ -486,182 +605,44 @@ namespace DocumentGenerator.ViewModels
             ValidatePosition();
             ValidateDateOfBirth();
             ValidateGender();
-            ValidateOrderClause();
             ValidateSnils();
             ValidatePassportSeries();
             ValidatePassportNumber();
             ValidatePassportIssueDate();
             ValidatePassportIssuedBy();
             ValidateMedicalPolicy();
+            ValidateAddress();
+            ValidatePhone();
+            ValidateMedicalOrganization();
+            ValidateMedicalFacility();
+            ValidateWorkplace();
+            ValidateOwnershipForm();
+            ValidateOkved();
+            ValidateWorkExperience();
+            ValidateSelectedOrderClauses();
 
-            if (!IsValid())
+            if (string.IsNullOrEmpty(FullNameError) &&
+                string.IsNullOrEmpty(PositionError) &&
+                string.IsNullOrEmpty(DateOfBirthError) &&
+                string.IsNullOrEmpty(GenderError) &&
+                string.IsNullOrEmpty(SnilsError) &&
+                string.IsNullOrEmpty(PassportSeriesError) &&
+                string.IsNullOrEmpty(PassportNumberError) &&
+                string.IsNullOrEmpty(PassportIssueDateError) &&
+                string.IsNullOrEmpty(PassportIssuedByError) &&
+                string.IsNullOrEmpty(MedicalPolicyError) &&
+                string.IsNullOrEmpty(AddressError) &&
+                string.IsNullOrEmpty(PhoneError) &&
+                string.IsNullOrEmpty(MedicalOrganizationError) &&
+                string.IsNullOrEmpty(MedicalFacilityError) &&
+                string.IsNullOrEmpty(WorkplaceError) &&
+                string.IsNullOrEmpty(OwnershipFormError) &&
+                string.IsNullOrEmpty(OkvedError) &&
+                string.IsNullOrEmpty(WorkExperienceError) &&
+                string.IsNullOrEmpty(SelectedOrderClausesError))
             {
-                return;
+                // Здесь будет логика сохранения в SQLite
             }
-
-            if (DateOfBirth == null)
-                throw new InvalidOperationException("Дата рождения не может быть null");
-
-            var dob = DateTime.ParseExact(DateOfBirth, "dd.MM.yyyy", null);
-            int age = DateTime.Now.Year - dob.Year;
-            if (DateTime.Now.DayOfYear < dob.DayOfYear) age--;
-
-            string connectionString = "Data Source=database.db";
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS Documents (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        FullName TEXT,
-                        Position TEXT,
-                        DateOfBirth TEXT,
-                        Age INTEGER,
-                        Gender TEXT,
-                        OrderClause TEXT,
-                        Snils TEXT,
-                        PassportSeries TEXT,
-                        PassportNumber TEXT,
-                        PassportIssueDate TEXT,
-                        PassportIssuedBy TEXT,
-                        MedicalPolicy TEXT
-                    )";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"
-                    INSERT INTO Documents (FullName, Position, DateOfBirth, Age, Gender, OrderClause, Snils, PassportSeries, PassportNumber, PassportIssueDate, PassportIssuedBy, MedicalPolicy)
-                    VALUES (@fullName, @position, @dateOfBirth, @age, @gender, @orderClause, @snils, @passportSeries, @passportNumber, @passportIssueDate, @passportIssuedBy, @medicalPolicy)";
-                command.Parameters.AddWithValue("@fullName", FullName ?? "");
-                command.Parameters.AddWithValue("@position", Position ?? "");
-                command.Parameters.AddWithValue("@dateOfBirth", DateOfBirth ?? "");
-                command.Parameters.AddWithValue("@age", age);
-                command.Parameters.AddWithValue("@gender", Gender ?? "");
-                command.Parameters.AddWithValue("@orderClause", OrderClause ?? "");
-                command.Parameters.AddWithValue("@snils", Snils ?? "");
-                command.Parameters.AddWithValue("@passportSeries", PassportSeries ?? "");
-                command.Parameters.AddWithValue("@passportNumber", PassportNumber ?? "");
-                command.Parameters.AddWithValue("@passportIssueDate", PassportIssueDate ?? "");
-                command.Parameters.AddWithValue("@passportIssuedBy", PassportIssuedBy ?? "");
-                command.Parameters.AddWithValue("@medicalPolicy", MedicalPolicy ?? "");
-                command.ExecuteNonQuery();
-            }
-
-            var previewWindow = new PreviewWindow
-            {
-                DataContext = new PreviewViewModel
-                {
-                    FullName = FullName,
-                    Position = Position,
-                    Age = age,
-                    Gender = Gender,
-                    OrderClause = OrderClause,
-                    Snils = Snils,
-                    PassportSeries = PassportSeries,
-                    PassportNumber = PassportNumber,
-                    PassportIssueDate = PassportIssueDate,
-                    PassportIssuedBy = PassportIssuedBy,
-                    MedicalPolicy = MedicalPolicy
-                }
-            };
-            Console.WriteLine("PreviewWindow создан и DataContext установлен");
-            previewWindow.Show();
-        }
-
-        public async Task LoadFromExcel(string filePath)
-        {
-            try
-            {
-                Console.WriteLine($"Метод LoadFromExcel вызван с файлом: {filePath}");
-
-                // Указываем лицензию для EPPlus
-                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    var worksheet = package.Workbook.Worksheets[0]; // Первый лист
-                    var rowCount = worksheet.Dimension.Rows;
-                    var records = new List<ExcelDataViewModel.Record>();
-
-                    // Начинаем со второй строки (первая строка — заголовки)
-                    for (int row = 2; row <= rowCount; row++)
-                    {
-                        // Пропускаем строки, где все ячейки пустые
-                        bool isRowEmpty = true;
-                        for (int col = 1; col <= 14; col++)
-                        {
-                            if (!string.IsNullOrWhiteSpace(worksheet.Cells[row, col].Text))
-                            {
-                                isRowEmpty = false;
-                                break;
-                            }
-                        }
-                        if (isRowEmpty) continue;
-
-                        var record = new ExcelDataViewModel.Record
-                        {
-                            FullName = worksheet.Cells[row, 2].Text,        // Сотрудник (ФИО)
-                            Position = worksheet.Cells[row, 3].Text,        // Должность
-                            DateOfBirth = ConvertExcelDateToString(worksheet.Cells[row, 5].Text), // Дата рождения
-                            Age = int.TryParse(worksheet.Cells[row, 6].Text, out int age) ? age : 0, // Возраст
-                            Gender = worksheet.Cells[row, 7].Text,          // Пол
-                            OrderClause = worksheet.Cells[row, 8].Text,     // Пункты по приказу
-                            Snils = worksheet.Cells[row, 9].Text,           // СНИЛС
-                            MedicalPolicy = worksheet.Cells[row, 10].Text,  // Полис ОМС
-                            PassportSeries = worksheet.Cells[row, 11].Text, // Серия паспорта
-                            PassportNumber = worksheet.Cells[row, 12].Text, // Номер паспорта
-                            PassportIssueDate = ConvertExcelDateToString(worksheet.Cells[row, 13].Text), // Дата выдачи паспорта
-                            PassportIssuedBy = worksheet.Cells[row, 14].Text // Кем выдан
-                        };
-
-                        records.Add(record);
-                    }
-
-                    if (records.Count == 0)
-                    {
-                        Console.WriteLine("В Excel-файле нет корректных данных.");
-                        return;
-                    }
-
-                    // Открываем окно с таблицей
-                    var excelDataWindow = new ExcelDataWindow
-                    {
-                        DataContext = new ExcelDataViewModel
-                        {
-                            Records = records
-                        }
-                    };
-                    Console.WriteLine("Окно ExcelDataWindow создано и готово к открытию.");
-                    excelDataWindow.Show();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при загрузке Excel: {ex.Message}");
-            }
-        }
-
-        // Метод для преобразования даты из числового формата Excel (например, 28618) в строку "ДД.ММ.ГГГГ"
-        private string ConvertExcelDateToString(string excelDateStr)
-        {
-            if (string.IsNullOrWhiteSpace(excelDateStr))
-                return "";
-
-            if (int.TryParse(excelDateStr, out int excelDate))
-            {
-                try
-                {
-                    // Преобразуем число в дату (Excel отсчитывает дни от 01.01.1900)
-                    DateTime date = DateTime.FromOADate(excelDate);
-                    return date.ToString("dd.MM.yyyy");
-                }
-                catch
-                {
-                    return excelDateStr; // Если не удалось преобразовать, возвращаем исходное значение
-                }
-            }
-
-            return excelDateStr;
         }
     }
 }

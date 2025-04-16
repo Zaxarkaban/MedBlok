@@ -3,9 +3,7 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Генератор документов"
-        Width="600"
-        Height="800">
+        Title="Document Generator" Width="600" Height="1400">
 	<Design.DataContext>
 		<vm:MainWindowViewModel />
 	</Design.DataContext>
@@ -47,14 +45,13 @@
                       KeyDown="InputField_KeyDown" />
 			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
 
-			<TextBlock Text="Пункты по приказу" />
-			<ComboBox Name="OrderClauseComboBox"
-                      SelectedItem="{Binding OrderClause}"
-                      ItemsSource="{Binding OrderClauses}"
-                      SelectionChanged="ComboBox_SelectionChanged"
-                      GotFocus="ComboBox_GotFocus"
-                      KeyDown="InputField_KeyDown" />
-			<TextBlock Text="{Binding OrderClauseError}" Foreground="Red" />
+			<ListBox ItemsSource="{Binding OrderClauses}" SelectedItems="{Binding SelectedOrderClauses}" SelectionMode="Multiple" Height="100">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding}" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
 			<TextBlock Text="СНИЛС (XXX-XXX-XXX XX)" />
 			<TextBox Name="SnilsTextBox"
@@ -98,8 +95,37 @@
                      TextChanged="HandleTextChanged"
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
-                     Watermark="В вами кем выдан" />
+                     Watermark="Введите кем выдан" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
+
+			<!-- Новые поля: Адрес и Телефон -->
+			<TextBlock Text="Адрес" />
+			<TextBox Name="AddressTextBox"
+                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите адрес (город, улица, дом)" />
+			<TextBlock Text="{Binding AddressError}" Foreground="Red" />
+
+			<TextBlock Text="Телефон (+X (XXX) XXX-XX-XX)" />
+			<TextBox Name="PhoneTextBox"
+                     Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="+X (XXX) XXX-XX-XX" />
+			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
+
+			<!-- Медицинские данные -->
+			<TextBlock Text="Наименование страховой медицинской организации" />
+			<TextBox Name="MedicalOrganizationTextBox"
+                     Text="{Binding MedicalOrganization, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите наименование организации" />
+			<TextBlock Text="{Binding MedicalOrganizationError}" Foreground="Red" />
 
 			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
 			<TextBox Name="MedicalPolicyTextBox"
@@ -110,12 +136,51 @@
                      Watermark="16 цифр" />
 			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
 
-			<Button Name="LoadFromExcelButton"
-                    Content="Загрузить из Excel"
-                    Click="LoadFromExcel_Click"
-                    HorizontalAlignment="Center"
-                    Margin="10"
-                    KeyDown="LoadFromExcelButton_KeyDown" />
+			<TextBlock Text="Наблюдается ЛПУ" />
+			<TextBox Name="MedicalFacilityTextBox"
+					 Text="{Binding MedicalFacility, UpdateSourceTrigger=PropertyChanged}"
+					 TextChanged="HandleTextChanged"
+					 TextInput="RestrictInput"
+					 KeyDown="RestrictKeyDown"
+					 Watermark="Введите название ЛПУ" />
+			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
+
+			<!-- Рабочие данные -->
+			<TextBlock Text="Место работы" />
+			<TextBox Name="WorkplaceTextBox"
+                     Text="{Binding Workplace, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите место работы" />
+			<TextBlock Text="{Binding WorkplaceError}" Foreground="Red" />
+
+			<TextBlock Text="Форма собственности" />
+			<ComboBox Name="OwnershipFormComboBox"
+                      SelectedItem="{Binding OwnershipForm}"
+                      ItemsSource="{Binding OwnershipFormOptions}"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      GotFocus="ComboBox_GotFocus"
+                      KeyDown="InputField_KeyDown" />
+			<TextBlock Text="{Binding OwnershipFormError}" Foreground="Red" />
+
+			<TextBlock Text="ОКВЭД (XX.XX.XX)" />
+			<TextBox Name="OkvedTextBox"
+                     Text="{Binding Okved, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XX.XX.XX" />
+			<TextBlock Text="{Binding OkvedError}" Foreground="Red" />
+
+			<TextBlock Text="Стаж работы общий (XX лет)" />
+			<TextBox Name="WorkExperienceTextBox"
+                     Text="{Binding WorkExperience, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XX лет" />
+			<TextBlock Text="{Binding WorkExperienceError}" Foreground="Red" />
 
 			<Button Name="SaveButton"
                     Content="Сохранить"
