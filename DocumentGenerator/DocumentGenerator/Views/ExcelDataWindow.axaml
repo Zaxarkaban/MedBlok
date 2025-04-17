@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
+	xmlns:models="clr-namespace:DocumentGenerator.Models"
+	x:Class="DocumentGenerator.ExcelDataWindow"
+	x:DataType="vm:ExcelDataViewModel"
+	Title="Данные из Excel" Width="800" Height="600">
+	<Design.DataContext>
+		<vm:ExcelDataViewModel />
+	</Design.DataContext>
+	<StackPanel Margin="20" Spacing="10">
+		<TextBlock Text="Данные из Excel" FontSize="18" FontWeight="Bold" />
+		<ScrollViewer MaxHeight="400">
+			<DataGrid ItemsSource="{Binding Records}" AutoGenerateColumns="False" CanUserSortColumns="True">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="ФИО" Binding="{Binding FullName, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Должность" Binding="{Binding Position, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Дата рождения" Binding="{Binding DateOfBirth, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Возраст" Binding="{Binding Age, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Пол" Binding="{Binding Gender, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Пункты по приказу" Binding="{Binding OrderClauses, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="СНИЛС" Binding="{Binding Snils, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Полис ОМС" Binding="{Binding MedicalPolicy, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Серия паспорта" Binding="{Binding PassportSeries, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Номер паспорта" Binding="{Binding PassportNumber, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Дата выдачи паспорта" Binding="{Binding PassportIssueDate, x:DataType=models:Record}" />
+					<DataGridTextColumn Header="Кем выдан" Binding="{Binding PassportIssuedBy, x:DataType=models:Record}" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</ScrollViewer>
+		<Button Content="Сохранить в PDF" Click="SaveToPdf_Click" HorizontalAlignment="Center" Margin="10" />
+	</StackPanel>
+</Window>

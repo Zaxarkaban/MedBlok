@@ -1,605 +1,293 @@
-﻿using DocumentGenerator.Data;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using ReactiveUI;
+﻿using DocumentGenerator.Data.Entities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DocumentGenerator.ViewModels
 {
-    public class MainWindowViewModel : ReactiveObject
+    public class MainWindowViewModel : ViewModelBase
     {
-        private string _fullName = "";
-        private string _position = "";
-        private string _dateOfBirth = "";
-        private string _gender = "";
-        private string _snils = "";
-        private string _passportSeries = "";
-        private string _passportNumber = "";
-        private string _passportIssueDate = "";
-        private string _passportIssuedBy = "";
-        private string _medicalPolicy = "";
-        private string _address = "";
-        private string _phone = "";
-        private string _medicalOrganization = "";
-        private string _medicalFacility = "";
-        private string _workplace = "";
-        private string _ownershipForm = "";
-        private string _okved = "";
-        private string _workExperience = "";
+        // Поля для свойств
+        private string _fullName = string.Empty;
+        private string _position = string.Empty;
+        private string _dateOfBirth = string.Empty;
+        private string _gender = string.Empty;
+        private string _snils = string.Empty;
+        private string _passportSeries = string.Empty;
+        private string _passportNumber = string.Empty;
+        private string _passportIssueDate = string.Empty;
+        private string _passportIssuedBy = string.Empty;
+        private string _address = string.Empty;
+        private string _phone = string.Empty;
+        private string _medicalOrganization = string.Empty;
+        private string _medicalPolicy = string.Empty;
+        private string _medicalFacility = string.Empty;
+        private string _workplace = string.Empty;
+        private string _ownershipForm = string.Empty;
+        private string _okved = string.Empty;
+        private string _workExperience = string.Empty;
 
-        private string _fullNameError = "";
-        private string _positionError = "";
-        private string _dateOfBirthError = "";
-        private string _genderError = "";
-        private string _snilsError = "";
-        private string _passportSeriesError = "";
-        private string _passportNumberError = "";
-        private string _passportIssueDateError = "";
-        private string _passportIssuedByError = "";
-        private string _medicalPolicyError = "";
-        private string _addressError = "";
-        private string _phoneError = "";
-        private string _medicalOrganizationError = "";
-        private string _medicalFacilityError = "";
-        private string _workplaceError = "";
-        private string _ownershipFormError = "";
-        private string _okvedError = "";
-        private string _workExperienceError = "";
-        private string _selectedOrderClausesError = "";
+        private string _fullNameError = string.Empty;
+        private string _positionError = string.Empty;
+        private string _dateOfBirthError = string.Empty;
+        private string _genderError = string.Empty;
+        private string _snilsError = string.Empty;
+        private string _passportSeriesError = string.Empty;
+        private string _passportNumberError = string.Empty;
+        private string _passportIssueDateError = string.Empty;
+        private string _passportIssuedByError = string.Empty;
+        private string _addressError = string.Empty;
+        private string _phoneError = string.Empty;
+        private string _medicalOrganizationError = string.Empty;
+        private string _medicalPolicyError = string.Empty;
+        private string _medicalFacilityError = string.Empty;
+        private string _workplaceError = string.Empty;
+        private string _ownershipFormError = string.Empty;
+        private string _okvedError = string.Empty;
+        private string _workExperienceError = string.Empty;
+        private string _selectedOrderClausesError = string.Empty;
 
-        private ObservableCollection<OrderClause> _orderClauses;
-        private ObservableCollection<OrderClause> _selectedOrderClauses;
-        private ObservableCollection<Doctor> _doctors;
+        private ObservableCollection<OrderClause> _selectedOrderClauses = new ObservableCollection<OrderClause>();
+        private ObservableCollection<string> _doctors = new ObservableCollection<string>();
 
-        public MainWindowViewModel()
-        {
-            GenderOptions = new List<string> { "Мужской", "Женский" };
-            OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
-            _orderClauses = new ObservableCollection<OrderClause>();
-            _selectedOrderClauses = new ObservableCollection<OrderClause>();
-            _doctors = new ObservableCollection<Doctor>();
-            LoadDataAsync().ConfigureAwait(false);
-        }
+        // Новые свойства для коллекций
+        public ObservableCollection<string> GenderOptions { get; } = new ObservableCollection<string> { "Мужской", "Женский" };
+        public ObservableCollection<string> OwnershipFormOptions { get; } = new ObservableCollection<string> { "ООО", "ИП", "АО" };
+        public ObservableCollection<OrderClause> OrderClauses { get; } = new ObservableCollection<OrderClause>();
 
-        private async Task LoadDataAsync()
-        {
-            using (var context = new AppDbContext())
-            {
-                var clauses = await context.OrderClauses.ToListAsync();
-                foreach (var clause in clauses)
-                {
-                    _orderClauses.Add(clause);
-                }
-            }
-        }
-
+        // Свойства с уведомлением об изменении
         public string FullName
         {
             get => _fullName;
-            set => this.RaiseAndSetIfChanged(ref _fullName, value);
-        }
-
-        public string Position
-        {
-            get => _position;
-            set => this.RaiseAndSetIfChanged(ref _position, value);
-        }
-
-        public string DateOfBirth
-        {
-            get => _dateOfBirth;
-            set => this.RaiseAndSetIfChanged(ref _dateOfBirth, value);
-        }
-
-        public string Gender
-        {
-            get => _gender;
-            set => this.RaiseAndSetIfChanged(ref _gender, value);
-        }
-
-        public string Snils
-        {
-            get => _snils;
-            set => this.RaiseAndSetIfChanged(ref _snils, value);
-        }
-
-        public string PassportSeries
-        {
-            get => _passportSeries;
-            set => this.RaiseAndSetIfChanged(ref _passportSeries, value);
-        }
-
-        public string PassportNumber
-        {
-            get => _passportNumber;
-            set => this.RaiseAndSetIfChanged(ref _passportNumber, value);
-        }
-
-        public string PassportIssueDate
-        {
-            get => _passportIssueDate;
-            set => this.RaiseAndSetIfChanged(ref _passportIssueDate, value);
-        }
-
-        public string PassportIssuedBy
-        {
-            get => _passportIssuedBy;
-            set => this.RaiseAndSetIfChanged(ref _passportIssuedBy, value);
-        }
-
-        public string MedicalPolicy
-        {
-            get => _medicalPolicy;
-            set => this.RaiseAndSetIfChanged(ref _medicalPolicy, value);
-        }
-
-        public string Address
-        {
-            get => _address;
-            set => this.RaiseAndSetIfChanged(ref _address, value);
-        }
-
-        public string Phone
-        {
-            get => _phone;
-            set => this.RaiseAndSetIfChanged(ref _phone, value);
-        }
-
-        public string MedicalOrganization
-        {
-            get => _medicalOrganization;
-            set => this.RaiseAndSetIfChanged(ref _medicalOrganization, value);
-        }
-
-        public string MedicalFacility
-        {
-            get => _medicalFacility;
-            set => this.RaiseAndSetIfChanged(ref _medicalFacility, value);
-        }
-
-        public string Workplace
-        {
-            get => _workplace;
-            set => this.RaiseAndSetIfChanged(ref _workplace, value);
-        }
-
-        public string OwnershipForm
-        {
-            get => _ownershipForm;
-            set => this.RaiseAndSetIfChanged(ref _ownershipForm, value);
-        }
-
-        public string Okved
-        {
-            get => _okved;
-            set => this.RaiseAndSetIfChanged(ref _okved, value);
-        }
-
-        public string WorkExperience
-        {
-            get => _workExperience;
-            set => this.RaiseAndSetIfChanged(ref _workExperience, value);
-        }
-
-        public ObservableCollection<OrderClause> OrderClauses
-        {
-            get => _orderClauses;
-            set => this.RaiseAndSetIfChanged(ref _orderClauses, value);
-        }
-
-        public ObservableCollection<OrderClause> SelectedOrderClauses
-        {
-            get => _selectedOrderClauses;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value ?? new ObservableCollection<OrderClause>());
-                UpdateDoctors();
-            }
-        }
-
-        public ObservableCollection<Doctor> Doctors
-        {
-            get => _doctors;
-            set => this.RaiseAndSetIfChanged(ref _doctors, value);
-        }
-
-        private void UpdateDoctors()
-        {
-            using (var context = new AppDbContext())
-            {
-                var selectedClauseIds = SelectedOrderClauses?.Select(c => c.Id).ToList() ?? new List<int>();
-                var doctors = context.Doctors
-                    .Include(d => d.OrderClause)
-                    .Where(d => selectedClauseIds.Contains(d.ClauseId))
-                    .ToList();
-                _doctors.Clear();
-                foreach (var doctor in doctors)
-                {
-                    _doctors.Add(doctor);
-                }
-            }
+            set => SetProperty(ref _fullName, value);
         }
 
         public string FullNameError
         {
             get => _fullNameError;
-            set => this.RaiseAndSetIfChanged(ref _fullNameError, value);
+            set => SetProperty(ref _fullNameError, value);
+        }
+
+        public string Position
+        {
+            get => _position;
+            set => SetProperty(ref _position, value);
         }
 
         public string PositionError
         {
             get => _positionError;
-            set => this.RaiseAndSetIfChanged(ref _positionError, value);
+            set => SetProperty(ref _positionError, value);
+        }
+
+        public string DateOfBirth
+        {
+            get => _dateOfBirth;
+            set => SetProperty(ref _dateOfBirth, value);
         }
 
         public string DateOfBirthError
         {
             get => _dateOfBirthError;
-            set => this.RaiseAndSetIfChanged(ref _dateOfBirthError, value);
+            set => SetProperty(ref _dateOfBirthError, value);
+        }
+
+        public string Gender
+        {
+            get => _gender;
+            set => SetProperty(ref _gender, value);
         }
 
         public string GenderError
         {
             get => _genderError;
-            set => this.RaiseAndSetIfChanged(ref _genderError, value);
+            set => SetProperty(ref _genderError, value);
+        }
+
+        public string Snils
+        {
+            get => _snils;
+            set => SetProperty(ref _snils, value);
         }
 
         public string SnilsError
         {
             get => _snilsError;
-            set => this.RaiseAndSetIfChanged(ref _snilsError, value);
+            set => SetProperty(ref _snilsError, value);
+        }
+
+        public string PassportSeries
+        {
+            get => _passportSeries;
+            set => SetProperty(ref _passportSeries, value);
         }
 
         public string PassportSeriesError
         {
             get => _passportSeriesError;
-            set => this.RaiseAndSetIfChanged(ref _passportSeriesError, value);
+            set => SetProperty(ref _passportSeriesError, value);
+        }
+
+        public string PassportNumber
+        {
+            get => _passportNumber;
+            set => SetProperty(ref _passportNumber, value);
         }
 
         public string PassportNumberError
         {
             get => _passportNumberError;
-            set => this.RaiseAndSetIfChanged(ref _passportNumberError, value);
+            set => SetProperty(ref _passportNumberError, value);
+        }
+
+        public string PassportIssueDate
+        {
+            get => _passportIssueDate;
+            set => SetProperty(ref _passportIssueDate, value);
         }
 
         public string PassportIssueDateError
         {
             get => _passportIssueDateError;
-            set => this.RaiseAndSetIfChanged(ref _passportIssueDateError, value);
+            set => SetProperty(ref _passportIssueDateError, value);
+        }
+
+        public string PassportIssuedBy
+        {
+            get => _passportIssuedBy;
+            set => SetProperty(ref _passportIssuedBy, value);
         }
 
         public string PassportIssuedByError
         {
             get => _passportIssuedByError;
-            set => this.RaiseAndSetIfChanged(ref _passportIssuedByError, value);
+            set => SetProperty(ref _passportIssuedByError, value);
         }
 
-        public string MedicalPolicyError
+        public string Address
         {
-            get => _medicalPolicyError;
-            set => this.RaiseAndSetIfChanged(ref _medicalPolicyError, value);
+            get => _address;
+            set => SetProperty(ref _address, value);
         }
 
         public string AddressError
         {
             get => _addressError;
-            set => this.RaiseAndSetIfChanged(ref _addressError, value);
+            set => SetProperty(ref _addressError, value);
+        }
+
+        public string Phone
+        {
+            get => _phone;
+            set => SetProperty(ref _phone, value);
         }
 
         public string PhoneError
         {
             get => _phoneError;
-            set => this.RaiseAndSetIfChanged(ref _phoneError, value);
+            set => SetProperty(ref _phoneError, value);
+        }
+
+        public string MedicalOrganization
+        {
+            get => _medicalOrganization;
+            set => SetProperty(ref _medicalOrganization, value);
         }
 
         public string MedicalOrganizationError
         {
             get => _medicalOrganizationError;
-            set => this.RaiseAndSetIfChanged(ref _medicalOrganizationError, value);
+            set => SetProperty(ref _medicalOrganizationError, value);
+        }
+
+        public string MedicalPolicy
+        {
+            get => _medicalPolicy;
+            set => SetProperty(ref _medicalPolicy, value);
+        }
+
+        public string MedicalPolicyError
+        {
+            get => _medicalPolicyError;
+            set => SetProperty(ref _medicalPolicyError, value);
+        }
+
+        public string MedicalFacility
+        {
+            get => _medicalFacility;
+            set => SetProperty(ref _medicalFacility, value);
         }
 
         public string MedicalFacilityError
         {
             get => _medicalFacilityError;
-            set => this.RaiseAndSetIfChanged(ref _medicalFacilityError, value);
+            set => SetProperty(ref _medicalFacilityError, value);
+        }
+
+        public string Workplace
+        {
+            get => _workplace;
+            set => SetProperty(ref _workplace, value);
         }
 
         public string WorkplaceError
         {
             get => _workplaceError;
-            set => this.RaiseAndSetIfChanged(ref _workplaceError, value);
+            set => SetProperty(ref _workplaceError, value);
+        }
+
+        public string OwnershipForm
+        {
+            get => _ownershipForm;
+            set => SetProperty(ref _ownershipForm, value);
         }
 
         public string OwnershipFormError
         {
             get => _ownershipFormError;
-            set => this.RaiseAndSetIfChanged(ref _ownershipFormError, value);
+            set => SetProperty(ref _ownershipFormError, value);
+        }
+
+        public string Okved
+        {
+            get => _okved;
+            set => SetProperty(ref _okved, value);
         }
 
         public string OkvedError
         {
             get => _okvedError;
-            set => this.RaiseAndSetIfChanged(ref _okvedError, value);
+            set => SetProperty(ref _okvedError, value);
+        }
+
+        public string WorkExperience
+        {
+            get => _workExperience;
+            set => SetProperty(ref _workExperience, value);
         }
 
         public string WorkExperienceError
         {
             get => _workExperienceError;
-            set => this.RaiseAndSetIfChanged(ref _workExperienceError, value);
+            set => SetProperty(ref _workExperienceError, value);
+        }
+
+        public ObservableCollection<OrderClause> SelectedOrderClauses
+        {
+            get => _selectedOrderClauses;
+            set => SetProperty(ref _selectedOrderClauses, value);
         }
 
         public string SelectedOrderClausesError
         {
             get => _selectedOrderClausesError;
-            set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
+            set => SetProperty(ref _selectedOrderClausesError, value);
         }
 
-        public List<string> GenderOptions { get; }
-        public List<string> OwnershipFormOptions { get; }
-
-        public void ValidateFullName()
+        public ObservableCollection<string> Doctors
         {
-            if (string.IsNullOrWhiteSpace(FullName))
-            {
-                FullNameError = "ФИО не может быть пустым";
-                return;
-            }
-
-            var parts = FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 2)
-            {
-                FullNameError = "ФИО должно содержать минимум два слова";
-                return;
-            }
-
-            FullNameError = "";
-        }
-
-        public void ValidatePosition()
-        {
-            PositionError = string.IsNullOrWhiteSpace(Position) ? "Должность не может быть пустой" : "";
-        }
-
-        public void ValidateDateOfBirth()
-        {
-            if (string.IsNullOrWhiteSpace(DateOfBirth))
-            {
-                DateOfBirthError = "Дата рождения не может быть пустой";
-                return;
-            }
-
-            if (!DateTime.TryParseExact(DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
-            {
-                DateOfBirthError = "Дата рождения должна быть в формате ДД.ММ.ГГГГ";
-                return;
-            }
-
-            if (DateTime.Now.Year - date.Year < 14)
-            {
-                DateOfBirthError = "Возраст должен быть не менее 14 лет";
-                return;
-            }
-
-            DateOfBirthError = "";
-        }
-
-        public void ValidateGender()
-        {
-            GenderError = string.IsNullOrWhiteSpace(Gender) ? "Пол должен быть выбран" : "";
-        }
-
-        public void ValidateSnils()
-        {
-            if (string.IsNullOrWhiteSpace(Snils))
-            {
-                SnilsError = "СНИЛС не может быть пустым";
-                return;
-            }
-
-            var digits = Snils.Replace("-", "").Replace(" ", "");
-            if (digits.Length != 11 || !digits.All(char.IsDigit))
-            {
-                SnilsError = "СНИЛС должен содержать 11 цифр";
-                return;
-            }
-
-            int checksum = int.Parse(digits.Substring(9, 2));
-            int sum = 0;
-            for (int i = 0; i < 9; i++)
-            {
-                sum += int.Parse(digits[i].ToString()) * (9 - i);
-            }
-            int expectedChecksum = sum % 101;
-            if (expectedChecksum == 100) expectedChecksum = 0;
-
-            SnilsError = checksum == expectedChecksum ? "" : "Неверная контрольная сумма СНИЛС";
-        }
-
-        public void ValidatePassportSeries()
-        {
-            if (string.IsNullOrWhiteSpace(PassportSeries))
-            {
-                PassportSeriesError = "Серия паспорта не может быть пустой";
-                return;
-            }
-
-            PassportSeriesError = PassportSeries.Length == 4 && PassportSeries.All(char.IsDigit)
-                ? ""
-                : "Серия паспорта должна содержать 4 цифры";
-        }
-
-        public void ValidatePassportNumber()
-        {
-            if (string.IsNullOrWhiteSpace(PassportNumber))
-            {
-                PassportNumberError = "Номер паспорта не может быть пустым";
-                return;
-            }
-
-            PassportNumberError = PassportNumber.Length == 6 && PassportNumber.All(char.IsDigit)
-                ? ""
-                : "Номер паспорта должен содержать 6 цифр";
-        }
-
-        public void ValidatePassportIssueDate()
-        {
-            if (string.IsNullOrWhiteSpace(PassportIssueDate))
-            {
-                PassportIssueDateError = "Дата выдачи паспорта не может быть пустой";
-                return;
-            }
-
-            if (!DateTime.TryParseExact(PassportIssueDate, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
-            {
-                PassportIssueDateError = "Дата выдачи паспорта должна быть в формате ДД.ММ.ГГГГ";
-                return;
-            }
-
-            if (date > DateTime.Now)
-            {
-                PassportIssueDateError = "Дата выдачи паспорта не может быть в будущем";
-                return;
-            }
-
-            PassportIssueDateError = "";
-        }
-
-        public void ValidatePassportIssuedBy()
-        {
-            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Кем выдан паспорт не может быть пустым" : "";
-        }
-
-        public void ValidateMedicalPolicy()
-        {
-            if (string.IsNullOrWhiteSpace(MedicalPolicy))
-            {
-                MedicalPolicyError = "";
-                return;
-            }
-
-            MedicalPolicyError = MedicalPolicy.Length == 16 && MedicalPolicy.All(char.IsDigit)
-                ? ""
-                : "Полис ОМС должен содержать 16 цифр";
-        }
-
-        public void ValidateAddress()
-        {
-            if (string.IsNullOrWhiteSpace(Address))
-            {
-                AddressError = "Адрес не может быть пустым";
-                return;
-            }
-
-            var parts = Address.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 3)
-            {
-                AddressError = "Адрес должен содержать город, улицу и дом (например, Москва, ул. Ленина, д. 5)";
-                return;
-            }
-
-            AddressError = "";
-        }
-
-        public void ValidatePhone()
-        {
-            if (string.IsNullOrWhiteSpace(Phone))
-            {
-                PhoneError = "Телефон не может быть пустым";
-                return;
-            }
-
-            var digits = Phone.Replace("+", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
-            if (digits.Length != 11 || !digits.All(char.IsDigit) || (digits[0] != '7' && digits[0] != '8'))
-            {
-                PhoneError = "Телефон должен быть в формате +X (XXX) XXX-XX-XX, начинаться с +7 или +8";
-                return;
-            }
-
-            PhoneError = "";
-        }
-
-        public void ValidateMedicalOrganization()
-        {
-            MedicalOrganizationError = string.IsNullOrWhiteSpace(MedicalOrganization)
-                ? "Наименование страховой медицинской организации не может быть пустым"
-                : "";
-        }
-
-        public void ValidateMedicalFacility()
-        {
-            MedicalFacilityError = string.IsNullOrWhiteSpace(MedicalFacility)
-                ? "Наблюдается ЛПУ должен быть указан"
-                : "";
-        }
-
-        public void ValidateWorkplace()
-        {
-            WorkplaceError = string.IsNullOrWhiteSpace(Workplace)
-                ? "Место работы не может быть пустым"
-                : "";
-        }
-
-        public void ValidateOwnershipForm()
-        {
-            OwnershipFormError = string.IsNullOrWhiteSpace(OwnershipForm)
-                ? "Форма собственности должна быть выбрана"
-                : "";
-        }
-
-        public void ValidateOkved()
-        {
-            if (string.IsNullOrWhiteSpace(Okved))
-            {
-                OkvedError = "ОКВЭД не может быть пустым";
-                return;
-            }
-
-            var parts = Okved.Split('.');
-            if (parts.Length < 2 || parts.Length > 3 || !parts.All(p => p.Length == 2 && p.All(char.IsDigit)))
-            {
-                OkvedError = "ОКВЭД должен быть в формате XX.XX или XX.XX.XX";
-                return;
-            }
-
-            int firstPart = int.Parse(parts[0]);
-            int secondPart = int.Parse(parts[1]);
-            if (firstPart == 0 || secondPart == 0)
-            {
-                OkvedError = "ОКВЭД не может содержать нулевые части (XX и XX должны быть от 01 до 99)";
-                return;
-            }
-
-            OkvedError = "";
-        }
-
-        public void ValidateWorkExperience()
-        {
-            if (string.IsNullOrWhiteSpace(WorkExperience))
-            {
-                WorkExperienceError = "Стаж работы не может быть пустым";
-                return;
-            }
-
-            var digits = WorkExperience.Replace(" лет", "");
-            if (!int.TryParse(digits, out int years) || years < 0 || years > 80)
-            {
-                WorkExperienceError = "Стаж работы должен быть числом от 0 до 80 лет";
-                return;
-            }
-
-            WorkExperienceError = "";
-        }
-
-        public void ValidateSelectedOrderClauses()
-        {
-            SelectedOrderClausesError = SelectedOrderClauses == null || !SelectedOrderClauses.Any()
-                ? "Необходимо выбрать хотя бы один пункт приказа"
-                : "";
+            get => _doctors;
+            set => SetProperty(ref _doctors, value);
         }
 
         public void OnSave()
@@ -613,39 +301,180 @@ namespace DocumentGenerator.ViewModels
             ValidatePassportNumber();
             ValidatePassportIssueDate();
             ValidatePassportIssuedBy();
-            ValidateMedicalPolicy();
             ValidateAddress();
             ValidatePhone();
             ValidateMedicalOrganization();
+            ValidateMedicalPolicy();
             ValidateMedicalFacility();
             ValidateWorkplace();
             ValidateOwnershipForm();
             ValidateOkved();
             ValidateWorkExperience();
             ValidateSelectedOrderClauses();
+        }
 
-            if (string.IsNullOrEmpty(FullNameError) &&
-                string.IsNullOrEmpty(PositionError) &&
-                string.IsNullOrEmpty(DateOfBirthError) &&
-                string.IsNullOrEmpty(GenderError) &&
-                string.IsNullOrEmpty(SnilsError) &&
-                string.IsNullOrEmpty(PassportSeriesError) &&
-                string.IsNullOrEmpty(PassportNumberError) &&
-                string.IsNullOrEmpty(PassportIssueDateError) &&
-                string.IsNullOrEmpty(PassportIssuedByError) &&
-                string.IsNullOrEmpty(MedicalPolicyError) &&
-                string.IsNullOrEmpty(AddressError) &&
-                string.IsNullOrEmpty(PhoneError) &&
-                string.IsNullOrEmpty(MedicalOrganizationError) &&
-                string.IsNullOrEmpty(MedicalFacilityError) &&
-                string.IsNullOrEmpty(WorkplaceError) &&
-                string.IsNullOrEmpty(OwnershipFormError) &&
-                string.IsNullOrEmpty(OkvedError) &&
-                string.IsNullOrEmpty(WorkExperienceError) &&
-                string.IsNullOrEmpty(SelectedOrderClausesError))
+        private void ValidateFullName() => FullNameError = string.IsNullOrWhiteSpace(FullName) ? "ФИО обязательно" : null;
+
+        private void ValidatePosition() => PositionError = string.IsNullOrWhiteSpace(Position) ? "Должность обязательна" : null;
+
+        private void ValidateDateOfBirth()
+        {
+            if (string.IsNullOrWhiteSpace(DateOfBirth))
             {
-                // Здесь будет логика сохранения в SQLite
+                DateOfBirthError = "Дата рождения обязательна";
+            }
+            else if (!DateTime.TryParse(DateOfBirth, out _))
+            {
+                DateOfBirthError = "Неверный формат даты (дд.мм.гггг)";
+            }
+            else
+            {
+                DateOfBirthError = null;
             }
         }
+
+        private void ValidateGender() => GenderError = string.IsNullOrWhiteSpace(Gender) ? "Пол обязателен" : null;
+
+        private void ValidateSnils()
+        {
+            if (string.IsNullOrWhiteSpace(Snils))
+            {
+                SnilsError = "СНИЛС обязателен";
+            }
+            else if (Snils.Replace("-", "").Replace(" ", "").Length != 11)
+            {
+                SnilsError = "СНИЛС должен содержать 11 цифр";
+            }
+            else
+            {
+                SnilsError = null;
+            }
+        }
+
+        private void ValidatePassportSeries()
+        {
+            if (string.IsNullOrWhiteSpace(PassportSeries))
+            {
+                PassportSeriesError = "Серия паспорта обязательна";
+            }
+            else if (PassportSeries.Length != 4)
+            {
+                PassportSeriesError = "Серия паспорта должна содержать 4 цифры";
+            }
+            else
+            {
+                PassportSeriesError = null;
+            }
+        }
+
+        private void ValidatePassportNumber()
+        {
+            if (string.IsNullOrWhiteSpace(PassportNumber))
+            {
+                PassportNumberError = "Номер паспорта обязателен";
+            }
+            else if (PassportNumber.Length != 6)
+            {
+                PassportNumberError = "Номер паспорта должен содержать 6 цифр";
+            }
+            else
+            {
+                PassportNumberError = null;
+            }
+        }
+
+        private void ValidatePassportIssueDate()
+        {
+            if (string.IsNullOrWhiteSpace(PassportIssueDate))
+            {
+                PassportIssueDateError = "Дата выдачи паспорта обязательна";
+            }
+            else if (!DateTime.TryParse(PassportIssueDate, out _))
+            {
+                PassportIssueDateError = "Неверный формат даты (дд.мм.гггг)";
+            }
+            else
+            {
+                PassportIssueDateError = null;
+            }
+        }
+
+        private void ValidatePassportIssuedBy() => PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Кем выдан паспорт - обязательно" : null;
+
+        private void ValidateAddress() => AddressError = string.IsNullOrWhiteSpace(Address) ? "Адрес обязателен" : null;
+
+        private void ValidatePhone()
+        {
+            if (string.IsNullOrWhiteSpace(Phone))
+            {
+                PhoneError = "Телефон обязателен";
+            }
+            else if (Phone.Replace("+", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "").Length != 11)
+            {
+                PhoneError = "Телефон должен содержать 11 цифр";
+            }
+            else
+            {
+                PhoneError = null;
+            }
+        }
+
+        private void ValidateMedicalOrganization() => MedicalOrganizationError = string.IsNullOrWhiteSpace(MedicalOrganization) ? "Медицинская организация обязательна" : null;
+
+        private void ValidateMedicalPolicy()
+        {
+            if (string.IsNullOrWhiteSpace(MedicalPolicy))
+            {
+                MedicalPolicyError = "Медицинский полис обязателен";
+            }
+            else if (MedicalPolicy.Length != 16)
+            {
+                MedicalPolicyError = "Медицинский полис должен содержать 16 цифр";
+            }
+            else
+            {
+                MedicalPolicyError = null;
+            }
+        }
+
+        private void ValidateMedicalFacility() => MedicalFacilityError = string.IsNullOrWhiteSpace(MedicalFacility) ? "Медицинское учреждение обязательно" : null;
+
+        private void ValidateWorkplace() => WorkplaceError = string.IsNullOrWhiteSpace(Workplace) ? "Место работы обязательно" : null;
+
+        private void ValidateOwnershipForm() => OwnershipFormError = string.IsNullOrWhiteSpace(OwnershipForm) ? "Форма собственности обязательна" : null;
+
+        private void ValidateOkved()
+        {
+            if (string.IsNullOrWhiteSpace(Okved))
+            {
+                OkvedError = "ОКВЭД обязателен";
+            }
+            else if (Okved.Replace(".", "").Length < 4)
+            {
+                OkvedError = "ОКВЭД должен содержать минимум 4 цифры";
+            }
+            else
+            {
+                OkvedError = null;
+            }
+        }
+
+        private void ValidateWorkExperience()
+        {
+            if (string.IsNullOrWhiteSpace(WorkExperience))
+            {
+                WorkExperienceError = "Стаж работы обязателен";
+            }
+            else if (!int.TryParse(WorkExperience.Replace(" лет", ""), out int years) || years < 0 || years > 80)
+            {
+                WorkExperienceError = "Стаж должен быть числом от 0 до 80";
+            }
+            else
+            {
+                WorkExperienceError = null;
+            }
+        }
+
+        private void ValidateSelectedOrderClauses() => SelectedOrderClausesError = (SelectedOrderClauses == null || !SelectedOrderClauses.Any()) ? "Не выбраны пункты вредности" : null;
     }
 }

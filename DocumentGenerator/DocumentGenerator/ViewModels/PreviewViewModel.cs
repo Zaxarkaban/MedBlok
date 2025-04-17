@@ -1,164 +1,167 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using Avalonia.Controls;
-using Avalonia.Platform.Storage;
-using Avalonia.Interactivity;
-using iText.Kernel.Font;
-using iText.IO.Font;
+﻿using DocumentGenerator.Data.Entities;
+using DocumentGenerator.ViewModels;
+using System.Collections.ObjectModel;
 
-namespace DocumentGenerator.ViewModels
+namespace DocumentGenerator.ViewModels // Добавляем пространство имён
 {
-    public class PreviewViewModel
+    public class PreviewViewModel : ViewModelBase
     {
-        public string? FullName { get; set; } = "";
-        public string? Position { get; set; } = "";
-        public int Age { get; set; }
-        public string? Gender { get; set; } = "";
-        public string? OrderClause { get; set; } = "";
-        public string? Snils { get; set; } = "";
-        public string? PassportSeries { get; set; } = "";
-        public string? PassportNumber { get; set; } = "";
-        public string? PassportIssueDate { get; set; } = "";
-        public string? PassportIssuedBy { get; set; } = "";
-        public string? MedicalPolicy { get; set; } = "";
+        private ObservableCollection<OrderClause> _selectedOrderClauses = new ObservableCollection<OrderClause>();
+        private string _fullName = string.Empty;
+        private string _position = string.Empty;
+        private string _dateOfBirth = string.Empty;
+        private string _gender = string.Empty;
+        private string _snils = string.Empty;
+        private string _passportSeries = string.Empty;
+        private string _passportNumber = string.Empty;
+        private string _passportIssueDate = string.Empty;
+        private string _passportIssuedBy = string.Empty;
+        private string _address = string.Empty;
+        private string _phone = string.Empty;
+        private string _medicalOrganization = string.Empty;
+        private string _medicalPolicy = string.Empty;
+        private string _medicalFacility = string.Empty;
+        private string _workplace = string.Empty;
+        private string _ownershipForm = string.Empty;
+        private string _okved = string.Empty;
+        private string _workExperience = string.Empty;
 
-        public async Task SaveToPdf(Window parentWindow)
+        public ObservableCollection<OrderClause> SelectedOrderClauses
         {
-            try
-            {
-                var storageProvider = parentWindow.StorageProvider;
-
-                var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-                {
-                    Title = "Сохранить PDF",
-                    SuggestedFileName = "document.pdf",
-                    DefaultExtension = "pdf",
-                    FileTypeChoices = new[]
-                    {
-                        new FilePickerFileType("PDF Files") { Patterns = new[] { "*.pdf" } },
-                        new FilePickerFileType("All Files") { Patterns = new[] { "*" } }
-                    }
-                });
-
-                if (file == null)
-                {
-                    await MessageBox.Show(parentWindow, "Сохранение отменено.", "Информация", MessageBox.MessageBoxButtons.Ok);
-                    return;
-                }
-
-                var filePath = file.Path.LocalPath;
-
-                using (var writer = new PdfWriter(filePath))
-                using (var pdf = new PdfDocument(writer))
-                using (var document = new Document(pdf))
-                {
-                    // Загружаем шрифт Arial
-                    PdfFont font = PdfFontFactory.CreateFont("C:/Windows/Fonts/arial.ttf", PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-
-                    // Заголовок
-                    document.Add(new Paragraph("Готовый документ")
-                        .SetFont(font)
-                        .SetFontSize(16)
-                        .SetMarginBottom(20));
-
-                    // Данные записи
-                    document.Add(new Paragraph($"ФИО: {FullName ?? "Не указано"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Должность: {Position ?? "Не указана"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Возраст: {Age}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Пол: {Gender ?? "Не указан"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Пункты по приказу: {OrderClause ?? "Не указан"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"СНИЛС: {Snils ?? "Не указан"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Полис ОМС: {MedicalPolicy ?? "Не указан"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Паспорт: {(PassportSeries ?? "Не указана")} {(PassportNumber ?? "Не указан")}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Дата выдачи паспорта: {PassportIssueDate ?? "Не указана"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                    document.Add(new Paragraph($"Кем выдан: {PassportIssuedBy ?? "Не указано"}")
-                        .SetFont(font)
-                        .SetFontSize(12)
-                        .SetMarginBottom(5));
-                }
-
-                await MessageBox.Show(parentWindow, $"PDF успешно сохранён по пути:\n{filePath}", "Успех", MessageBox.MessageBoxButtons.Ok);
-            }
-            catch (Exception ex)
-            {
-                await MessageBox.Show(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
-            }
+            get => _selectedOrderClauses;
+            set => SetProperty(ref _selectedOrderClauses, value);
         }
 
-        private class MessageBox
+        public string FullName
         {
-            public enum MessageBoxButtons
-            {
-                Ok
-            }
+            get => _fullName;
+            set => SetProperty(ref _fullName, value);
+        }
 
-            public static async Task Show(Window parent, string message, string title, MessageBoxButtons buttons)
-            {
-                var dialog = new Window
-                {
-                    Title = title,
-                    Width = 300,
-                    Height = 150,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    CanResize = false,
-                    Content = new StackPanel
-                    {
-                        Margin = new Avalonia.Thickness(10),
-                        Spacing = 10,
-                        Children =
-                        {
-                            new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
-                            new Button
-                            {
-                                Content = "OK",
-                                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                            }
-                        }
-                    }
-                };
+        public string Position
+        {
+            get => _position;
+            set => SetProperty(ref _position, value);
+        }
 
-                var stackPanel = dialog.Content as StackPanel;
-                if (stackPanel != null)
-                {
-                    var okButton = stackPanel.Children[1] as Button;
-                    if (okButton != null)
-                    {
-                        okButton.Click += (sender, e) => dialog.Close();
-                    }
-                }
-                await dialog.ShowDialog(parent);
-            }
+        public string DateOfBirth
+        {
+            get => _dateOfBirth;
+            set => SetProperty(ref _dateOfBirth, value);
+        }
+
+        public string Gender
+        {
+            get => _gender;
+            set => SetProperty(ref _gender, value);
+        }
+
+        public string Snils
+        {
+            get => _snils;
+            set => SetProperty(ref _snils, value);
+        }
+
+        public string PassportSeries
+        {
+            get => _passportSeries;
+            set => SetProperty(ref _passportSeries, value);
+        }
+
+        public string PassportNumber
+        {
+            get => _passportNumber;
+            set => SetProperty(ref _passportNumber, value);
+        }
+
+        public string PassportIssueDate
+        {
+            get => _passportIssueDate;
+            set => SetProperty(ref _passportIssueDate, value);
+        }
+
+        public string PassportIssuedBy
+        {
+            get => _passportIssuedBy;
+            set => SetProperty(ref _passportIssuedBy, value);
+        }
+
+        public string Address
+        {
+            get => _address;
+            set => SetProperty(ref _address, value);
+        }
+
+        public string Phone
+        {
+            get => _phone;
+            set => SetProperty(ref _phone, value);
+        }
+
+        public string MedicalOrganization
+        {
+            get => _medicalOrganization;
+            set => SetProperty(ref _medicalOrganization, value);
+        }
+
+        public string MedicalPolicy
+        {
+            get => _medicalPolicy;
+            set => SetProperty(ref _medicalPolicy, value);
+        }
+
+        public string MedicalFacility
+        {
+            get => _medicalFacility;
+            set => SetProperty(ref _medicalFacility, value);
+        }
+
+        public string Workplace
+        {
+            get => _workplace;
+            set => SetProperty(ref _workplace, value);
+        }
+
+        public string OwnershipForm
+        {
+            get => _ownershipForm;
+            set => SetProperty(ref _ownershipForm, value);
+        }
+
+        public string Okved
+        {
+            get => _okved;
+            set => SetProperty(ref _okved, value);
+        }
+
+        public string WorkExperience
+        {
+            get => _workExperience;
+            set => SetProperty(ref _workExperience, value);
+        }
+
+        public PreviewViewModel(MainWindowViewModel mainViewModel)
+        {
+            // Копируем данные из MainWindowViewModel
+            FullName = mainViewModel.FullName;
+            Position = mainViewModel.Position;
+            DateOfBirth = mainViewModel.DateOfBirth;
+            Gender = mainViewModel.Gender;
+            Snils = mainViewModel.Snils;
+            PassportSeries = mainViewModel.PassportSeries;
+            PassportNumber = mainViewModel.PassportNumber;
+            PassportIssueDate = mainViewModel.PassportIssueDate;
+            PassportIssuedBy = mainViewModel.PassportIssuedBy;
+            Address = mainViewModel.Address;
+            Phone = mainViewModel.Phone;
+            MedicalOrganization = mainViewModel.MedicalOrganization;
+            MedicalPolicy = mainViewModel.MedicalPolicy;
+            MedicalFacility = mainViewModel.MedicalFacility;
+            Workplace = mainViewModel.Workplace;
+            OwnershipForm = mainViewModel.OwnershipForm;
+            Okved = mainViewModel.Okved;
+            WorkExperience = mainViewModel.WorkExperience;
+            SelectedOrderClauses = mainViewModel.SelectedOrderClauses ?? new ObservableCollection<OrderClause>();
         }
     }
 }

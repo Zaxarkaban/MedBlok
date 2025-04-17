@@ -1,28 +1,26 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Interactivity;
 using DocumentGenerator.ViewModels;
-using System;
 
-namespace DocumentGenerator
+namespace DocumentGenerator.Views
 {
     public partial class PreviewWindow : Window
     {
-        private PreviewViewModel ViewModel => (PreviewViewModel)DataContext;
-
-        public PreviewWindow()
+        public PreviewWindow(PreviewViewModel viewModel)
         {
+            DataContext = viewModel;
             InitializeComponent();
         }
 
-        private async void SaveToPdf_Click(object sender, RoutedEventArgs e)
+        public PreviewWindow()
         {
-            Console.WriteLine("Кнопка 'Сохранить в PDF' нажата");
-            if (ViewModel == null)
+            if (Design.IsDesignMode)
             {
-                Console.WriteLine("Ошибка: ViewModel не установлен!");
+                DataContext = new PreviewViewModel(new MainWindowViewModel());
+                InitializeComponent();
                 return;
             }
-            await ViewModel.SaveToPdf(this); // Асинхронный вызов
+
+            throw new System.InvalidOperationException("This constructor is only for design-time use. Use the parameterized constructor with DI.");
         }
     }
 }

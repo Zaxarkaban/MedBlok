@@ -3,32 +3,80 @@
   "WorkspaceRootPath": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\app.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\app.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\mainwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\mainwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
       "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\services\\datainitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\services\\datainitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\databaseinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\databaseinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\data\\entities\\doctor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\data\\entities\\doctor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\services\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\services\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\exceldatawindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\exceldatawindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\exceldatawindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\exceldatawindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\models\\record.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\models\\record.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\viewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\data\\entities\\orderclause.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\data\\entities\\orderclause.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\previewviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\previewviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\previewwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\previewwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\previewwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\previewwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,97 +86,236 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ExcelDataViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ExcelDataViewModel.cs",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs",
-              "RelativeToolTip": "DocumentGenerator\\ExcelDataViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T00:14:57.979Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DatabaseInitializer.cs",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DatabaseInitializer.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\DatabaseInitializer.cs",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DatabaseInitializer.cs",
-              "RelativeToolTip": "DocumentGenerator\\DatabaseInitializer.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAADwv1EAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T22:30:12.313Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
               "Title": "App.axaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml.cs",
               "RelativeDocumentMoniker": "DocumentGenerator\\App.axaml.cs",
               "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml.cs",
               "RelativeToolTip": "DocumentGenerator\\App.axaml.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAwwDIAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T22:14:58.082Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
+              "Title": "ExcelDataWindow.axaml.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\ExcelDataWindow.axaml.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\ExcelDataWindow.axaml.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\ExcelDataWindow.axaml.cs",
+              "RelativeToolTip": "DocumentGenerator\\Views\\ExcelDataWindow.axaml.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAuwCcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T12:12:30.231Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "App.axaml",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml",
+              "RelativeDocumentMoniker": "DocumentGenerator\\App.axaml",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml",
+              "RelativeToolTip": "DocumentGenerator\\App.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-17T10:57:53.825Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Record.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Record.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Models\\Record.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Record.cs",
+              "RelativeToolTip": "DocumentGenerator\\Models\\Record.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T10:28:58.795Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ExcelDataWindow.axaml",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\ExcelDataWindow.axaml",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\ExcelDataWindow.axaml",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\ExcelDataWindow.axaml",
+              "RelativeToolTip": "DocumentGenerator\\Views\\ExcelDataWindow.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-17T10:08:03.873Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ExcelDataViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\ExcelDataViewModel.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\ExcelDataViewModel.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\ExcelDataViewModel.cs",
+              "RelativeToolTip": "DocumentGenerator\\ViewModels\\ExcelDataViewModel.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAswHQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T09:12:38.433Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ViewModelBase.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\ViewModelBase.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\ViewModelBase.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\ViewModelBase.cs",
+              "RelativeToolTip": "DocumentGenerator\\ViewModels\\ViewModelBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:55:44.834Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "PreviewWindow.axaml.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\PreviewWindow.axaml.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\PreviewWindow.axaml.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\PreviewWindow.axaml.cs",
+              "RelativeToolTip": "DocumentGenerator\\Views\\PreviewWindow.axaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:51:53.049Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PreviewWindow.axaml",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\PreviewWindow.axaml",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\PreviewWindow.axaml",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\PreviewWindow.axaml",
+              "RelativeToolTip": "DocumentGenerator\\Views\\PreviewWindow.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-17T08:51:35.329Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "PreviewViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PreviewViewModel.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PreviewViewModel.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PreviewViewModel.cs",
+              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PreviewViewModel.cs",
+              "ViewState": "AgIAAH8AAAAAAAAAAAAuwKYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:44:46.467Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DataInitializer.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\DataInitializer.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Services\\DataInitializer.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\DataInitializer.cs",
+              "RelativeToolTip": "DocumentGenerator\\Services\\DataInitializer.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAkwDAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:36:53.531Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Doctor.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\Entities\\Doctor.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Data\\Entities\\Doctor.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\Entities\\Doctor.cs",
+              "RelativeToolTip": "DocumentGenerator\\Data\\Entities\\Doctor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:34:59.017Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "OrderClause.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\Entities\\OrderClause.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Data\\Entities\\OrderClause.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\Entities\\OrderClause.cs",
+              "RelativeToolTip": "DocumentGenerator\\Data\\Entities\\OrderClause.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:34:23.697Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "DocumentGenerator\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T08:32:51.284Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Program.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Program.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Program.cs",
+              "RelativeToolTip": "DocumentGenerator\\Program.cs",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAowMkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T07:34:12.877Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "MainWindow.axaml",
               "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml",
               "RelativeDocumentMoniker": "DocumentGenerator\\Views\\MainWindow.axaml",
               "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml",
               "RelativeToolTip": "DocumentGenerator\\Views\\MainWindow.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-16T17:35:03.965Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T17:35:03.965Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 10,
               "Title": "MainWindowViewModel.cs",
               "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
               "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
               "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
               "RelativeToolTip": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "ViewState": "AgIAACYAAAAAAAAAAAAAwA0AAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAANIBAAAAggD+B2ARwN8BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T17:32:57.282Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T17:32:57.282Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "MainWindow.axaml.cs",
               "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml.cs",
               "RelativeDocumentMoniker": "DocumentGenerator\\Views\\MainWindow.axaml.cs",
               "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml.cs",
               "RelativeToolTip": "DocumentGenerator\\Views\\MainWindow.axaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABTAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T17:31:19.18Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
               "Title": "PdfGenerator.cs",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAbAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\PdfGenerator.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Services\\PdfGenerator.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\PdfGenerator.cs",
+              "RelativeToolTip": "DocumentGenerator\\Services\\PdfGenerator.cs",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAswIEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T15:09:12.808Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T15:09:12.808Z"
             }
           ]
         }
