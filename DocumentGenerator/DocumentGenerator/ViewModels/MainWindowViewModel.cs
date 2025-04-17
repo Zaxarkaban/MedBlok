@@ -1,10 +1,13 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using DocumentGenerator.Data;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -49,55 +52,32 @@ namespace DocumentGenerator.ViewModels
         private string _workExperienceError = "";
         private string _selectedOrderClausesError = "";
 
-        // Список всех пунктов приказа из базы данных
-        private ObservableCollection<string> _orderClauses;
-        // Список выбранных пунктов
-        private ObservableCollection<string> _selectedOrderClauses;
+        private ObservableCollection<OrderClause> _orderClauses;
+        private ObservableCollection<OrderClause> _selectedOrderClauses;
+        private ObservableCollection<Doctor> _doctors;
 
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
             OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
-            _orderClauses = new ObservableCollection<string>();
-            _selectedOrderClauses = new ObservableCollection<string>();
-            LoadOrderClauses();
+            _orderClauses = new ObservableCollection<OrderClause>();
+            _selectedOrderClauses = new ObservableCollection<OrderClause>();
+            _doctors = new ObservableCollection<Doctor>();
+            LoadDataAsync().ConfigureAwait(false);
         }
 
-        // Загрузка пунктов из базы данных с обработкой ошибок
-        private void LoadOrderClauses()
+        private async Task LoadDataAsync()
         {
-            string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "OrderClauses.db");
-            if (!File.Exists(dbPath))
+            using (var context = new AppDbContext())
             {
-                // Логика для обработки случая, если файл базы данных отсутствует
-                // Например, можно выбросить исключение или добавить пустые данные
-                return; // Или инициализировать вручную, если нужно
-            }
-
-            try
-            {
-                using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+                var clauses = await context.OrderClauses.ToListAsync();
+                foreach (var clause in clauses)
                 {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "SELECT ClauseText FROM OrderClauses";
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            _orderClauses.Add(reader.GetString(0));
-                        }
-                    }
+                    _orderClauses.Add(clause);
                 }
             }
-            catch (SqliteException ex)
-            {
-                // Логирование ошибки (в реальном проекте используйте ILogger)
-                Console.WriteLine($"Ошибка загрузки данных из базы: {ex.Message}");
-            }
         }
 
-        // Свойства
         public string FullName
         {
             get => _fullName;
@@ -206,20 +186,45 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _workExperience, value);
         }
 
-        // Свойства для пунктов приказа
-        public ObservableCollection<string> OrderClauses
+        public ObservableCollection<OrderClause> OrderClauses
         {
             get => _orderClauses;
             set => this.RaiseAndSetIfChanged(ref _orderClauses, value);
         }
 
-        public ObservableCollection<string> SelectedOrderClauses
+        public ObservableCollection<OrderClause> SelectedOrderClauses
         {
             get => _selectedOrderClauses;
-            set => this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value ?? new ObservableCollection<OrderClause>());
+                UpdateDoctors();
+            }
         }
 
-        // Свойства ошибок
+        public ObservableCollection<Doctor> Doctors
+        {
+            get => _doctors;
+            set => this.RaiseAndSetIfChanged(ref _doctors, value);
+        }
+
+        private void UpdateDoctors()
+        {
+            using (var context = new AppDbContext())
+            {
+                var selectedClauseIds = SelectedOrderClauses?.Select(c => c.Id).ToList() ?? new List<int>();
+                var doctors = context.Doctors
+                    .Include(d => d.OrderClause)
+                    .Where(d => selectedClauseIds.Contains(d.ClauseId))
+                    .ToList();
+                _doctors.Clear();
+                foreach (var doctor in doctors)
+                {
+                    _doctors.Add(doctor);
+                }
+            }
+        }
+
         public string FullNameError
         {
             get => _fullNameError;
@@ -334,11 +339,9 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
         }
 
-        // Списки для ComboBox
         public List<string> GenderOptions { get; }
         public List<string> OwnershipFormOptions { get; }
 
-        // Методы валидации
         public void ValidateFullName()
         {
             if (string.IsNullOrWhiteSpace(FullName))

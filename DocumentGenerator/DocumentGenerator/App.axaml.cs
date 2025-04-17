@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using DocumentGenerator.Data;
 using DocumentGenerator.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -20,26 +21,27 @@ namespace DocumentGenerator
             {
                 var services = new ServiceCollection();
 
-                // Регистрация DatabaseInitializer как синглтона
+                // Регистрация AppDbContext
+                services.AddDbContext<AppDbContext>();
                 services.AddSingleton<DatabaseInitializer>(provider =>
                 {
                     var initializer = new DatabaseInitializer();
-                    initializer.Initialize(); // Инициализация базы данных при создании
+                    initializer.Initialize(); // Инициализируем базу данных
                     return initializer;
                 });
 
-                // Регистрация MainWindowViewModel с внедрением DatabaseInitializer
-                services.AddTransient<MainWindowViewModel>(provider =>
-                {
-                    var dbInitializer = provider.GetRequiredService<DatabaseInitializer>();
-                    return new MainWindowViewModel();
-                });
+                // Регистрация MainWindowViewModel
+                services.AddTransient<MainWindowViewModel>();
+
+                // Регистрация PdfGenerator
+                services.AddTransient<PdfGenerator>();
 
                 // Регистрация главного окна
                 services.AddTransient<MainWindow>();
 
                 var serviceProvider = services.BuildServiceProvider();
 
+                // Создаём главное окно
                 desktop.MainWindow = serviceProvider.GetRequiredService<MainWindow>();
             }
 

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DocumentGenerator.ViewModels;
+using DocumentGenerator.Data;
+using iText.IO.Font.Constants;
 
 namespace DocumentGenerator
 {
@@ -17,10 +19,10 @@ namespace DocumentGenerator
         private readonly MainWindowViewModel _viewModel;
         private readonly string _dbPath;
 
-        public PdfGenerator(MainWindowViewModel viewModel)
+        public PdfGenerator(MainWindowViewModel viewModel, DatabaseInitializer dbInitializer)
         {
-            _viewModel = viewModel;
-            _dbPath = new DatabaseInitializer().GetDbPath();
+            _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            _dbPath = dbInitializer.GetDbPath();
         }
 
         public void GeneratePdf(string outputPath, string templatePath)
@@ -30,147 +32,75 @@ namespace DocumentGenerator
                 throw new FileNotFoundException("PDF template not found at the specified path.", templatePath);
             }
 
-            using (var writer = new PdfWriter(outputPath))
-            using (var pdf = new PdfDocument(new PdfReader(templatePath), writer))
+            try
             {
-                var form = PdfAcroForm.GetAcroForm(pdf, true);
-                var fields = form.GetAllFormFields();
+                using (var reader = new PdfReader(templatePath))
+                using (var writer = new PdfWriter(outputPath))
+                using (var pdf = new PdfDocument(reader, writer))
+                {
+                    var form = PdfAcroForm.GetAcroForm(pdf, true);
+                    var fields = form.GetAllFormFields(); // Исправлено с GetFormFields на GetAllFormFields
 
-                // Загружаем шрифт Times New Roman из проекта
-                string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                if (!File.Exists(fontPath))
-                {
-                    throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
-                }
-                PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
-
-                // Заполняем поля в шаблоне
-                if (fields.ContainsKey("FullName"))
-                {
-                    var field = fields["FullName"];
-                    field.SetValue(_viewModel.FullName ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Position"))
-                {
-                    var field = fields["Position"];
-                    field.SetValue(_viewModel.Position ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("DateOfBirth"))
-                {
-                    var field = fields["DateOfBirth"];
-                    field.SetValue(_viewModel.DateOfBirth ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Gender"))
-                {
-                    var field = fields["Gender"];
-                    field.SetValue(_viewModel.Gender ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Snils"))
-                {
-                    var field = fields["Snils"];
-                    field.SetValue(_viewModel.Snils ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("PassportSeries"))
-                {
-                    var field = fields["PassportSeries"];
-                    field.SetValue(_viewModel.PassportSeries ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("PassportNumber"))
-                {
-                    var field = fields["PassportNumber"];
-                    field.SetValue(_viewModel.PassportNumber ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("PassportIssueDate"))
-                {
-                    var field = fields["PassportIssueDate"];
-                    field.SetValue(_viewModel.PassportIssueDate ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("PassportIssuedBy"))
-                {
-                    var field = fields["PassportIssuedBy"];
-                    field.SetValue(_viewModel.PassportIssuedBy ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Address"))
-                {
-                    var field = fields["Address"];
-                    field.SetValue(_viewModel.Address ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Phone"))
-                {
-                    var field = fields["Phone"];
-                    field.SetValue(_viewModel.Phone ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("MedicalOrganization"))
-                {
-                    var field = fields["MedicalOrganization"];
-                    field.SetValue(_viewModel.MedicalOrganization ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("MedicalPolicy"))
-                {
-                    var field = fields["MedicalPolicy"];
-                    field.SetValue(_viewModel.MedicalPolicy ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("MedicalFacility"))
-                {
-                    var field = fields["MedicalFacility"];
-                    field.SetValue(_viewModel.MedicalFacility ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Workplace"))
-                {
-                    var field = fields["Workplace"];
-                    field.SetValue(_viewModel.Workplace ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("OwnershipForm"))
-                {
-                    var field = fields["OwnershipForm"];
-                    field.SetValue(_viewModel.OwnershipForm ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("Okved"))
-                {
-                    var field = fields["Okved"];
-                    field.SetValue(_viewModel.Okved ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-                if (fields.ContainsKey("WorkExperience"))
-                {
-                    var field = fields["WorkExperience"];
-                    field.SetValue(_viewModel.WorkExperience ?? "");
-                    field.SetFontAndSize(font, 10);
-                }
-
-                // Получаем список врачей для выбранных пунктов
-                var doctors = GetDoctorsForSelectedClauses();
-                // Заполняем поля врачей в PDF (Doctor1, Doctor2, и т.д.)
-                for (int i = 0; i < doctors.Count; i++)
-                {
-                    string fieldName = $"Doctor{i + 1}";
-                    if (fields.ContainsKey(fieldName))
+                    // Используем встроенный шрифт Times-Roman с UTF-8 для поддержки кириллицы
+                    string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
+                    if (!File.Exists(fontPath))
                     {
-                        var field = fields[fieldName];
-                        field.SetValue(doctors[i]);
-                        field.SetFontAndSize(font, 10);
+                        throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
                     }
-                }
+                    PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
 
-                // Сохраняем изменения
-                form.FlattenFields();
-                pdf.Close();
+                    // Заполняем поля шаблона
+                    SetFieldValue(form, fields, "FullName", _viewModel.FullName ?? "");
+                    SetFieldValue(form, fields, "Position", _viewModel.Position ?? "");
+                    SetFieldValue(form, fields, "DateOfBirth", _viewModel.DateOfBirth ?? "");
+                    SetFieldValue(form, fields, "Gender", _viewModel.Gender ?? "");
+                    SetFieldValue(form, fields, "Snils", _viewModel.Snils ?? "");
+                    SetFieldValue(form, fields, "PassportSeries", _viewModel.PassportSeries ?? "");
+                    SetFieldValue(form, fields, "PassportNumber", _viewModel.PassportNumber ?? "");
+                    SetFieldValue(form, fields, "PassportIssueDate", _viewModel.PassportIssueDate ?? "");
+                    SetFieldValue(form, fields, "PassportIssuedBy", _viewModel.PassportIssuedBy ?? "");
+                    SetFieldValue(form, fields, "Address", _viewModel.Address ?? "");
+                    SetFieldValue(form, fields, "Phone", _viewModel.Phone ?? "");
+                    SetFieldValue(form, fields, "MedicalOrganization", _viewModel.MedicalOrganization ?? "");
+                    SetFieldValue(form, fields, "MedicalPolicy", _viewModel.MedicalPolicy ?? "");
+                    SetFieldValue(form, fields, "MedicalFacility", _viewModel.MedicalFacility ?? "");
+                    SetFieldValue(form, fields, "Workplace", _viewModel.Workplace ?? "");
+                    SetFieldValue(form, fields, "OwnershipForm", _viewModel.OwnershipForm ?? "");
+                    SetFieldValue(form, fields, "Okved", _viewModel.Okved ?? "");
+                    SetFieldValue(form, fields, "WorkExperience", _viewModel.WorkExperience ?? "");
+
+                    // Получаем и заполняем врачей
+                    var doctors = GetDoctorsForSelectedClauses();
+                    for (int i = 0; i < doctors.Count; i++)
+                    {
+                        string fieldName = $"Doctor{i + 1}";
+                        SetFieldValue(form, fields, fieldName, doctors[i] ?? "");
+                    }
+
+                    // Сохраняем изменения
+                    form.FlattenFields();
+                    pdf.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating PDF: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                throw;
+            }
+        }
+
+        private void SetFieldValue(PdfAcroForm form, IDictionary<string, PdfFormField> fields, string fieldName, string value)
+        {
+            if (fields.ContainsKey(fieldName))
+            {
+                var field = fields[fieldName];
+                field.SetValue(value);
+                field.SetFont(PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED));
+                field.SetFontSize(10);
+            }
+            else
+            {
+                Console.WriteLine($"Field {fieldName} not found in template.");
             }
         }
 
@@ -178,20 +108,24 @@ namespace DocumentGenerator
         {
             var doctors = new List<string>();
 
+            if (string.IsNullOrEmpty(_dbPath))
+            {
+                throw new InvalidOperationException("Database path is not initialized.");
+            }
+
             using (var connection = new SqliteConnection($"Data Source={_dbPath}"))
             {
                 connection.Open();
 
-                // Получаем врачей для каждого выбранного пункта
-                foreach (var clause in _viewModel.SelectedOrderClauses)
+                foreach (var clause in _viewModel.SelectedOrderClauses ?? new System.Collections.ObjectModel.ObservableCollection<OrderClause>())
                 {
                     var command = connection.CreateCommand();
                     command.CommandText = @"
                         SELECT d.DoctorName
                         FROM Doctors d
                         JOIN OrderClauses c ON d.ClauseId = c.Id
-                        WHERE c.ClauseText = $clause";
-                    command.Parameters.AddWithValue("$clause", clause);
+                        WHERE c.ClauseText = $clauseText";
+                    command.Parameters.AddWithValue("$clauseText", clause.ClauseText ?? "");
 
                     using (var reader = command.ExecuteReader())
                     {
@@ -203,7 +137,6 @@ namespace DocumentGenerator
                 }
             }
 
-            // Удаляем дубликаты врачей
             return doctors.Distinct().ToList();
         }
     }

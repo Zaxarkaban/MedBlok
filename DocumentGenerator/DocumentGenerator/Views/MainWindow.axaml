@@ -45,10 +45,25 @@
                       KeyDown="InputField_KeyDown" />
 			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
 
-			<ListBox ItemsSource="{Binding OrderClauses}" SelectedItems="{Binding SelectedOrderClauses}" SelectionMode="Multiple" Height="100">
+			<TextBlock Text="Выберите пункты вредности" />
+			<ListBox ItemsSource="{Binding OrderClauses}"
+                     SelectedItems="{Binding SelectedOrderClauses}"
+                     SelectionMode="Multiple"
+                     Height="100">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding}" />
+						<TextBlock Text="{Binding ClauseText}" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+			<TextBlock Text="{Binding SelectedOrderClausesError}" Foreground="Red" />
+
+			<TextBlock Text="Список докторов" />
+			<ListBox ItemsSource="{Binding Doctors}"
+                     Height="100">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding DoctorName}" />
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
@@ -138,11 +153,11 @@
 
 			<TextBlock Text="Наблюдается ЛПУ" />
 			<TextBox Name="MedicalFacilityTextBox"
-					 Text="{Binding MedicalFacility, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите название ЛПУ" />
+                     Text="{Binding MedicalFacility, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите название ЛПУ" />
 			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
 
 			<!-- Рабочие данные -->

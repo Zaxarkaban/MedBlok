@@ -10,8 +10,10 @@ namespace DocumentGenerator
 
         public DatabaseInitializer()
         {
-            // Используем Directory.GetCurrentDirectory() для получения текущей директории
-            _dbPath = Path.Combine(Directory.GetCurrentDirectory(), "OrderClauses.db");
+            // Синхронизируем путь с AppDbContext и PdfGenerator
+            string dbDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DocumentGenerator");
+            Directory.CreateDirectory(dbDir); // Создаём папку, если её нет
+            _dbPath = Path.Combine(dbDir, "OrderClauses.db");
         }
 
         public void Initialize()
