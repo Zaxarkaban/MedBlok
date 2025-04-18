@@ -1,12 +1,12 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
-        x:Class="DocumentGenerator.Views.MainWindow"
+        x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        xmlns:entities="clr-namespace:DocumentGenerator.Data.Entities"
-        Title="Document Generator"
-        Width="600"
-        Height="1400">
+        Title="Document Generator" Width="600" Height="1400">
+	<Design.DataContext>
+		<vm:MainWindowViewModel />
+	</Design.DataContext>
 	<ScrollViewer>
 		<StackPanel Margin="20" Name="MainStackPanel">
 			<TextBlock Text="ФИО" />
@@ -51,7 +51,7 @@
                      SelectionMode="Multiple"
                      Height="100">
 				<ListBox.ItemTemplate>
-					<DataTemplate x:DataType="entities:OrderClause">
+					<DataTemplate>
 						<TextBlock Text="{Binding ClauseText}" />
 					</DataTemplate>
 				</ListBox.ItemTemplate>
@@ -63,7 +63,7 @@
                      Height="100">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<TextBlock Text="{Binding}" />
+						<TextBlock Text="{Binding DoctorName}" />
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
@@ -113,6 +113,7 @@
                      Watermark="Введите кем выдан" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
 
+			<!-- Новые поля: Адрес и Телефон -->
 			<TextBlock Text="Адрес" />
 			<TextBox Name="AddressTextBox"
                      Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
@@ -131,6 +132,7 @@
                      Watermark="+X (XXX) XXX-XX-XX" />
 			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
 
+			<!-- Медицинские данные -->
 			<TextBlock Text="Наименование страховой медицинской организации" />
 			<TextBox Name="MedicalOrganizationTextBox"
                      Text="{Binding MedicalOrganization, UpdateSourceTrigger=PropertyChanged}"
@@ -158,6 +160,7 @@
                      Watermark="Введите название ЛПУ" />
 			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
 
+			<!-- Рабочие данные -->
 			<TextBlock Text="Место работы" />
 			<TextBox Name="WorkplaceTextBox"
                      Text="{Binding Workplace, UpdateSourceTrigger=PropertyChanged}"
@@ -194,8 +197,6 @@
                      Watermark="XX лет" />
 			<TextBlock Text="{Binding WorkExperienceError}" Foreground="Red" />
 
-			<Button Name="LoadFromExcelButton" Content="Загрузить из Excel" Click="LoadFromExcel_Click" Margin="5"/>
-			<Button Name="PreviewButton" Content="Предпросмотр" Click="Preview_Click" Margin="5"/>
 			<Button Name="SaveButton"
                     Content="Сохранить"
                     Click="Save_Click"

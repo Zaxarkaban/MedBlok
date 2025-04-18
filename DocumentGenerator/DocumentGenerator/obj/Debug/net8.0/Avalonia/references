@@ -24,7 +24,7 @@ C:\Users\Артём\.nuget\packages\avalonia.win32\11.2.1\lib\net8.0\Avalonia.Wi
 C:\Users\Артём\.nuget\packages\avalonia.x11\11.2.1\lib\net8.0\Avalonia.X11.dll
 C:\Users\Артём\.nuget\packages\communitytoolkit.mvvm\8.2.1\lib\net6.0\CommunityToolkit.Mvvm.dll
 C:\Users\Артём\.nuget\packages\dynamicdata\9.1.2\lib\net8.0\DynamicData.dll
-C:\Users\Артём\.nuget\packages\epplus\7.2.2\lib\net8.0\EPPlus.dll
+C:\Users\Артём\.nuget\packages\epplus\6.2.10\lib\net7.0\EPPlus.dll
 C:\Users\Артём\.nuget\packages\epplus.interfaces\6.1.1\lib\net7.0\EPPlus.Interfaces.dll
 C:\Users\Артём\.nuget\packages\epplus.system.drawing\6.1.1\lib\net7.0\EPPlus.System.Drawing.dll
 C:\Users\Артём\.nuget\packages\harfbuzzsharp\7.3.0.2\lib\net6.0\HarfBuzzSharp.dll
@@ -44,27 +44,27 @@ C:\Users\Артём\.nuget\packages\microcom.runtime\0.11.0\lib\net5.0\MicroCom.
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\Microsoft.CSharp.dll
 C:\Users\Артём\.nuget\packages\microsoft.data.sqlite.core\9.0.4\lib\net8.0\Microsoft.Data.Sqlite.dll
 C:\Users\Артём\.nuget\packages\microsoft.dotnet.platformabstractions\1.1.0\lib\netstandard1.3\Microsoft.DotNet.PlatformAbstractions.dll
-C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore.abstractions\8.0.4\lib\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
-C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore\8.0.4\lib\net8.0\Microsoft.EntityFrameworkCore.dll
-C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore.relational\8.0.4\lib\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore.abstractions\8.0.2\lib\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore\8.0.2\lib\net8.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore.relational\8.0.2\lib\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\Артём\.nuget\packages\microsoft.entityframeworkcore.sqlite.core\8.0.2\lib\net8.0\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.caching.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.Caching.Abstractions.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.caching.memory\8.0.0\lib\net8.0\Microsoft.Extensions.Caching.Memory.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration\8.0.0\lib\net8.0\Microsoft.Extensions.Configuration.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration.fileextensions\8.0.0\lib\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration.json\8.0.0\lib\net8.0\Microsoft.Extensions.Configuration.Json.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration\7.0.0\lib\net7.0\Microsoft.Extensions.Configuration.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration.fileextensions\7.0.0\lib\net7.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.configuration.json\7.0.0\lib\net7.0\Microsoft.Extensions.Configuration.Json.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.dependencyinjection\8.0.0\lib\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.dependencymodel\8.0.0\lib\net8.0\Microsoft.Extensions.DependencyModel.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.fileproviders.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.fileproviders.physical\8.0.0\lib\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
-C:\Users\Артём\.nuget\packages\microsoft.extensions.filesystemglobbing\8.0.0\lib\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.fileproviders.abstractions\7.0.0\lib\net7.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.fileproviders.physical\7.0.0\lib\net7.0\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\Артём\.nuget\packages\microsoft.extensions.filesystemglobbing\7.0.0\lib\net7.0\Microsoft.Extensions.FileSystemGlobbing.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.logging.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.logging\8.0.0\lib\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.options\8.0.0\lib\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\Артём\.nuget\packages\microsoft.extensions.primitives\8.0.0\lib\net8.0\Microsoft.Extensions.Primitives.dll
-C:\Users\Артём\.nuget\packages\microsoft.io.recyclablememorystream\3.0.0\lib\net6.0\Microsoft.IO.RecyclableMemoryStream.dll
+C:\Users\Артём\.nuget\packages\microsoft.io.recyclablememorystream\2.2.1\lib\net5.0\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\Microsoft.VisualBasic.Core.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\Microsoft.VisualBasic.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\Microsoft.Win32.Primitives.dll
@@ -200,7 +200,7 @@ C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.Cryptography.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.Cryptography.Encoding.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.Cryptography.OpenSsl.dll
-C:\Users\Артём\.nuget\packages\system.security.cryptography.pkcs\8.0.0\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\Артём\.nuget\packages\system.security.cryptography.pkcs\7.0.2\lib\net7.0\System.Security.Cryptography.Pkcs.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.Cryptography.Primitives.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.Cryptography.X509Certificates.dll
 C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\8.0.11\ref\net8.0\System.Security.dll

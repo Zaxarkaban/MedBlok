@@ -1,38 +1,47 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
-        xmlns:entities="clr-namespace:DocumentGenerator.Data.Entities"
-        x:Class="DocumentGenerator.Views.PreviewWindow"
+        x:Class="DocumentGenerator.PreviewWindow"
         x:DataType="vm:PreviewViewModel"
-        Title="Preview"
-        Width="600" Height="400">
-	<StackPanel Margin="10">
-		<TextBlock Text="Предпросмотр данных" FontSize="16" FontWeight="Bold" Margin="0 0 0 10"/>
-		<TextBlock Text="{Binding FullName, StringFormat='ФИО: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Position, StringFormat='Должность: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding DateOfBirth, StringFormat='Дата рождения: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Gender, StringFormat='Пол: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Snils, StringFormat='СНИЛС: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding PassportSeries, StringFormat='Серия паспорта: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding PassportNumber, StringFormat='Номер паспорта: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding PassportIssueDate, StringFormat='Дата выдачи паспорта: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding PassportIssuedBy, StringFormat='Кем выдан паспорт: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Address, StringFormat='Адрес: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Phone, StringFormat='Телефон: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding MedicalOrganization, StringFormat='Медицинская организация: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding MedicalPolicy, StringFormat='Медицинский полис: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding MedicalFacility, StringFormat='Медицинское учреждение: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Workplace, StringFormat='Место работы: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding OwnershipForm, StringFormat='Форма собственности: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding Okved, StringFormat='ОКВЭД: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="{Binding WorkExperience, StringFormat='Стаж работы: {0}'}" Margin="0 0 0 5"/>
-		<TextBlock Text="Выбранные пункты:" FontWeight="Bold" Margin="0 10 0 5"/>
-		<ItemsControl ItemsSource="{Binding SelectedOrderClauses}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate x:DataType="entities:OrderClause">
-					<TextBlock Text="{Binding ClauseText}" Margin="0 0 0 2"/>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+        Title="Предпросмотр документа" Width="600" Height="700">
+	<Design.DataContext>
+		<vm:PreviewViewModel />
+	</Design.DataContext>
+	<StackPanel Margin="20" Spacing="10">
+		<TextBlock Text="Готовый документ" FontSize="18" FontWeight="Bold" />
+		<TextBlock TextWrapping="Wrap" Margin="0,10">
+			<Run Text="ФИО: " />
+			<Run Text="{Binding FullName}" />
+			<LineBreak />
+			<Run Text="Должность: " />
+			<Run Text="{Binding Position}" />
+			<LineBreak />
+			<Run Text="Возраст: " />
+			<Run Text="{Binding Age}" />
+			<LineBreak />
+			<Run Text="Пол: " />
+			<Run Text="{Binding Gender}" />
+			<LineBreak />
+			<Run Text="Пункт приказа: " />
+			<Run Text="{Binding OrderClause}" />
+			<LineBreak />
+			<Run Text="СНИЛС: " />
+			<Run Text="{Binding Snils}" />
+			<LineBreak />
+			<Run Text="Паспорт: " />
+			<Run Text="{Binding PassportSeries}" />
+			<Run Text=" " />
+			<Run Text="{Binding PassportNumber}" />
+			<LineBreak />
+			<Run Text="Дата выдачи паспорта: " />
+			<Run Text="{Binding PassportIssueDate}" />
+			<LineBreak />
+			<Run Text="Кем выдан: " />
+			<Run Text="{Binding PassportIssuedBy}" />
+			<LineBreak />
+			<Run Text="Полис ОМС: " />
+			<Run Text="{Binding MedicalPolicy}" />
+		</TextBlock>
+		<Button Content="Сохранить в PDF" Click="SaveToPdf_Click" HorizontalAlignment="Center" Margin="10" />
 	</StackPanel>
 </Window>
