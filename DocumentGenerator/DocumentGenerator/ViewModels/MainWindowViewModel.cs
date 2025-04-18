@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DocumentGenerator.Models;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -48,15 +49,6 @@ namespace DocumentGenerator.ViewModels
         private string _selectedOrderClausesError = "";
 
         private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
-
-        // Статический словарь для сопоставления пунктов вредности и врачей
-        private static readonly Dictionary<string, string[]> OrderClauseDoctors = new Dictionary<string, string[]>
-        {
-            { "Общие осмотры", new[] { "Терапевт Иванов", "Офтальмолог Петров" } },
-            { "Неврологические исследования", new[] { "Невролог Сидоров" } },
-            { "Кардиологические исследования", new[] { "Кардиолог Кузнецов" } },
-            { "Дерматологические исследования", new[] { "Дерматолог Смирнова" } }
-        };
 
         public MainWindowViewModel()
         {
@@ -312,7 +304,7 @@ namespace DocumentGenerator.ViewModels
             var doctors = new List<string>();
             foreach (var clause in SelectedOrderClauses)
             {
-                if (OrderClauseDoctors.TryGetValue(clause, out var clauseDoctors))
+                if (Dictionaries.OrderClauseDoctors.TryGetValue(clause, out var clauseDoctors))
                 {
                     doctors.AddRange(clauseDoctors);
                 }

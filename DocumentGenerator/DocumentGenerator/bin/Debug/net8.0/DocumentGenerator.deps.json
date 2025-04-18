@@ -19,8 +19,8 @@
           "Microsoft.Data.Sqlite": "9.0.4",
           "ReactiveUI": "20.2.45",
           "ReactiveUI.Fody": "19.5.41",
-          "itext7": "9.1.0",
-          "itext7.bouncy-castle-adapter": "9.1.0"
+          "itext7": "8.0.4",
+          "itext7.bouncy-castle-adapter": "8.0.4"
         },
         "runtime": {
           "DocumentGenerator.dll": {}
@@ -265,11 +265,11 @@
           }
         }
       },
-      "BouncyCastle.Cryptography/2.4.0": {
+      "BouncyCastle.Cryptography/2.2.1": {
         "runtime": {
           "lib/net6.0/BouncyCastle.Cryptography.dll": {
             "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.4.0.33771"
+            "fileVersion": "2.2.1.47552"
           }
         }
       },
@@ -397,7 +397,7 @@
           }
         }
       },
-      "itext/9.1.0": {
+      "itext/8.0.4": {
         "dependencies": {
           "Microsoft.DotNet.PlatformAbstractions": "1.1.0",
           "Microsoft.Extensions.DependencyModel": "1.1.0",
@@ -413,87 +413,87 @@
           "System.Threading.Thread": "4.3.0",
           "System.Threading.ThreadPool": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0",
-          "itext.commons": "9.1.0"
+          "itext.commons": "8.0.4"
         },
         "runtime": {
           "lib/netstandard2.0/itext.barcodes.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.bouncy-castle-connector.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.forms.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.io.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.kernel.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.layout.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.pdfa.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.pdfua.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.sign.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.styledxmlparser.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           },
           "lib/netstandard2.0/itext.svg.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           }
         }
       },
-      "itext.bouncy-castle-adapter/9.1.0": {
+      "itext.bouncy-castle-adapter/8.0.4": {
         "dependencies": {
-          "BouncyCastle.Cryptography": "2.4.0",
-          "itext.commons": "9.1.0"
+          "BouncyCastle.Cryptography": "2.2.1",
+          "itext.commons": "8.0.4"
         },
         "runtime": {
           "lib/netstandard2.0/itext.bouncy-castle-adapter.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           }
         }
       },
-      "itext.commons/9.1.0": {
+      "itext.commons/8.0.4": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "5.0.0",
           "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
           "lib/netstandard2.0/itext.commons.dll": {
-            "assemblyVersion": "9.1.0.0",
-            "fileVersion": "9.1.0.0"
+            "assemblyVersion": "8.0.4.0",
+            "fileVersion": "8.0.4.0"
           }
         }
       },
-      "itext7/9.1.0": {
+      "itext7/8.0.4": {
         "dependencies": {
-          "itext": "9.1.0"
+          "itext": "8.0.4"
         }
       },
-      "itext7.bouncy-castle-adapter/9.1.0": {
+      "itext7.bouncy-castle-adapter/8.0.4": {
         "dependencies": {
-          "itext.bouncy-castle-adapter": "9.1.0"
+          "itext.bouncy-castle-adapter": "8.0.4"
         }
       },
       "MicroCom.Runtime/0.11.0": {
@@ -1708,12 +1708,12 @@
       "path": "avalonia.x11/11.2.1",
       "hashPath": "avalonia.x11.11.2.1.nupkg.sha512"
     },
-    "BouncyCastle.Cryptography/2.4.0": {
+    "BouncyCastle.Cryptography/2.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-SwXsAV3sMvAU/Nn31pbjhWurYSjJ+/giI/0n6tCrYoupEK34iIHCuk3STAd9fx8yudM85KkLSVdn951vTng/vQ==",
-      "path": "bouncycastle.cryptography/2.4.0",
-      "hashPath": "bouncycastle.cryptography.2.4.0.nupkg.sha512"
+      "sha512": "sha512-A6Zr52zVqJKt18ZBsTnX0qhG0kwIQftVAjLmszmkiR/trSp8H+xj1gUOzk7XHwaKgyREMSV1v9XaKrBUeIOdvQ==",
+      "path": "bouncycastle.cryptography/2.2.1",
+      "hashPath": "bouncycastle.cryptography.2.2.1.nupkg.sha512"
     },
     "CommunityToolkit.Mvvm/8.2.1": {
       "type": "package",
@@ -1792,40 +1792,40 @@
       "path": "harfbuzzsharp.nativeassets.win32/7.3.0.2",
       "hashPath": "harfbuzzsharp.nativeassets.win32.7.3.0.2.nupkg.sha512"
     },
-    "itext/9.1.0": {
+    "itext/8.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-4aPC+8MlF78KX7/Ad0BusGpliO5RMNzJU/jOxoDrHLpP92go3fKcaULVIhuaX24gnaJpoCX5Xf+HfvhcBdEjYw==",
-      "path": "itext/9.1.0",
-      "hashPath": "itext.9.1.0.nupkg.sha512"
+      "sha512": "sha512-k2dSmNbDAUmlXseGDjYL0d4h8gn5uAeFIVoEyS2zP3YT2t+AjZMtKb1rY4DgSS7lGn0TuAn9dez0fSemdlnsXQ==",
+      "path": "itext/8.0.4",
+      "hashPath": "itext.8.0.4.nupkg.sha512"
     },
-    "itext.bouncy-castle-adapter/9.1.0": {
+    "itext.bouncy-castle-adapter/8.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1SVA5zIvvTX02+eIOTkYb7efwnY1oEmAPR2JuF15KcDTCp0eOPgRqfcujiDqR+xdxAqs8viFWvGZePcl7T0YhA==",
-      "path": "itext.bouncy-castle-adapter/9.1.0",
-      "hashPath": "itext.bouncy-castle-adapter.9.1.0.nupkg.sha512"
+      "sha512": "sha512-uNc3tEfF/4+gNfNBlIuy4zTsrtAy/un+DZzXJeDODM4o9kNTawBQ7AeChfjMKg9C9aNMa3kky8LeTkbXo0LOFQ==",
+      "path": "itext.bouncy-castle-adapter/8.0.4",
+      "hashPath": "itext.bouncy-castle-adapter.8.0.4.nupkg.sha512"
     },
-    "itext.commons/9.1.0": {
+    "itext.commons/8.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-oaUKSbmWg0zhOmyElnL+52yRvn+m39LxfqdXJGjHHR7ypC3MdOpfyb/GkQ4mFRMlXwyO2srLzgnZ+cN6zAjMXw==",
-      "path": "itext.commons/9.1.0",
-      "hashPath": "itext.commons.9.1.0.nupkg.sha512"
+      "sha512": "sha512-+76EQpGCj1gw17/zD6DaFumWXj9S+ko40wxNny+/3nW7PmrMZd6R8NJHvE1HVHo0xr2Ibx1JL71REYjIYTKFCQ==",
+      "path": "itext.commons/8.0.4",
+      "hashPath": "itext.commons.8.0.4.nupkg.sha512"
     },
-    "itext7/9.1.0": {
+    "itext7/8.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xHRttMKi/9W7XDIIWRgMoau3Eo2+4JvctqN25X8a0k8uHFf56WgIMjFnGadH1nACJy+5ABi3XoWvJsUv20Wd2w==",
-      "path": "itext7/9.1.0",
-      "hashPath": "itext7.9.1.0.nupkg.sha512"
+      "sha512": "sha512-J+eaLBqCSXbk4DPGuuKZPcs02cH7De6xGZ312o87d21MNgSmAQQikDVw5OpcdMiA0GW/YT/VXRjU5cLPa6sh9A==",
+      "path": "itext7/8.0.4",
+      "hashPath": "itext7.8.0.4.nupkg.sha512"
     },
-    "itext7.bouncy-castle-adapter/9.1.0": {
+    "itext7.bouncy-castle-adapter/8.0.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-FN8QFUA9oYnrCNRZrDYWpK8gU8AFszaKbSwuYS7nFiPr5WlMcPREb6G+JJ9NO1BEKaqJbRH079OJgAgjmQpRjg==",
-      "path": "itext7.bouncy-castle-adapter/9.1.0",
-      "hashPath": "itext7.bouncy-castle-adapter.9.1.0.nupkg.sha512"
+      "sha512": "sha512-i+VSf2O2sCRW/SQv4KrOK6X7asfPLzxCMBPCsiDA6xHkOYYnoRYReCVcOmNflZiKT9X/KU8TqdmSc2wEcMSyOg==",
+      "path": "itext7.bouncy-castle-adapter/8.0.4",
+      "hashPath": "itext7.bouncy-castle-adapter.8.0.4.nupkg.sha512"
     },
     "MicroCom.Runtime/0.11.0": {
       "type": "package",
