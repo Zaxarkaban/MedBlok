@@ -46,7 +46,7 @@ namespace DocumentGenerator
                     try
                     {
                         PdfFontFactory.Register(fontPath);
-                        font = PdfFontFactory.CreateRegisteredFont("Times New Roman");
+                        font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
                     }
                     catch (Exception ex)
                     {
@@ -73,7 +73,27 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "Okved", _viewModel.Okved, font);
                     SetFieldValue(fields, "WorkExperience", _viewModel.WorkExperience, font);
                     SetFieldValue(fields, "OrderClause", string.Join(", ", _viewModel.SelectedOrderClauses), font);
-                    SetFieldValue(fields, "Doctors", string.Join(", ", _viewModel.GetDoctorsForSelectedClauses()), font);
+
+                    // Создаём список врачей (аналогично DocumentService.GenerateDoctorsList)
+                    var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
+                    var doctorsFromClauses = _viewModel.GetDoctorsForSelectedClauses();
+                    var allDoctors = mandatoryDoctors
+                        .Concat(doctorsFromClauses)
+                        .Distinct()
+                        .ToList();
+                    allDoctors.Add("Профпатолог");
+
+                    // Заполняем врачей в поля Doctor_1 до Doctor_12
+                    for (int i = 0; i < allDoctors.Count && i < 12; i++)
+                    {
+                        string fieldName = $"Doctor_{i + 1}";
+                        SetFieldValue(fields, fieldName, allDoctors[i], font);
+                    }
+
+                    if (allDoctors.Count > 12)
+                    {
+                        Console.WriteLine($"Внимание: В списке {allDoctors.Count} врачей, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
+                    }
 
                     // Сохраняем изменения
                     form.FlattenFields();

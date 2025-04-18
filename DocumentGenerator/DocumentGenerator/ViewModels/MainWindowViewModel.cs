@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DocumentGenerator.Models;
+using DocumentGenerator.Services;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -50,17 +51,14 @@ namespace DocumentGenerator.ViewModels
 
         private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
 
+        private readonly DocumentService _documentService;
+
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
             OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
-            OrderClauseOptions = new List<string>
-            {
-                "Общие осмотры",
-                "Неврологические исследования",
-                "Кардиологические исследования",
-                "Дерматологические исследования"
-            };
+            OrderClauseOptions = Dictionaries.OrderClauseDataMap.Keys.ToList();
+            _documentService = new DocumentService();
         }
 
         // Свойства
@@ -575,6 +573,7 @@ namespace DocumentGenerator.ViewModels
 
         public void OnSave()
         {
+            // Выполняем валидацию
             ValidateFullName();
             ValidatePosition();
             ValidateDateOfBirth();
@@ -594,6 +593,44 @@ namespace DocumentGenerator.ViewModels
             ValidateOkved();
             ValidateWorkExperience();
             ValidateSelectedOrderClauses();
+
+            // Проверяем, есть ли ошибки валидации
+            if (new[] { FullNameError, PositionError, DateOfBirthError, GenderError, SnilsError, PassportSeriesError,
+                PassportNumberError, PassportIssueDateError, PassportIssuedByError, MedicalPolicyError,
+                AddressError, PhoneError, MedicalOrganizationError, MedicalFacilityError, WorkplaceError,
+                OwnershipFormError, OkvedError, WorkExperienceError, SelectedOrderClausesError }
+                .Any(error => !string.IsNullOrEmpty(error)))
+            {
+                return; // Если есть ошибки, прерываем выполнение
+            }
+
+            // Собираем данные пользователя в словарь
+            var userData = new Dictionary<string, string>
+    {
+        { "FullName", FullName },
+        { "Position", Position },
+        { "DateOfBirth", DateOfBirth },
+        { "Gender", Gender },
+        { "Snils", Snils },
+        { "PassportSeries", PassportSeries },
+        { "PassportNumber", PassportNumber },
+        { "PassportIssueDate", PassportIssueDate },
+        { "PassportIssuedBy", PassportIssuedBy },
+        { "MedicalPolicy", MedicalPolicy },
+        { "Address", Address },
+        { "Phone", Phone },
+        { "MedicalOrganization", MedicalOrganization },
+        { "MedicalFacility", MedicalFacility },
+        { "Workplace", Workplace },
+        { "OwnershipForm", OwnershipForm },
+        { "Okved", Okved },
+        { "WorkExperience", WorkExperience },
+        { "OrderClause", string.Join(", ", SelectedOrderClauses) } // Добавляем пункты вредности
+    };
+
+            // Генерируем список врачей и заполняем PDF
+            var doctors = _documentService.GenerateDoctorsList(SelectedOrderClauses.ToList());
+            _documentService.FillPdfTemplate(userData, doctors);
         }
     }
 }
