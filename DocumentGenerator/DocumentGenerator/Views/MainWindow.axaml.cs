@@ -8,23 +8,21 @@ using Avalonia.Threading;
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Avalonia.Platform.Storage;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace DocumentGenerator
 {
     public partial class MainWindow : Window
     {
-        private readonly IServiceProvider _serviceProvider;
         public MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
         private const int CurrentYear = 2025;
         private const int MinYear = CurrentYear - 120; // 1905
 
-        public MainWindow(IServiceProvider serviceProvider)
+        public MainWindow()
         {
-            _serviceProvider = serviceProvider;
-            DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>(); // Устанавливаем DataContext через DI
             InitializeComponent();
+            // DataContext устанавливается через DI в App.axaml.cs
+            DataContext = new MainWindowViewModel();
         }
 
         private void HandleTextChanged(object sender, TextChangedEventArgs e)
@@ -552,32 +550,25 @@ namespace DocumentGenerator
                 string.IsNullOrEmpty(ViewModel.OkvedError) &&
                 string.IsNullOrEmpty(ViewModel.WorkExperienceError))
             {
-                // Используем TopLevel.StorageProvider для выбора пути сохранения
-                var topLevel = TopLevel.GetTopLevel(this);
-                var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                // Создаем диалог сохранения файла
+                var saveFileDialog = new SaveFileDialog
                 {
                     Title = "Сохранить PDF-документ",
+                    Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
+            },
                     DefaultExtension = "pdf",
-                    SuggestedFileName = $"{SanitizeFileName(ViewModel.FullName ?? "Document")}.pdf",
-                    FileTypeChoices = new[]
-                    {
-                        new FilePickerFileType("PDF Files")
-                        {
-                            Patterns = new[] { "*.pdf" },
-                            MimeTypes = new[] { "application/pdf" }
-                        }
-                    }
-                });
+                    InitialFileName = $"{SanitizeFileName(ViewModel.FullName ?? "Document")}.pdf"
+                };
 
-                if (file != null)
+                // Показываем диалог и ждем, пока пользователь выберет путь
+                var result = await saveFileDialog.ShowAsync(this);
+                if (!string.IsNullOrEmpty(result))
                 {
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var pdfGenerator = scope.ServiceProvider.GetRequiredService<PdfGenerator>();
-                        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
-                        string outputPath = file.Path.LocalPath;
-                        pdfGenerator.GeneratePdf(outputPath, templatePath);
-                    }
+                    var pdfGenerator = new PdfGenerator(ViewModel);
+                    string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
+                    pdfGenerator.GeneratePdf(result, templatePath);
                 }
             }
         }
