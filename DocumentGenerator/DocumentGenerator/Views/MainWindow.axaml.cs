@@ -6,22 +6,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using System;
-using System.IO;
-using System.Collections.Generic;
-
+using Avalonia.Platform.Storage;
 
 namespace DocumentGenerator
 {
     public partial class MainWindow : Window
     {
-        public MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
+        private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
         private const int CurrentYear = 2025;
         private const int MinYear = CurrentYear - 120; // 1905
 
         public MainWindow()
         {
             InitializeComponent();
-            // DataContext устанавливается через DI в App.axaml.cs
             DataContext = new MainWindowViewModel();
         }
 
@@ -34,7 +31,7 @@ namespace DocumentGenerator
             string name = textBox.Name ?? throw new InvalidOperationException("TextBox must have a Name");
             var (filteredText, caretIndex) = name switch
             {
-                "FullNameTextBox" or "PositionTextBox" or "PassportIssuedByTextBox" or "MedicalFacilityTextBox" =>
+                "FullNameTextBox" or "PositionTextBox" or "PassportIssuedByTextBox" =>
                     (text.Length > 1000 ? text.Substring(0, 1000) : text, Math.Min(text.Length, 1000)),
                 "PassportSeriesTextBox" or "PassportNumberTextBox" or "MedicalPolicyTextBox" =>
                     FilterNumericInput(text, GetMaxLength(name), textBox),
@@ -42,14 +39,6 @@ namespace DocumentGenerator
                     FormatAndValidateDate(text, textBox),
                 "SnilsTextBox" =>
                     FormatAndValidateSnils(text, textBox),
-                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
-                    (text.Length > 1000 ? text.Substring(0, 1000) : text, Math.Min(text.Length, 1000)),
-                "PhoneTextBox" =>
-                    FormatAndValidatePhone(text, textBox),
-                "OkvedTextBox" =>
-                    FormatAndValidateOkved(text, textBox),
-                "WorkExperienceTextBox" =>
-                    FormatAndValidateWorkExperience(text, textBox),
                 _ => (text, text.Length)
             };
 
@@ -81,7 +70,7 @@ namespace DocumentGenerator
 
             bool isValid = name switch
             {
-                "FullNameTextBox" or "PositionTextBox" or "PassportIssuedByTextBox" or "MedicalFacilityTextBox" =>
+                "FullNameTextBox" or "PositionTextBox" or "PassportIssuedByTextBox" =>
                     newText.Length <= 1000,
                 "PassportSeriesTextBox" or "PassportNumberTextBox" or "MedicalPolicyTextBox" =>
                     e.Text.All(char.IsDigit) && newText.Length <= GetMaxLength(name),
@@ -89,14 +78,6 @@ namespace DocumentGenerator
                     ValidateDateInput(currentText, e.Text),
                 "SnilsTextBox" =>
                     e.Text.All(char.IsDigit) && newText.Replace("-", "").Replace(" ", "").Length <= 11,
-                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
-                    newText.Length <= 1000,
-                "PhoneTextBox" =>
-                    ValidatePhoneInput(currentText, e.Text),
-                "OkvedTextBox" =>
-                    ValidateOkvedInput(currentText, e.Text),
-                "WorkExperienceTextBox" =>
-                    e.Text.All(char.IsDigit) && newText.Replace(" лет", "").Length <= 2,
                 _ => true
             };
 
@@ -139,14 +120,6 @@ namespace DocumentGenerator
                             FormatAndValidateDate(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
                         "SnilsTextBox" =>
                             FormatAndValidateSnils(new string(clipboardText.Where(c => char.IsDigit(c) || c == '-' || c == ' ').ToArray()), textBox).filteredText,
-                        "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
-                            clipboardText.Length > 1000 ? clipboardText.Substring(0, 1000) : clipboardText,
-                        "PhoneTextBox" =>
-                            FormatAndValidatePhone(new string(clipboardText.Where(c => char.IsDigit(c) || c == '+' || c == ' ' || c == '(' || c == ')' || c == '-').ToArray()), textBox).filteredText,
-                        "OkvedTextBox" =>
-                            FormatAndValidateOkved(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
-                        "WorkExperienceTextBox" =>
-                            new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()) + " лет",
                         _ => clipboardText
                     };
 
@@ -155,7 +128,6 @@ namespace DocumentGenerator
                         textBox.Text = filteredText;
                         textBox.CaretIndex = filteredText.Length;
 
-                        // Проверяем, достиг ли текст максимальной длины после вставки
                         int maxLength = GetMaxLengthForField(name);
                         if (filteredText.Length == maxLength)
                         {
@@ -354,137 +326,6 @@ namespace DocumentGenerator
             return (formatted, formatted.Length);
         }
 
-        private (string filteredText, int caretIndex) FormatAndValidatePhone(string text, TextBox textBox)
-        {
-            // Фильтруем только цифры и символ "+"
-            string digits = new string(text.Where(c => char.IsDigit(c) || c == '+').ToArray());
-            if (string.IsNullOrEmpty(digits)) return ("+", 1);
-
-            // Удаляем "+" для дальнейшей обработки
-            digits = digits.Replace("+", "");
-            if (string.IsNullOrEmpty(digits)) return ("+", 1);
-
-            // Ограничиваем до 11 цифр (включая код страны)
-            if (digits.Length > 11) digits = digits.Substring(0, 11);
-
-            // Проверяем первую цифру (должна быть 7 или 8)
-            string validatedDigits = "";
-            for (int i = 0; i < digits.Length; i++)
-            {
-                string currentDigits = validatedDigits + digits[i];
-                int pos = currentDigits.Length;
-
-                // Проверяем первую цифру
-                if (pos == 1)
-                {
-                    if (digits[i] != '7' && digits[i] != '8')
-                    {
-                        return (validatedDigits.Length > 0 ? "+" + validatedDigits : "+", validatedDigits.Length + 1);
-                    }
-                }
-
-                validatedDigits = currentDigits;
-            }
-
-            // Форматируем телефон: +X (XXX) XXX-XX-XX
-            string formatted = "+";
-            if (validatedDigits.Length > 0)
-                formatted += validatedDigits[0]; // Добавляем код страны (+7 или +8)
-            if (validatedDigits.Length > 1)
-                formatted += " (" + validatedDigits.Substring(1, Math.Min(3, validatedDigits.Length - 1)); // Добавляем цифры в скобках
-            if (validatedDigits.Length >= 4)
-                formatted += ")";
-            if (validatedDigits.Length > 4)
-                formatted += " " + validatedDigits.Substring(4, Math.Min(3, validatedDigits.Length - 4)); // Следующие 3 цифры
-            if (validatedDigits.Length > 7)
-                formatted += "-" + validatedDigits.Substring(7, Math.Min(2, validatedDigits.Length - 7)); // Следующие 2 цифры
-            if (validatedDigits.Length > 9)
-                formatted += "-" + validatedDigits.Substring(9); // Последние 2 цифры
-
-            return (formatted, formatted.Length);
-        }
-
-        private bool ValidatePhoneInput(string currentText, string input)
-        {
-            if (!input.All(char.IsDigit)) return false;
-
-            // Удаляем форматирование из текущего текста
-            string digits = currentText.Replace("+", "").Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "");
-            digits += input;
-            int pos = digits.Length;
-
-            // Проверяем первую цифру
-            if (pos == 1)
-            {
-                if (input != "7" && input != "8") return false;
-            }
-
-            return pos <= 11; // Максимум 11 цифр
-        }
-
-        private (string filteredText, int caretIndex) FormatAndValidateOkved(string text, TextBox textBox)
-        {
-            // Фильтруем только цифры и точки
-            string digits = new string(text.Where(c => char.IsDigit(c) || c == '.').ToArray());
-            if (string.IsNullOrEmpty(digits)) return (digits, 0);
-
-            // Удаляем точки для подсчета чистых цифр
-            digits = digits.Replace(".", "");
-            if (digits.Length > 6) digits = digits.Substring(0, 6); // Максимум 6 цифр (XX.XX.XX)
-
-            // Форматируем: XX.XX.XX
-            string formatted = digits;
-            if (digits.Length >= 2)
-                formatted = digits.Substring(0, 2) + (digits.Length > 2 ? "." + digits.Substring(2) : "");
-            if (digits.Length >= 4)
-                formatted = formatted.Substring(0, 5) + (digits.Length > 4 ? "." + digits.Substring(4) : "");
-
-            return (formatted, formatted.Length);
-        }
-
-        private bool ValidateOkvedInput(string currentText, string input)
-        {
-            if (!input.All(char.IsDigit)) return false;
-
-            // Удаляем точки из текущего текста и добавляем новый ввод
-            string digits = currentText.Replace(".", "") + input;
-            int pos = digits.Length;
-
-            // Проверяем общее количество цифр
-            if (pos > 6) return false; // Максимум 6 цифр (XX.XX.XX)
-
-            return true;
-        }
-
-        private static string FormatOkvedInput(string digits)
-        {
-            if (string.IsNullOrEmpty(digits)) return "";
-            string result = new string(digits.Where(char.IsDigit).ToArray());
-            if (result.Length >= 2)
-                result = result.Substring(0, 2) + (result.Length > 2 ? "." + result.Substring(2) : "");
-            if (result.Length >= 5)
-                result = result.Substring(0, 5) + (result.Length > 4 ? "." + result.Substring(4) : "");
-            return result.Length > 8 ? result.Substring(0, 8) : result; // Максимум XX.XX.XX
-        }
-
-        private (string filteredText, int caretIndex) FormatAndValidateWorkExperience(string text, TextBox textBox)
-        {
-            string digits = new string(text.Where(char.IsDigit).ToArray());
-            if (string.IsNullOrEmpty(digits)) return (text, text.Length);
-
-            if (digits.Length > 2) digits = digits.Substring(0, 2);
-
-            int years;
-            if (int.TryParse(digits, out years))
-            {
-                if (years > 80) digits = "80"; // Максимум 80 лет
-                else if (years < 0) digits = "0";
-            }
-
-            string formatted = digits + " лет";
-            return (formatted, formatted.Length);
-        }
-
         private static string FormatDateInput(string digits)
         {
             if (string.IsNullOrEmpty(digits)) return "";
@@ -509,79 +350,46 @@ namespace DocumentGenerator
             "FullNameTextBox" => 1000,
             "PositionTextBox" => 1000,
             "PassportIssuedByTextBox" => 1000,
-            "MedicalFacilityTextBox" => 1000,
             "PassportSeriesTextBox" => 4,
             "PassportNumberTextBox" => 6,
             "MedicalPolicyTextBox" => 16,
             "DateOfBirthTextBox" => 10, // ДД.ММ.ГГГГ
             "PassportIssueDateTextBox" => 10, // ДД.ММ.ГГГГ
             "SnilsTextBox" => 14, // XXX-XXX-XXX XX
-            "AddressTextBox" => 1000,
-            "PhoneTextBox" => 18, // +X (XXX) XXX-XX-XX
-            "MedicalOrganizationTextBox" => 1000,
-            "WorkplaceTextBox" => 1000,
-            "OkvedTextBox" => 8, // XX.XX.XX
-            "WorkExperienceTextBox" => 7, // XX лет
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 
-        private async void Save_Click(object sender, RoutedEventArgs e)
+        private async void LoadFromExcel_Click(object sender, RoutedEventArgs e)
         {
-            // Вызываем валидацию через ViewModel
-            ViewModel.OnSave();
-
-            // Если валидация прошла успешно (нет ошибок), генерируем PDF
-            if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
-                string.IsNullOrEmpty(ViewModel.PositionError) &&
-                string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
-                string.IsNullOrEmpty(ViewModel.GenderError) &&
-                string.IsNullOrEmpty(ViewModel.SnilsError) &&
-                string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
-                string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
-                string.IsNullOrEmpty(ViewModel.PassportIssueDateError) &&
-                string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
-                string.IsNullOrEmpty(ViewModel.AddressError) &&
-                string.IsNullOrEmpty(ViewModel.PhoneError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalOrganizationError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalPolicyError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalFacilityError) &&
-                string.IsNullOrEmpty(ViewModel.WorkplaceError) &&
-                string.IsNullOrEmpty(ViewModel.OwnershipFormError) &&
-                string.IsNullOrEmpty(ViewModel.OkvedError) &&
-                string.IsNullOrEmpty(ViewModel.WorkExperienceError))
+            var storageProvider = StorageProvider;
+            var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                // Создаем диалог сохранения файла
-                var saveFileDialog = new SaveFileDialog
+                Title = "Выберите Excel-файл",
+                FileTypeFilter = new[]
                 {
-                    Title = "Сохранить PDF-документ",
-                    Filters = new List<FileDialogFilter>
-            {
-                new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
-            },
-                    DefaultExtension = "pdf",
-                    InitialFileName = $"{SanitizeFileName(ViewModel.FullName ?? "Document")}.pdf"
-                };
+                    new FilePickerFileType("Excel Files") { Patterns = new[] { "*.xlsx", "*.xls" } },
+                    new FilePickerFileType("All Files") { Patterns = new[] { "*" } }
+                },
+                AllowMultiple = false
+            });
 
-                // Показываем диалог и ждем, пока пользователь выберет путь
-                var result = await saveFileDialog.ShowAsync(this);
-                if (!string.IsNullOrEmpty(result))
-                {
-                    var pdfGenerator = new PdfGenerator(ViewModel);
-                    string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
-                    pdfGenerator.GeneratePdf(result, templatePath);
-                }
+            if (file != null && file.Count > 0)
+            {
+                var filePath = file[0].Path.LocalPath;
+                await ViewModel.LoadFromExcel(filePath);
             }
         }
 
-        // Метод для очистки имени файла от недопустимых символов
-        private string SanitizeFileName(string fileName)
+        private void LoadFromExcelButton_KeyDown(object sender, KeyEventArgs e)
         {
-            foreach (var c in Path.GetInvalidFileNameChars())
+            if (e.Key == Key.Enter)
             {
-                fileName = fileName.Replace(c, '_');
+                LoadFromExcel_Click(sender, new RoutedEventArgs());
+                e.Handled = true;
             }
-            return fileName.Trim();
         }
+
+        private void Save_Click(object sender, RoutedEventArgs e) => ViewModel.OnSave();
 
         private void SaveButton_KeyDown(object sender, KeyEventArgs e)
         {
@@ -610,7 +418,7 @@ namespace DocumentGenerator
 
             if (e.Key == Key.Enter)
             {
-                if (control.Name == "WorkExperienceTextBox") // Последнее поле
+                if (control.Name == "MedicalPolicyTextBox")
                 {
                     var saveButton = this.FindControl<Button>("SaveButton");
                     saveButton?.Focus();
@@ -642,7 +450,7 @@ namespace DocumentGenerator
 
             for (int i = start; moveNext ? i < end : i >= end; i += step)
             {
-                if (children[i] is TextBox or ComboBox)
+                if (children[i] is TextBox or ComboBox or Button)
                 {
                     var nextControl = (Control)children[i];
                     nextControl.Focus();
