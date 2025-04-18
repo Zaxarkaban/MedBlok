@@ -3,7 +3,7 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Document Generator" Width="600" Height="1400">
+        Title="Document Generator" Width="600" Height="700">
 	<Design.DataContext>
 		<vm:MainWindowViewModel />
 	</Design.DataContext>

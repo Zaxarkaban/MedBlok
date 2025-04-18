@@ -2,12 +2,12 @@
 using System.IO;
 using System.Threading.Tasks;
 using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using Avalonia.Controls;
-using Avalonia.Platform.Storage;
+using iText.Forms;
+using iText.Forms.Fields;
 using iText.Kernel.Font;
 using iText.IO.Font;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using System.Collections.Generic;
 using OfficeOpenXml;
 
@@ -52,25 +52,40 @@ namespace DocumentGenerator.ViewModels
                     {
                         var record = new Record
                         {
-                            FullName = worksheet.Cells[row, 1].Text,
-                            Position = worksheet.Cells[row, 2].Text,
-                            DateOfBirth = worksheet.Cells[row, 3].Text,
-                            Gender = worksheet.Cells[row, 5].Text,
-                            OrderClause = worksheet.Cells[row, 6].Text,
-                            Snils = worksheet.Cells[row, 7].Text,
-                            MedicalPolicy = worksheet.Cells[row, 8].Text,
-                            PassportSeries = worksheet.Cells[row, 9].Text,
-                            PassportNumber = worksheet.Cells[row, 10].Text,
-                            PassportIssueDate = worksheet.Cells[row, 11].Text,
-                            PassportIssuedBy = worksheet.Cells[row, 12].Text
+                            FullName = worksheet.Cells[row, 2].Text, // Столбец 2: Сотрудник
+                            Position = worksheet.Cells[row, 3].Text, // Столбец 3: Должность
+                            DateOfBirth = worksheet.Cells[row, 5].Text, // Столбец 5: Дата рождения
+                            Gender = worksheet.Cells[row, 7].Text, // Столбец 7: Пол
+                            OrderClause = worksheet.Cells[row, 8].Text, // Столбец 8: Пункты по приказу 29н
+                            Snils = worksheet.Cells[row, 9].Text, // Столбец 9: СНИЛС
+                            MedicalPolicy = worksheet.Cells[row, 10].Text, // Столбец 10: Полис ОМС
+                            PassportSeries = worksheet.Cells[row, 11].Text, // Столбец 11: Серия паспорта
+                            PassportNumber = worksheet.Cells[row, 12].Text, // Столбец 12: Номер паспорта
+                            PassportIssueDate = worksheet.Cells[row, 13].Text, // Столбец 13: Дата выдачи паспорта
+                            PassportIssuedBy = worksheet.Cells[row, 14].Text // Столбец 14: Кем выдан паспорт
                         };
 
+                        // Преобразование числовой даты рождения в формат dd.MM.yyyy
+                        if (double.TryParse(record.DateOfBirth, out double dateOfBirthDays))
+                        {
+                            DateTime dateOfBirth = DateTime.FromOADate(dateOfBirthDays);
+                            record.DateOfBirth = dateOfBirth.ToString("dd.MM.yyyy");
+                        }
+
+                        // Вычисление возраста на основе даты рождения
                         if (DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var birthDate))
                         {
                             var today = DateTime.Today;
                             int age = today.Year - birthDate.Year;
                             if (birthDate.Date > today.AddYears(-age)) age--;
                             record.Age = age;
+                        }
+
+                        // Преобразование числовой даты выдачи паспорта в формат dd.MM.yyyy
+                        if (double.TryParse(record.PassportIssueDate, out double passportIssueDays))
+                        {
+                            DateTime passportIssueDate = DateTime.FromOADate(passportIssueDays);
+                            record.PassportIssueDate = passportIssueDate.ToString("dd.MM.yyyy");
                         }
 
                         Records.Add(record);
@@ -89,109 +104,120 @@ namespace DocumentGenerator.ViewModels
             {
                 var storageProvider = parentWindow.StorageProvider;
 
-                var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                // Запрашиваем папку для сохранения файлов
+                var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
-                    Title = "Сохранить PDF",
-                    SuggestedFileName = "excel_data.pdf",
-                    DefaultExtension = "pdf",
-                    FileTypeChoices = new[]
-                    {
-                        new FilePickerFileType("PDF Files") { Patterns = new[] { "*.pdf" } },
-                        new FilePickerFileType("All Files") { Patterns = new[] { "*" } }
-                    }
+                    Title = "Выберите папку для сохранения PDF-файлов",
+                    SuggestedStartLocation = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents)
                 });
 
-                if (file == null)
+                if (folder == null || folder.Count == 0)
                 {
-                    await ShowMessageBox(parentWindow, "Сохранение отменено.", "Информация");
+                    await ShowMessageBox(parentWindow, "Выбор папки отменён.", "Информация");
                     return;
                 }
 
-                var filePath = file.Path.LocalPath;
+                var folderPath = folder[0].Path.LocalPath;
+                string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
 
-                using (var writer = new PdfWriter(filePath))
-                using (var pdf = new PdfDocument(writer))
-                using (var document = new Document(pdf))
+                if (!File.Exists(templatePath))
                 {
-                    // Загружаем шрифт Times New Roman из проекта
-                    string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                    if (!File.Exists(fontPath))
-                    {
-                        throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
-                    }
-                    PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
-
-                    // Заголовок документа
-                    document.Add(new Paragraph("Данные из Excel")
-                        .SetFont(font)
-                        .SetFontSize(16)
-                        .SetMarginBottom(20));
-
-                    // Добавляем записи
-                    int recordNumber = 1;
-                    foreach (var record in Records)
-                    {
-                        document.Add(new Paragraph($"Запись #{recordNumber}")
-                            .SetFont(font)
-                            .SetFontSize(14)
-                            .SetMarginTop(10)
-                            .SetMarginBottom(5));
-
-                        document.Add(new Paragraph($"ФИО: {record.FullName ?? "Не указано"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Должность: {record.Position ?? "Не указана"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Дата рождения: {record.DateOfBirth ?? "Не указана"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Возраст: {record.Age}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Пол: {record.Gender ?? "Не указан"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Пункты по приказу: {record.OrderClause ?? "Не указан"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"СНИЛС: {record.Snils ?? "Не указан"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Полис ОМС: {record.MedicalPolicy ?? "Не указан"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Паспорт: {(record.PassportSeries ?? "Не указана")} {(record.PassportNumber ?? "Не указан")}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Дата выдачи паспорта: {record.PassportIssueDate ?? "Не указана"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(5));
-                        document.Add(new Paragraph($"Кем выдан: {record.PassportIssuedBy ?? "Не указано"}")
-                            .SetFont(font)
-                            .SetFontSize(12)
-                            .SetMarginBottom(10));
-
-                        recordNumber++;
-                    }
+                    await ShowMessageBox(parentWindow, "Шаблон PDF не найден.", "Ошибка");
+                    return;
                 }
 
-                await ShowMessageBox(parentWindow, $"PDF успешно сохранён по пути:\n{filePath}", "Успех");
+                // Создаём PDF для каждой записи
+                int recordNumber = 1;
+                foreach (var record in Records)
+                {
+                    // Формируем имя файла на основе FullName
+                    string safeFileName = SanitizeFileName(record.FullName ?? $"Record_{recordNumber}");
+                    string outputPath = Path.Combine(folderPath, $"{safeFileName}.pdf");
+
+                    using (var writer = new PdfWriter(outputPath))
+                    using (var pdf = new PdfDocument(new PdfReader(templatePath), writer))
+                    {
+                        var form = PdfAcroForm.GetAcroForm(pdf, true);
+                        var fields = form.GetAllFormFields();
+
+                        // Загружаем шрифт Times New Roman из проекта
+                        string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
+                        if (!File.Exists(fontPath))
+                        {
+                            throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
+                        }
+
+                        PdfFont font;
+                        try
+                        {
+                            font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+                            if (font == null)
+                            {
+                                throw new InvalidOperationException("Failed to create font from times.ttf.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
+                        }
+
+                        // Заполняем поля в шаблоне
+                        SetFieldValue(fields, "FullName", record.FullName, font); // Пункт 1: Ф.И.О.
+                        SetFieldValue(fields, "Gender", record.Gender, font); // Пункт 2: Пол
+                        SetFieldValue(fields, "DateOfBirth", record.DateOfBirth, font); // Пункт 3: Дата рождения
+                        SetFieldValue(fields, "Address", "", font); // Пункт 4: Адрес (нет в Record)
+                        // Пункт 5: Телефон; серия, №, дата выдачи, кем выдан паспорта; СНИЛС, № полиса мед. страхования
+                        SetFieldValue(fields, "Phone", "", font); // Телефон (нет в Record)
+                        SetFieldValue(fields, "PassportSeries", record.PassportSeries, font); // Серия паспорта
+                        SetFieldValue(fields, "PassportNumber", record.PassportNumber, font); // Номер паспорта
+                        SetFieldValue(fields, "PassportIssueDate", record.PassportIssueDate, font); // Дата выдачи паспорта
+                        SetFieldValue(fields, "PassportIssuedBy", record.PassportIssuedBy, font); // Кем выдан паспорт
+                        SetFieldValue(fields, "Snils", record.Snils, font); // СНИЛС
+                        SetFieldValue(fields, "MedicalPolicy", record.MedicalPolicy, font); // Полис ОМС
+                        SetFieldValue(fields, "OrderClause", record.OrderClause, font); // Пункт 6: Структурное подразделение организации
+                        SetFieldValue(fields, "Workplace", "", font); // Пункт 7: Место работы (нет в Record)
+                        SetFieldValue(fields, "MedicalFacility", "", font); // Пункт 8: Структурное подразделение (нет в Record)
+                        SetFieldValue(fields, "Position", record.Position, font); // Пункт 9: Должность
+                        SetFieldValue(fields, "WorkExperience", "", font); // Пункт 10: Стаж работы (нет в Record)
+                        SetFieldValue(fields, "MedicalOrganization", "", font); // Пункт 11: Нагрузочность ЛПУ (нет в Record)
+
+                        // Дополнительные поля, которые могут быть в шаблоне
+                        SetFieldValue(fields, "Okved", "", font); // ОКВЭД (нет в Record)
+                        SetFieldValue(fields, "Doctors", "", font); // Врачи (нет в Record)
+
+                        form.FlattenFields();
+                        pdf.Close();
+                    }
+
+                    recordNumber++;
+                }
+
+                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}", "Успех");
             }
             catch (Exception ex)
             {
                 await ShowMessageBox(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка");
             }
+        }
+
+        private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
+        {
+            if (fields.ContainsKey(fieldName))
+            {
+                var field = fields[fieldName];
+                field.SetValue(value ?? "");
+                if (font != null)
+                {
+                    field.SetFontAndSize(font, 10);
+                }
+            }
+        }
+
+        private string SanitizeFileName(string fileName)
+        {
+            var invalidChars = new string(Path.GetInvalidFileNameChars());
+            var regex = new System.Text.RegularExpressions.Regex($"[{System.Text.RegularExpressions.Regex.Escape(invalidChars)}]");
+            return regex.Replace(fileName, "_").Trim();
         }
 
         private async Task ShowMessageBox(Window parent, string message, string title)
