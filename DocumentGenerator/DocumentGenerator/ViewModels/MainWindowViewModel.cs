@@ -304,9 +304,9 @@ namespace DocumentGenerator.ViewModels
             var doctors = new List<string>();
             foreach (var clause in SelectedOrderClauses)
             {
-                if (Dictionaries.OrderClauseDoctors.TryGetValue(clause, out var clauseDoctors))
+                if (Dictionaries.OrderClauseDataMap.TryGetValue(clause, out var clauseData))
                 {
-                    doctors.AddRange(clauseDoctors);
+                    doctors.AddRange(clauseData.Doctors);
                 }
             }
             return doctors.Distinct().ToList();
