@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using iText.Kernel.Font;
 using iText.IO.Font;
 using System.Collections.Generic;
+using OfficeOpenXml;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -31,6 +32,56 @@ namespace DocumentGenerator.ViewModels
         }
 
         public List<Record> Records { get; set; } = new List<Record>();
+
+        public async Task LoadFromExcel(string filePath)
+        {
+            try
+            {
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException("Excel file not found.", filePath);
+                }
+
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension?.Rows ?? 0;
+
+                    Records.Clear();
+                    for (int row = 2; row <= rowCount; row++) // Пропускаем заголовок
+                    {
+                        var record = new Record
+                        {
+                            FullName = worksheet.Cells[row, 1].Text,
+                            Position = worksheet.Cells[row, 2].Text,
+                            DateOfBirth = worksheet.Cells[row, 3].Text,
+                            Gender = worksheet.Cells[row, 5].Text,
+                            OrderClause = worksheet.Cells[row, 6].Text,
+                            Snils = worksheet.Cells[row, 7].Text,
+                            MedicalPolicy = worksheet.Cells[row, 8].Text,
+                            PassportSeries = worksheet.Cells[row, 9].Text,
+                            PassportNumber = worksheet.Cells[row, 10].Text,
+                            PassportIssueDate = worksheet.Cells[row, 11].Text,
+                            PassportIssuedBy = worksheet.Cells[row, 12].Text
+                        };
+
+                        if (DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var birthDate))
+                        {
+                            var today = DateTime.Today;
+                            int age = today.Year - birthDate.Year;
+                            if (birthDate.Date > today.AddYears(-age)) age--;
+                            record.Age = age;
+                        }
+
+                        Records.Add(record);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка при чтении Excel-файла: {ex.Message}", ex);
+            }
+        }
 
         public async Task SaveToPdf(Window parentWindow)
         {
@@ -62,8 +113,13 @@ namespace DocumentGenerator.ViewModels
                 using (var pdf = new PdfDocument(writer))
                 using (var document = new Document(pdf))
                 {
-                    // Загружаем шрифт Arial с поддержкой кириллицы
-                    PdfFont font = PdfFontFactory.CreateFont("C:/Windows/Fonts/arial.ttf", PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+                    // Загружаем шрифт Times New Roman из проекта
+                    string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
+                    if (!File.Exists(fontPath))
+                    {
+                        throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
+                    }
+                    PdfFont font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
 
                     // Заголовок документа
                     document.Add(new Paragraph("Данные из Excel")

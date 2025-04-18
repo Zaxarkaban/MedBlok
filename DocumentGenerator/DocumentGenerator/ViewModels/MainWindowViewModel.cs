@@ -1,9 +1,7 @@
-﻿using Microsoft.Data.Sqlite;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 
 namespace DocumentGenerator.ViewModels
@@ -49,52 +47,28 @@ namespace DocumentGenerator.ViewModels
         private string _workExperienceError = "";
         private string _selectedOrderClausesError = "";
 
-        // Список всех пунктов приказа из базы данных
-        private ObservableCollection<string> _orderClauses;
-        // Список выбранных пунктов
-        private ObservableCollection<string> _selectedOrderClauses;
+        private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
+
+        // Статический словарь для сопоставления пунктов вредности и врачей
+        private static readonly Dictionary<string, string[]> OrderClauseDoctors = new Dictionary<string, string[]>
+        {
+            { "Общие осмотры", new[] { "Терапевт Иванов", "Офтальмолог Петров" } },
+            { "Неврологические исследования", new[] { "Невролог Сидоров" } },
+            { "Кардиологические исследования", new[] { "Кардиолог Кузнецов" } },
+            { "Дерматологические исследования", new[] { "Дерматолог Смирнова" } }
+        };
 
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
             OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
-            _orderClauses = new ObservableCollection<string>();
-            _selectedOrderClauses = new ObservableCollection<string>();
-            LoadOrderClauses();
-        }
-
-        // Загрузка пунктов из базы данных с обработкой ошибок
-        private void LoadOrderClauses()
-        {
-            string dbPath = Path.Combine(Directory.GetCurrentDirectory(), "OrderClauses.db");
-            if (!File.Exists(dbPath))
+            OrderClauseOptions = new List<string>
             {
-                // Логика для обработки случая, если файл базы данных отсутствует
-                // Например, можно выбросить исключение или добавить пустые данные
-                return; // Или инициализировать вручную, если нужно
-            }
-
-            try
-            {
-                using (var connection = new SqliteConnection($"Data Source={dbPath}"))
-                {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "SELECT ClauseText FROM OrderClauses";
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            _orderClauses.Add(reader.GetString(0));
-                        }
-                    }
-                }
-            }
-            catch (SqliteException ex)
-            {
-                // Логирование ошибки (в реальном проекте используйте ILogger)
-                Console.WriteLine($"Ошибка загрузки данных из базы: {ex.Message}");
-            }
+                "Общие осмотры",
+                "Неврологические исследования",
+                "Кардиологические исследования",
+                "Дерматологические исследования"
+            };
         }
 
         // Свойства
@@ -206,18 +180,16 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _workExperience, value);
         }
 
-        // Свойства для пунктов приказа
-        public ObservableCollection<string> OrderClauses
-        {
-            get => _orderClauses;
-            set => this.RaiseAndSetIfChanged(ref _orderClauses, value);
-        }
-
         public ObservableCollection<string> SelectedOrderClauses
         {
             get => _selectedOrderClauses;
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value);
         }
+
+        // Списки для ComboBox и ListBox
+        public List<string> GenderOptions { get; }
+        public List<string> OwnershipFormOptions { get; }
+        public List<string> OrderClauseOptions { get; }
 
         // Свойства ошибок
         public string FullNameError
@@ -334,9 +306,19 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
         }
 
-        // Списки для ComboBox
-        public List<string> GenderOptions { get; }
-        public List<string> OwnershipFormOptions { get; }
+        // Получение врачей для выбранных пунктов вредности
+        public List<string> GetDoctorsForSelectedClauses()
+        {
+            var doctors = new List<string>();
+            foreach (var clause in SelectedOrderClauses)
+            {
+                if (OrderClauseDoctors.TryGetValue(clause, out var clauseDoctors))
+                {
+                    doctors.AddRange(clauseDoctors);
+                }
+            }
+            return doctors.Distinct().ToList();
+        }
 
         // Методы валидации
         public void ValidateFullName()
@@ -594,8 +576,8 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidateSelectedOrderClauses()
         {
-            SelectedOrderClausesError = SelectedOrderClauses == null || !SelectedOrderClauses.Any()
-                ? "Необходимо выбрать хотя бы один пункт приказа"
+            SelectedOrderClausesError = SelectedOrderClauses.Count == 0
+                ? "Необходимо выбрать хотя бы один пункт вредности"
                 : "";
         }
 
@@ -620,29 +602,6 @@ namespace DocumentGenerator.ViewModels
             ValidateOkved();
             ValidateWorkExperience();
             ValidateSelectedOrderClauses();
-
-            if (string.IsNullOrEmpty(FullNameError) &&
-                string.IsNullOrEmpty(PositionError) &&
-                string.IsNullOrEmpty(DateOfBirthError) &&
-                string.IsNullOrEmpty(GenderError) &&
-                string.IsNullOrEmpty(SnilsError) &&
-                string.IsNullOrEmpty(PassportSeriesError) &&
-                string.IsNullOrEmpty(PassportNumberError) &&
-                string.IsNullOrEmpty(PassportIssueDateError) &&
-                string.IsNullOrEmpty(PassportIssuedByError) &&
-                string.IsNullOrEmpty(MedicalPolicyError) &&
-                string.IsNullOrEmpty(AddressError) &&
-                string.IsNullOrEmpty(PhoneError) &&
-                string.IsNullOrEmpty(MedicalOrganizationError) &&
-                string.IsNullOrEmpty(MedicalFacilityError) &&
-                string.IsNullOrEmpty(WorkplaceError) &&
-                string.IsNullOrEmpty(OwnershipFormError) &&
-                string.IsNullOrEmpty(OkvedError) &&
-                string.IsNullOrEmpty(WorkExperienceError) &&
-                string.IsNullOrEmpty(SelectedOrderClausesError))
-            {
-                // Здесь будет логика сохранения в SQLite
-            }
         }
     }
 }

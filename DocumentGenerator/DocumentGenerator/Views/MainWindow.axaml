@@ -45,13 +45,14 @@
                       KeyDown="InputField_KeyDown" />
 			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
 
-			<ListBox ItemsSource="{Binding OrderClauses}" SelectedItems="{Binding SelectedOrderClauses}" SelectionMode="Multiple" Height="100">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding}" />
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+			<TextBlock Text="Пункты вредности" />
+			<ListBox Name="OrderClausesListBox"
+                     ItemsSource="{Binding OrderClauseOptions}"
+                     SelectedItems="{Binding SelectedOrderClauses}"
+                     SelectionMode="Multiple"
+                     Height="100"
+                     KeyDown="InputField_KeyDown" />
+			<TextBlock Text="{Binding SelectedOrderClausesError}" Foreground="Red" />
 
 			<TextBlock Text="СНИЛС (XXX-XXX-XXX XX)" />
 			<TextBox Name="SnilsTextBox"
@@ -98,7 +99,6 @@
                      Watermark="Введите кем выдан" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
 
-			<!-- Новые поля: Адрес и Телефон -->
 			<TextBlock Text="Адрес" />
 			<TextBox Name="AddressTextBox"
                      Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
@@ -117,7 +117,6 @@
                      Watermark="+X (XXX) XXX-XX-XX" />
 			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
 
-			<!-- Медицинские данные -->
 			<TextBlock Text="Наименование страховой медицинской организации" />
 			<TextBox Name="MedicalOrganizationTextBox"
                      Text="{Binding MedicalOrganization, UpdateSourceTrigger=PropertyChanged}"
@@ -145,7 +144,6 @@
 					 Watermark="Введите название ЛПУ" />
 			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
 
-			<!-- Рабочие данные -->
 			<TextBlock Text="Место работы" />
 			<TextBox Name="WorkplaceTextBox"
                      Text="{Binding Workplace, UpdateSourceTrigger=PropertyChanged}"
@@ -188,6 +186,11 @@
                     HorizontalAlignment="Center"
                     Margin="10"
                     KeyDown="SaveButton_KeyDown" />
+			<Button Name="LoadExcelButton"
+                    Content="Загрузить Excel"
+                    Click="LoadExcel_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>
