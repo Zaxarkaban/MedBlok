@@ -564,6 +564,19 @@ namespace DocumentGenerator.ViewModels
             WorkExperienceError = "";
         }
 
+        private int CalculateAge()
+        {
+            if (string.IsNullOrEmpty(DateOfBirth)) return 0;
+
+            if (!DateTime.TryParseExact(DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var dob))
+                return 0;
+
+            var today = DateTime.Today;
+            int age = today.Year - dob.Year;
+            if (dob.Date > today.AddYears(-age)) age--;
+            return age;
+        }
+
         public void ValidateSelectedOrderClauses()
         {
             SelectedOrderClausesError = SelectedOrderClauses.Count == 0
@@ -604,6 +617,11 @@ namespace DocumentGenerator.ViewModels
                 return; // Если есть ошибки, прерываем выполнение
             }
 
+            // Вычисляем возраст и проверяем пол
+            int age = CalculateAge();
+            bool isFemale = Gender == "Женский";
+            bool isOver40 = age > 40;
+
             // Собираем данные пользователя в словарь
             var userData = new Dictionary<string, string>
     {
@@ -625,11 +643,11 @@ namespace DocumentGenerator.ViewModels
         { "OwnershipForm", OwnershipForm },
         { "Okved", Okved },
         { "WorkExperience", WorkExperience },
-        { "OrderClause", string.Join(", ", SelectedOrderClauses) } // Добавляем пункты вредности
+        { "OrderClause", string.Join(", ", SelectedOrderClauses) }
     };
 
-            // Генерируем список врачей и заполняем PDF
-            var doctors = _documentService.GenerateDoctorsList(SelectedOrderClauses.ToList());
+            // Генерируем список врачей с учётом новых условий
+            var doctors = _documentService.GenerateDoctorsList(SelectedOrderClauses.ToList(), isOver40, isFemale);
             _documentService.FillPdfTemplate(userData, doctors);
         }
     }

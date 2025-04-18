@@ -4,20 +4,22 @@ using System.Linq;
 using iText.Kernel.Pdf;
 using iText.Forms;
 using DocumentGenerator.Models;
+using iText.Kernel.Pdf.Canvas;
+using iText.Layout;
+using iText.Layout.Element;
 using iText.Kernel.Font;
-using System.IO;
 using iText.IO.Font;
+using iText.Kernel.Geom;
+using System.IO;
 
 namespace DocumentGenerator.Services
 {
     public class DocumentService
     {
-        public List<string> GenerateDoctorsList(List<string> selectedClauses)
+        public List<string> GenerateDoctorsList(List<string> selectedClauses, bool isOver40, bool isFemale)
         {
-            // Создаём список обязательных врачей
             var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
 
-            // Получаем врачей из выбранных пунктов вредности
             var doctorsFromClauses = new List<string>();
             foreach (var clause in selectedClauses)
             {
@@ -27,16 +29,67 @@ namespace DocumentGenerator.Services
                 }
             }
 
-            // Объединяем списки, исключаем дубликаты
             var allDoctors = mandatoryDoctors
                 .Concat(doctorsFromClauses)
                 .Distinct()
                 .ToList();
 
-            // Добавляем Профпатолога в конец
+            if (isOver40)
+            {
+                if (!allDoctors.Contains("Офтальмолог"))
+                    allDoctors.Add("Офтальмолог");
+            }
+
+            if (isFemale)
+            {
+                if (!allDoctors.Contains("Акушер-гинеколог"))
+                    allDoctors.Add("Акушер-гинеколог");
+            }
+
+            if (isFemale && isOver40)
+            {
+                if (!allDoctors.Contains("Радиолог"))
+                    allDoctors.Add("Радиолог");
+            }
+
             allDoctors.Add("Профпатолог");
 
             return allDoctors;
+        }
+
+        public List<string> GenerateTestsList(bool isOver40, bool isFemale)
+        {
+            var mandatoryTests = new List<string>
+            {
+                "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
+                "Электрокардиография в покое",
+                "Измерение артериального давления на периферических артериях",
+                "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
+                "Определение относительного сердечно-сосудистого риска",
+                "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
+                "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
+                "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
+                "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
+            };
+
+            if (isOver40)
+            {
+                mandatoryTests.Add("Определение абсолютного сердечно-сосудистого риска");
+                mandatoryTests.Add("Измерение внутриглазного давления");
+            }
+
+            if (isFemale)
+            {
+                mandatoryTests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
+                mandatoryTests.Add("Ультразвуковое исследование органов малого таза");
+            }
+
+            if (isFemale && isOver40)
+            {
+                mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
+            }
+
+            return mandatoryTests;
         }
 
         public void FillPdfTemplate(Dictionary<string, string> userData, List<string> doctors, string templatePath = "template.pdf")
@@ -52,8 +105,7 @@ namespace DocumentGenerator.Services
                     var form = PdfAcroForm.GetAcroForm(pdfDocument, true);
                     var fields = form.GetAllFormFields();
 
-                    // Загружаем шрифт Times New Roman
-                    string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
+                    string fontPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
                     if (!File.Exists(fontPath))
                     {
                         throw new FileNotFoundException("Times New Roman font file not found.", fontPath);
@@ -70,18 +122,16 @@ namespace DocumentGenerator.Services
                         throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
                     }
 
-                    // Заполняем поля с данными пользователя
                     foreach (var data in userData)
                     {
                         if (fields.TryGetValue(data.Key, out var field))
                         {
                             field.SetValue(data.Value);
                             field.SetFontAndSize(font, 10);
-                            field.RegenerateField(); // Обновляем поле для корректного отображения
+                            field.RegenerateField();
                         }
                     }
 
-                    // Заполняем врачей в поля Doctor_1 до Doctor_12
                     for (int i = 0; i < doctors.Count && i < 12; i++)
                     {
                         string fieldName = $"Doctor_{i + 1}";
@@ -89,7 +139,7 @@ namespace DocumentGenerator.Services
                         {
                             doctorField.SetValue(doctors[i]);
                             doctorField.SetFontAndSize(font, 10);
-                            doctorField.RegenerateField(); // Обновляем поле для корректного отображения
+                            doctorField.RegenerateField();
                         }
                         else
                         {
@@ -102,15 +152,25 @@ namespace DocumentGenerator.Services
                         Console.WriteLine($"Внимание: В списке {doctors.Count} врачей, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
                     }
 
-                    // Сохраняем изменения
+                    int age = 0;
+                    bool isFemale = userData.TryGetValue("Gender", out var gender) && gender == "Женский";
+                    if (userData.TryGetValue("DateOfBirth", out var dob) && DateTime.TryParseExact(dob, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var birthDate))
+                    {
+                        var today = DateTime.Today;
+                        age = today.Year - birthDate.Year;
+                        if (birthDate.Date > today.AddYears(-age)) age--;
+                    }
+                    bool isOver40 = age > 40;
+
+                    var tests = GenerateTestsList(isOver40, isFemale);
+                    AddTestsPage(pdfDocument, tests, font);
+
                     form.FlattenFields();
                     pdfDocument.Close();
                 }
 
-                // Даём время на завершение записи файла перед открытием
                 System.Threading.Thread.Sleep(500);
 
-                // Открываем PDF-файл (для Windows)
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = outputPath,
@@ -121,6 +181,43 @@ namespace DocumentGenerator.Services
             {
                 Console.WriteLine($"Ошибка при заполнении PDF: {ex.Message}");
             }
+        }
+
+        private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
+        {
+            // Убедимся, что в документе есть как минимум 3 страницы
+            int currentPageCount = pdfDocument.GetNumberOfPages();
+            while (currentPageCount < 3)
+            {
+                pdfDocument.AddNewPage();
+                currentPageCount++;
+            }
+
+            // Получаем третью страницу
+            var page = pdfDocument.GetPage(3);
+            var pageSize = page.GetPageSize();
+            var canvas = new PdfCanvas(page);
+
+            // Создаём ColumnText для управления позицией текста
+            var column = new iText.Kernel.Pdf.Canvas.PdfCanvas(page);
+            var columnText = new iText.Layout.Canvas(column, new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72));
+
+            // Создаём параграф с текстом
+            var paragraph = new Paragraph()
+                .SetFont(font)
+                .SetFontSize(12);
+
+            paragraph.Add(new Text("Список необходимых анализов:\n\n"));
+            int testNumber = 1;
+            foreach (var test in tests)
+            {
+                paragraph.Add(new Text($"{testNumber}. {test}\n"));
+                testNumber++;
+            }
+
+            // Добавляем параграф на третью страницу
+            columnText.Add(paragraph);
+            columnText.Close();
         }
     }
 }
