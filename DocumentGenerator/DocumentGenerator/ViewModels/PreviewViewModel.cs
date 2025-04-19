@@ -25,7 +25,7 @@ namespace DocumentGenerator.ViewModels
         private string _okved = "";
         private string _workExperience = "";
 
-        public PreviewViewModel(MainWindowViewModel sourceViewModel = null)
+        public PreviewViewModel(DataEntryViewModel sourceViewModel = null)
         {
             if (sourceViewModel != null)
             {

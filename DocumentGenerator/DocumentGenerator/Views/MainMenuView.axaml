@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:DocumentGenerator.ViewModels"
+             x:Class="DocumentGenerator.Views.MainMenuView"
+             x:DataType="vm:MainWindowViewModel">
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Margin" Value="10"/>
+			<Setter Property="Padding" Value="10,5"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Background" Value="LightBlue"/>
+			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="CornerRadius" Value="5"/>
+		</Style>
+		<Style Selector="Button:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="SkyBlue"/>
+		</Style>
+	</UserControl.Styles>
+	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+		<Button Content="Ввод данных" Command="{Binding GoToDataEntryCommand}"/>
+	</StackPanel>
+</UserControl>

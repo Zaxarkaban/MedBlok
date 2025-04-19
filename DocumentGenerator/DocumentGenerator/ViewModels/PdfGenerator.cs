@@ -16,9 +16,9 @@ namespace DocumentGenerator
 {
     public class PdfGenerator
     {
-        private readonly MainWindowViewModel _viewModel;
+        private readonly DataEntryViewModel _viewModel;
 
-        public PdfGenerator(MainWindowViewModel viewModel)
+        public PdfGenerator(DataEntryViewModel viewModel)
         {
             _viewModel = viewModel;
         }

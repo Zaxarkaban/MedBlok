@@ -1,21 +1,18 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using DocumentGenerator.ViewModels;
+using Avalonia.Markup.Xaml;
 
 namespace DocumentGenerator
 {
     public partial class ExcelDataWindow : Window
     {
-        private ExcelDataViewModel ViewModel => (ExcelDataViewModel)DataContext;
-
         public ExcelDataWindow()
         {
             InitializeComponent();
         }
 
-        private async void SaveToPdf_Click(object sender, RoutedEventArgs e)
+        private void InitializeComponent()
         {
-            await ViewModel.SaveToPdf(this);
+            AvaloniaXamlLoader.Load(this);
         }
     }
 }
