@@ -21,13 +21,15 @@ namespace DocumentGenerator.ViewModels
         private string _passportIssuedBy = "";
         private string _medicalPolicy = "";
         private string _address = "";
-        private string _phone = "";
+        private string _phone = "+7";
         private string _medicalOrganization = "";
-        private string _medicalFacility = "";
+        private string _medicalFacility = "СПб ГБУЗ \"Городская поликлиника № 60 Пушкинского района\"";
         private string _workplace = "";
         private string _ownershipForm = "";
         private string _okved = "";
         private string _workExperience = "";
+        private string _workAddress = "";
+        private string _department = "";
 
         private string _fullNameError = "";
         private string _positionError = "";
@@ -48,6 +50,8 @@ namespace DocumentGenerator.ViewModels
         private string _okvedError = "";
         private string _workExperienceError = "";
         private string _selectedOrderClausesError = "";
+        private string _workAddressError = "";
+        private string _departmentError = "";
 
         private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
 
@@ -56,7 +60,8 @@ namespace DocumentGenerator.ViewModels
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
-            OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО" };
+            OwnershipFormOptions = new List<string> { "ООО","ИП","АО","ПАО","ГУП","ЗАО","ОАО" };
+            MedicalOrganizationOptions = new List<string>{"АО \"ГСМК\"","АО \"МАКС-М\"","ООО \"СМК РЕСО-Мед\"","ООО \"Капитал МС\"","АО \"СОГАЗ-Мед\"","ООО \"СК \"Ингосстрах-М\""};
             OrderClauseOptions = Dictionaries.OrderClauseDataMap.Keys.ToList();
             _documentService = new DocumentService();
         }
@@ -175,11 +180,23 @@ namespace DocumentGenerator.ViewModels
             get => _selectedOrderClauses;
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value);
         }
+        public string WorkAddress
+        {
+            get => _workAddress;
+            set => this.RaiseAndSetIfChanged(ref _workAddress, value);
+        }
+
+        public string Department
+        {
+            get => _department;
+            set => this.RaiseAndSetIfChanged(ref _department, value);
+        }
 
         // Списки для ComboBox и ListBox
         public List<string> GenderOptions { get; }
         public List<string> OwnershipFormOptions { get; }
         public List<string> OrderClauseOptions { get; }
+        public List<string> MedicalOrganizationOptions { get; }
 
         // Свойства ошибок
         public string FullNameError
@@ -295,6 +312,17 @@ namespace DocumentGenerator.ViewModels
             get => _selectedOrderClausesError;
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
         }
+        public string WorkAddressError
+        {
+            get => _workAddressError;
+            set => this.RaiseAndSetIfChanged(ref _workAddressError, value);
+        }
+
+        public string DepartmentError
+        {
+            get => _departmentError;
+            set => this.RaiseAndSetIfChanged(ref _departmentError, value);
+        }
 
         // Получение врачей для выбранных пунктов вредности
         public List<string> GetDoctorsForSelectedClauses()
@@ -393,7 +421,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportSeries))
             {
-                PassportSeriesError = "Серия паспорта не может быть пустой";
+                PassportSeriesError = "";
                 return;
             }
 
@@ -406,7 +434,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportNumber))
             {
-                PassportNumberError = "Номер паспорта не может быть пустым";
+                PassportNumberError = "";
                 return;
             }
 
@@ -419,7 +447,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportIssueDate))
             {
-                PassportIssueDateError = "Дата выдачи паспорта не может быть пустой";
+                PassportIssueDateError = "";
                 return;
             }
 
@@ -440,7 +468,7 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidatePassportIssuedBy()
         {
-            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Кем выдан паспорт не может быть пустым" : "";
+            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "" : "";
         }
 
         public void ValidateMedicalPolicy()
@@ -460,7 +488,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Address))
             {
-                AddressError = "Адрес не может быть пустым";
+                AddressError = "";
                 return;
             }
 
@@ -492,17 +520,11 @@ namespace DocumentGenerator.ViewModels
             PhoneError = "";
         }
 
-        public void ValidateMedicalOrganization()
-        {
-            MedicalOrganizationError = string.IsNullOrWhiteSpace(MedicalOrganization)
-                ? "Наименование страховой медицинской организации не может быть пустым"
-                : "";
-        }
 
         public void ValidateMedicalFacility()
         {
             MedicalFacilityError = string.IsNullOrWhiteSpace(MedicalFacility)
-                ? "Наблюдается ЛПУ должен быть указан"
+                ? ""
                 : "";
         }
 
@@ -516,7 +538,7 @@ namespace DocumentGenerator.ViewModels
         public void ValidateOwnershipForm()
         {
             OwnershipFormError = string.IsNullOrWhiteSpace(OwnershipForm)
-                ? "Форма собственности должна быть выбрана"
+                ? ""
                 : "";
         }
 
@@ -524,14 +546,25 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Okved))
             {
-                OkvedError = "ОКВЭД не может быть пустым";
+                OkvedError = "";
                 return;
             }
 
             var parts = Okved.Split('.');
-            if (parts.Length < 2 || parts.Length > 3 || !parts.All(p => p.Length == 2 && p.All(char.IsDigit)))
+            if (parts.Length < 2 || parts.Length > 3 || !parts.All(p => p.All(char.IsDigit)))
             {
-                OkvedError = "ОКВЭД должен быть в формате XX.XX или XX.XX.XX";
+                OkvedError = "ОКВЭД должен быть в формате XX.XX, XX.XX.X или XX.XX.XX";
+                return;
+            }
+
+            if (parts.Length == 2 && parts[0].Length != 2 || parts[1].Length != 2)
+            {
+                OkvedError = "ОКВЭД должен быть в формате XX.XX, XX.XX.X или XX.XX.XX";
+                return;
+            }
+            else if (parts.Length == 3 && (parts[0].Length != 2 || parts[1].Length != 2 || parts[2].Length > 2))
+            {
+                OkvedError = "ОКВЭД должен быть в формате XX.XX, XX.XX.X или XX.XX.XX";
                 return;
             }
 
@@ -550,7 +583,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(WorkExperience))
             {
-                WorkExperienceError = "Стаж работы не может быть пустым";
+                WorkExperienceError = "";
                 return;
             }
 
@@ -583,6 +616,31 @@ namespace DocumentGenerator.ViewModels
                 ? "Необходимо выбрать хотя бы один пункт вредности"
                 : "";
         }
+        public void ValidateWorkAddress()
+        {
+            if (string.IsNullOrWhiteSpace(WorkAddress))
+            {
+                WorkAddressError = "";
+                return;
+            }
+
+            WorkAddressError = WorkAddress.Length > 1000
+                ? "Адрес работы не может превышать 1000 символов"
+                : "";
+        }
+
+        public void ValidateDepartment()
+        {
+            if (string.IsNullOrWhiteSpace(Department))
+            {
+                DepartmentError = "";
+                return;
+            }
+
+            DepartmentError = Department.Length > 1000
+                ? "Структурное подразделение не может превышать 1000 символов"
+                : "";
+        }
 
         public void OnSave()
         {
@@ -599,19 +657,20 @@ namespace DocumentGenerator.ViewModels
             ValidateMedicalPolicy();
             ValidateAddress();
             ValidatePhone();
-            ValidateMedicalOrganization();
             ValidateMedicalFacility();
             ValidateWorkplace();
             ValidateOwnershipForm();
             ValidateOkved();
             ValidateWorkExperience();
             ValidateSelectedOrderClauses();
+            ValidateWorkAddress(); // Добавляем
+            ValidateDepartment();   // Добавляем
 
             // Проверяем, есть ли ошибки валидации
             if (new[] { FullNameError, PositionError, DateOfBirthError, GenderError, SnilsError, PassportSeriesError,
                 PassportNumberError, PassportIssueDateError, PassportIssuedByError, MedicalPolicyError,
                 AddressError, PhoneError, MedicalOrganizationError, MedicalFacilityError, WorkplaceError,
-                OwnershipFormError, OkvedError, WorkExperienceError, SelectedOrderClausesError }
+                OwnershipFormError, OkvedError, WorkExperienceError, SelectedOrderClausesError, WorkAddressError, DepartmentError}
                 .Any(error => !string.IsNullOrEmpty(error)))
             {
                 return; // Если есть ошибки, прерываем выполнение
@@ -643,7 +702,9 @@ namespace DocumentGenerator.ViewModels
         { "OwnershipForm", OwnershipForm },
         { "Okved", Okved },
         { "WorkExperience", WorkExperience },
-        { "OrderClause", string.Join(", ", SelectedOrderClauses) }
+        { "OrderClause", string.Join(", ", SelectedOrderClauses) },
+        { "WorkAddress", WorkAddress }, // Добавляем
+        { "Department", Department }    // Добавляем
     };
 
             // Генерируем список врачей с учётом новых условий

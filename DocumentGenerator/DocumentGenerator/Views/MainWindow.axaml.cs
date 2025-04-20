@@ -56,7 +56,7 @@ namespace DocumentGenerator
                     FormatAndValidateDate(text, textBox),
                 "SnilsTextBox" =>
                     FormatAndValidateSnils(text, textBox),
-                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
+                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
                     (text.Length > 1000 ? text.Substring(0, 1000) : text, Math.Min(text.Length, 1000)),
                 "PhoneTextBox" =>
                     FormatAndValidatePhone(text, textBox),
@@ -101,7 +101,7 @@ namespace DocumentGenerator
                     ValidateDateInput(currentText, e.Text),
                 "SnilsTextBox" =>
                     e.Text.All(char.IsDigit) && newText.Replace("-", "").Replace(" ", "").Length <= 11,
-                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
+                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
                     newText.Length <= 1000,
                 "PhoneTextBox" =>
                     ValidatePhoneInput(currentText, e.Text),
@@ -149,7 +149,7 @@ namespace DocumentGenerator
                             FormatAndValidateDate(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
                         "SnilsTextBox" =>
                             FormatAndValidateSnils(new string(clipboardText.Where(c => char.IsDigit(c) || c == '-' || c == ' ').ToArray()), textBox).filteredText,
-                        "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" =>
+                        "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
                             clipboardText.Length > 1000 ? clipboardText.Substring(0, 1000) : clipboardText,
                         "PhoneTextBox" =>
                             FormatAndValidatePhone(new string(clipboardText.Where(c => char.IsDigit(c) || c == '+' || c == ' ' || c == '(' || c == ')' || c == '-').ToArray()), textBox).filteredText,
@@ -442,7 +442,7 @@ namespace DocumentGenerator
             string digits = currentText.Replace(".", "") + input;
             int pos = digits.Length;
 
-            if (pos > 6) return false;
+            if (pos > 6) return false; // Оставляем до 6 цифр (XX.XX.XX или XX.XX.X)
 
             return true;
         }
@@ -513,6 +513,8 @@ namespace DocumentGenerator
             "WorkplaceTextBox" => 1000,
             "OkvedTextBox" => 8,
             "WorkExperienceTextBox" => 7,
+            "WorkAddressTextBox" => 1000, // Добавляем
+            "DepartmentTextBox" => 1000,  // Добавляем
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 

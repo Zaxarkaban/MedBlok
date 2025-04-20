@@ -382,13 +382,12 @@
 			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
 
 			<TextBlock Text="Наименование страховой медицинской организации" />
-			<TextBox Name="MedicalOrganizationTextBox"
-					 Text="{Binding MedicalOrganization, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите наименование организации" />
-			<TextBlock Text="{Binding MedicalOrganizationError}" Foreground="Red" />
+					<ComboBox Name="MedicalOrganizationComboBox"
+					  SelectedItem="{Binding MedicalOrganization}"
+					  ItemsSource="{Binding MedicalOrganizationOptions}"
+					  SelectionChanged="ComboBox_SelectionChanged"
+					  GotFocus="ComboBox_GotFocus"
+					  KeyDown="InputField_KeyDown" />
 
 			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
 			<TextBox Name="MedicalPolicyTextBox"
@@ -416,6 +415,24 @@
 					 KeyDown="RestrictKeyDown"
 					 Watermark="Введите место работы" />
 			<TextBlock Text="{Binding WorkplaceError}" Foreground="Red" />
+			
+			<TextBlock Text="Адрес работы" />
+			<TextBox Name="WorkAddressTextBox"
+					 Text="{Binding WorkAddress, UpdateSourceTrigger=PropertyChanged}"
+					 TextChanged="HandleTextChanged"
+					 TextInput="RestrictInput"
+					 KeyDown="RestrictKeyDown"
+					 Watermark="Введите адрес работы" />
+			<TextBlock Text="{Binding WorkAddressError}" Foreground="Red" />
+			
+			<TextBlock Text="Структурное подразделение" />
+			<TextBox Name="DepartmentTextBox"
+				 Text="{Binding Department, UpdateSourceTrigger=PropertyChanged}"
+				 TextChanged="HandleTextChanged"
+				 TextInput="RestrictInput"
+				 KeyDown="RestrictKeyDown"
+				 Watermark="Введите подразделение" />
+			<TextBlock Text="{Binding DepartmentError}" Foreground="Red" />
 
 			<TextBlock Text="Форма собственности" />
 			<ComboBox Name="OwnershipFormComboBox"
