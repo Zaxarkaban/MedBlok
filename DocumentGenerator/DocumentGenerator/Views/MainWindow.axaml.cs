@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using OfficeOpenXml;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentGenerator
 {
@@ -17,12 +18,25 @@ namespace DocumentGenerator
         public MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
         private const int CurrentYear = 2025;
         private const int MinYear = CurrentYear - 120; // 1905
+        private readonly IServiceProvider _serviceProvider;
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainWindowViewModel();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Для EPPlus
+        }
+
+        public MainWindow(IServiceProvider serviceProvider) : this()
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        private void BackToMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var menuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+            menuWindow.Show();
+            Close();
         }
 
         private void HandleTextChanged(object sender, TextChangedEventArgs e)

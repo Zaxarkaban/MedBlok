@@ -191,6 +191,11 @@
                     Click="LoadExcel_Click"
                     HorizontalAlignment="Center"
                     Margin="10" />
+			<Button Name="BackToMenuButton"
+                    Content="Назад в главное меню"
+                    Click="BackToMenu_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>

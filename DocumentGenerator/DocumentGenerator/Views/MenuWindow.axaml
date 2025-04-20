@@ -1,12 +1,67 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:vm="using:DocumentGenerator.ViewModels"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MenuWindow"
         Title="Главное меню"
-        Width="400" Height="300"
+        Width="600" Height="400"
         WindowStartupLocation="CenterScreen">
-	<StackPanel Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
-		<TextBlock Text="Добро пожаловать!" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center"/>
-		<Button Content="Открыть основное окно" x:Name="OpenMainWindowButton" Width="200" Height="40" Click="OpenMainWindowButton_Click"/>
-	</StackPanel>
+	<Window.Background>
+		<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+			<GradientStop Color="#4A00E0" Offset="0"/>
+			<GradientStop Color="#8E2DE2" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>
+	<Window.Styles>
+		<!-- Стиль для кнопок -->
+		<Style Selector="Button">
+			<Setter Property="Background" Value="#FFFFFF"/>
+			<Setter Property="Foreground" Value="#4A00E0"/>
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Width" Value="250"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,10"/>
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+				</Transitions>
+			</Setter>
+			<Setter Property="RenderTransform" Value="scale(1)"/>
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+		<!-- Стиль для кнопок при наведении -->
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background" Value="#E0E0E0"/>
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="RenderTransform" Value="scale(1.05)"/>
+		</Style>
+		<!-- Стиль для кнопок при нажатии -->
+		<Style Selector="Button:pressed">
+			<Setter Property="Background" Value="#D0D0D0"/>
+			<Setter Property="RenderTransform" Value="scale(0.98)"/>
+		</Style>
+		<!-- Стиль для заголовка -->
+		<Style Selector="TextBlock.header">
+			<Setter Property="FontSize" Value="36"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="0,0,0,30"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="2" OffsetY="2"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Styles>
+	<Grid>
+		<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+			<TextBlock Text="Document Generator" Classes="header"/>
+			<Button Content="Создать документ" x:Name="OpenMainWindowButton" Click="OpenMainWindowButton_Click"/>
+			<Button Content="Выход" x:Name="ExitButton" Click="ExitButton_Click"/>
+		</StackPanel>
+	</Grid>
 </Window>
