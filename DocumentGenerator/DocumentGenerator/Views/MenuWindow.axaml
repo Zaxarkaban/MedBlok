@@ -5,63 +5,173 @@
         Title="Главное меню"
         Width="600" Height="400"
         WindowStartupLocation="CenterScreen">
+	<!-- Многослойный фон -->
 	<Window.Background>
-		<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-			<GradientStop Color="#4A00E0" Offset="0"/>
-			<GradientStop Color="#8E2DE2" Offset="1"/>
+		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Color="#063d2c" Offset="0"/>
+			<GradientStop Color="#125e47" Offset="0.5"/>
+			<GradientStop Color="#063d2c" Offset="1"/>
 		</LinearGradientBrush>
 	</Window.Background>
+	<!-- Стили -->
 	<Window.Styles>
 		<!-- Стиль для кнопок -->
 		<Style Selector="Button">
-			<Setter Property="Background" Value="#FFFFFF"/>
-			<Setter Property="Foreground" Value="#4A00E0"/>
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ed1b5" Offset="0"/>
+						<!-- Светлый бирюзовый -->
+						<GradientStop Color="#0a5c4e" Offset="1"/>
+						<!-- Тёмный зелёный -->
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="FontSize" Value="18"/>
 			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Width" Value="250"/>
-			<Setter Property="Height" Value="50"/>
-			<Setter Property="Margin" Value="0,10"/>
-			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="Width" Value="300"/>
+			<Setter Property="Height" Value="60"/>
+			<Setter Property="Margin" Value="0,15"/>
+			<Setter Property="CornerRadius" Value="30"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
-			<Setter Property="Transitions">
-				<Transitions>
-					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
-					<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-				</Transitions>
-			</Setter>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="RenderTransform" Value="scale(1)"/>
-			<Setter Property="Opacity" Value="0.9"/>
-		</Style>
-		<!-- Стиль для кнопок при наведении -->
-		<Style Selector="Button:pointerover">
-			<Setter Property="Background" Value="#E0E0E0"/>
-			<Setter Property="Opacity" Value="1"/>
-			<Setter Property="RenderTransform" Value="scale(1.05)"/>
-		</Style>
-		<!-- Стиль для кнопок при нажатии -->
-		<Style Selector="Button:pressed">
-			<Setter Property="Background" Value="#D0D0D0"/>
-			<Setter Property="RenderTransform" Value="scale(0.98)"/>
-		</Style>
-		<!-- Стиль для заголовка -->
-		<Style Selector="TextBlock.header">
-			<Setter Property="FontSize" Value="36"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="TextAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="0,0,0,30"/>
 			<Setter Property="Effect">
 				<Setter.Value>
-					<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="2" OffsetY="2"/>
+					<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="3" OffsetY="3" Opacity="0.5"/>
 				</Setter.Value>
+			</Setter>
+			<Setter Property="Transitions">
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+					<BrushTransition Property="Background" Duration="0:0:0.3"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+			<Setter Property="Opacity" Value="0.9"/>
+			<Setter Property="Template">
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+							CornerRadius="{TemplateBinding CornerRadius}"
+							RenderTransform="{TemplateBinding RenderTransform}"
+							ClipToBounds="False"
+							Padding="10">
+						<Grid>
+							<!-- Эффект волны при нажатии -->
+							<Ellipse x:Name="RippleEffect"
+									 Width="0" Height="0"
+									 HorizontalAlignment="Center"
+									 VerticalAlignment="Center"
+									 Fill="White"
+									 Opacity="0">
+								<Ellipse.Transitions>
+									<Transitions>
+										<DoubleTransition Property="Width" Duration="0:0:0.5"/>
+										<DoubleTransition Property="Height" Duration="0:0:0.5"/>
+										<DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+									</Transitions>
+								</Ellipse.Transitions>
+							</Ellipse>
+							<!-- Контент кнопки -->
+							<ContentPresenter Content="{TemplateBinding Content}"
+											  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<!-- Стиль при наведении -->
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#3ef7d2" Offset="0"/>
+						<!-- Яркий бирюзовый -->
+						<GradientStop Color="#1a9b82" Offset="1"/>
+						<!-- Средний зелёный -->
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="RenderTransform" Value="scale(1.01)"/>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<!-- Стиль при нажатии -->
+		<Style Selector="Button:pressed">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#0f7a6b" Offset="0"/>
+						<!-- Тёмный зелёный -->
+						<GradientStop Color="#063d2c" Offset="1"/>
+						<!-- Очень тёмный зелёный -->
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="RenderTransform" Value="scale(0.98)"/>
+			<Setter Property="Opacity" Value="0.8"/>
+		</Style>
+		<!-- Стиль заголовка -->
+		<Style Selector="TextBlock.header">
+			<Setter Property="FontSize" Value="48"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Foreground" Value="#f0f4f8"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="0,0,0,50"/>
+			<Setter Property="Opacity" Value="0"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:1"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<!-- Стиль для частиц -->
+		<Style Selector="Ellipse.particle">
+			<Setter Property="Fill" Value="#18ab9a"/>
+			<Setter Property="Opacity" Value="0.5"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:2"/>
+					<DoubleTransition Property="Width" Duration="0:0:2"/>
+					<DoubleTransition Property="Height" Duration="0:0:2"/>
+				</Transitions>
 			</Setter>
 		</Style>
 	</Window.Styles>
+	<!-- Макет -->
 	<Grid>
-		<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-			<TextBlock Text="Document Generator" Classes="header"/>
-			<Button Content="Создать документ" x:Name="OpenMainWindowButton" Click="OpenMainWindowButton_Click"/>
-			<Button Content="Выход" x:Name="ExitButton" Click="ExitButton_Click"/>
-		</StackPanel>
+		<!-- Фон для частиц -->
+		<Canvas x:Name="ParticleCanvas" IsHitTestVisible="False"/>
+		<!-- Основной контент -->
+		<Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<TextBlock x:Name="HeaderText" Text="Document Generator" Classes="header" Grid.Row="0"/>
+			<Button x:Name="NewDocumentButton" Content="Новый документ" Grid.Row="1">
+				<Button.ContentTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<TextBlock Text="📝" FontSize="20" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</Button.ContentTemplate>
+			</Button>
+			<Button x:Name="ExitButton" Content="Выход" Grid.Row="2">
+				<Button.ContentTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<TextBlock Text="🚪" FontSize="20" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</Button.ContentTemplate>
+			</Button>
+		</Grid>
 	</Grid>
 </Window>
