@@ -27,7 +27,8 @@ namespace DocumentGenerator.ViewModels
         private string _workplace = "";
         private string _ownershipForm = "";
         private string _okved = "";
-        private string _workExperience = "";
+        private string _workExperienceYears = "";
+        private string _workExperienceMonths = "";
         private string _workAddress = "";
         private string _department = "";
 
@@ -48,22 +49,28 @@ namespace DocumentGenerator.ViewModels
         private string _workplaceError = "";
         private string _ownershipFormError = "";
         private string _okvedError = "";
-        private string _workExperienceError = "";
+        private string _workExperienceYearsError = "";
+        private string _workExperienceMonthsError = "";
         private string _selectedOrderClausesError = "";
         private string _workAddressError = "";
         private string _departmentError = "";
 
         private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
+        private string _orderClausesSearchText = ""; // Текст для поиска
+        private ObservableCollection<string> _filteredOrderClauseOptions; // Отфильтрованный список
 
         private readonly DocumentService _documentService;
 
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
-            OwnershipFormOptions = new List<string> { "ООО","ИП","АО","ПАО","ГУП","ЗАО","ОАО" };
-            MedicalOrganizationOptions = new List<string>{"АО \"ГСМК\"","АО \"МАКС-М\"","ООО \"СМК РЕСО-Мед\"","ООО \"Капитал МС\"","АО \"СОГАЗ-Мед\"","ООО \"СК \"Ингосстрах-М\""};
+            OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО", "ГУП", "ЗАО", "ОАО" };
+            MedicalOrganizationOptions = new List<string> { "АО \"ГСМК\"", "АО \"МАКС-М\"", "ООО \"СМК РЕСО-Мед\"", "ООО \"Капитал МС\"", "АО \"СОГАЗ-Мед\"", "ООО \"СК \"Ингосстрах-М\"" };
             OrderClauseOptions = Dictionaries.OrderClauseDataMap.Keys.ToList();
             _documentService = new DocumentService();
+
+            // Инициализация отфильтрованного списка (изначально все пункты)
+            _filteredOrderClauseOptions = new ObservableCollection<string>(OrderClauseOptions);
         }
 
         // Свойства
@@ -169,10 +176,16 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _okved, value);
         }
 
-        public string WorkExperience
+        public string WorkExperienceYears
         {
-            get => _workExperience;
-            set => this.RaiseAndSetIfChanged(ref _workExperience, value);
+            get => _workExperienceYears;
+            set => this.RaiseAndSetIfChanged(ref _workExperienceYears, value);
+        }
+
+        public string WorkExperienceMonths
+        {
+            get => _workExperienceMonths;
+            set => this.RaiseAndSetIfChanged(ref _workExperienceMonths, value);
         }
 
         public ObservableCollection<string> SelectedOrderClauses
@@ -180,6 +193,7 @@ namespace DocumentGenerator.ViewModels
             get => _selectedOrderClauses;
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClauses, value);
         }
+
         public string WorkAddress
         {
             get => _workAddress;
@@ -197,6 +211,24 @@ namespace DocumentGenerator.ViewModels
         public List<string> OwnershipFormOptions { get; }
         public List<string> OrderClauseOptions { get; }
         public List<string> MedicalOrganizationOptions { get; }
+
+        // Свойство для отфильтрованного списка пунктов вредности
+        public ObservableCollection<string> FilteredOrderClauseOptions
+        {
+            get => _filteredOrderClauseOptions;
+            set => this.RaiseAndSetIfChanged(ref _filteredOrderClauseOptions, value);
+        }
+
+        // Текст для поиска
+        public string OrderClausesSearchText
+        {
+            get => _orderClausesSearchText;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _orderClausesSearchText, value);
+                FilterOrderClauses(); // Фильтруем список при изменении текста
+            }
+        }
 
         // Свойства ошибок
         public string FullNameError
@@ -301,10 +333,16 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _okvedError, value);
         }
 
-        public string WorkExperienceError
+        public string WorkExperienceYearsError
         {
-            get => _workExperienceError;
-            set => this.RaiseAndSetIfChanged(ref _workExperienceError, value);
+            get => _workExperienceYearsError;
+            set => this.RaiseAndSetIfChanged(ref _workExperienceYearsError, value);
+        }
+
+        public string WorkExperienceMonthsError
+        {
+            get => _workExperienceMonthsError;
+            set => this.RaiseAndSetIfChanged(ref _workExperienceMonthsError, value);
         }
 
         public string SelectedOrderClausesError
@@ -312,6 +350,7 @@ namespace DocumentGenerator.ViewModels
             get => _selectedOrderClausesError;
             set => this.RaiseAndSetIfChanged(ref _selectedOrderClausesError, value);
         }
+
         public string WorkAddressError
         {
             get => _workAddressError;
@@ -336,6 +375,39 @@ namespace DocumentGenerator.ViewModels
                 }
             }
             return doctors.Distinct().ToList();
+        }
+
+        // Фильтрация пунктов по тексту поиска
+        private void FilterOrderClauses()
+        {
+            if (string.IsNullOrWhiteSpace(OrderClausesSearchText))
+            {
+                // Если текст поиска пустой, показываем все пункты
+                FilteredOrderClauseOptions = new ObservableCollection<string>(OrderClauseOptions);
+            }
+            else
+            {
+                // Фильтруем пункты, которые начинаются с введённого текста (без учёта регистра)
+                var filtered = OrderClauseOptions
+                    .Where(item => item.StartsWith(OrderClausesSearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                FilteredOrderClauseOptions = new ObservableCollection<string>(filtered);
+
+                // Удаляем из выбранных пунктов те, которые больше не отображаются
+                var invalidSelections = _selectedOrderClauses
+                    .Where(selected => !FilteredOrderClauseOptions.Contains(selected))
+                    .ToList();
+                foreach (var invalid in invalidSelections)
+                {
+                    _selectedOrderClauses.Remove(invalid);
+                }
+
+                // Обновляем SelectedOrderClauses в UI
+                this.RaisePropertyChanged(nameof(SelectedOrderClauses));
+            }
+
+            // Перезапускаем валидацию, так как список выбранных пунктов мог измениться
+            ValidateSelectedOrderClauses();
         }
 
         // Методы валидации
@@ -520,7 +592,6 @@ namespace DocumentGenerator.ViewModels
             PhoneError = "";
         }
 
-
         public void ValidateMedicalFacility()
         {
             MedicalFacilityError = string.IsNullOrWhiteSpace(MedicalFacility)
@@ -581,20 +652,33 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidateWorkExperience()
         {
-            if (string.IsNullOrWhiteSpace(WorkExperience))
+            // Сбрасываем ошибки
+            WorkExperienceYearsError = "";
+            WorkExperienceMonthsError = "";
+
+            // Проверяем годы
+            if (!string.IsNullOrWhiteSpace(WorkExperienceYears))
             {
-                WorkExperienceError = "";
-                return;
+                if (!int.TryParse(WorkExperienceYears, out int years) || years < 0 || years > 80)
+                {
+                    WorkExperienceYearsError = "Годы должны быть числом от 0 до 80";
+                    return;
+                }
             }
 
-            var digits = WorkExperience.Replace(" лет", "");
-            if (!int.TryParse(digits, out int years) || years < 0 || years > 80)
+            // Проверяем месяцы
+            if (!string.IsNullOrWhiteSpace(WorkExperienceMonths))
             {
-                WorkExperienceError = "Стаж работы должен быть числом от 0 до 80 лет";
-                return;
+                if (!int.TryParse(WorkExperienceMonths, out int months) || months < 0 || months > 11)
+                {
+                    WorkExperienceMonthsError = "Месяцы должны быть числом от 0 до 11";
+                    return;
+                }
             }
-
-            WorkExperienceError = "";
+            else
+            {
+                WorkExperienceMonths = ""; // Если месяцы не указаны, ставим пустую строку
+            }
         }
 
         private int CalculateAge()
@@ -616,6 +700,7 @@ namespace DocumentGenerator.ViewModels
                 ? "Необходимо выбрать хотя бы один пункт вредности"
                 : "";
         }
+
         public void ValidateWorkAddress()
         {
             if (string.IsNullOrWhiteSpace(WorkAddress))
@@ -663,14 +748,14 @@ namespace DocumentGenerator.ViewModels
             ValidateOkved();
             ValidateWorkExperience();
             ValidateSelectedOrderClauses();
-            ValidateWorkAddress(); // Добавляем
-            ValidateDepartment();   // Добавляем
+            ValidateWorkAddress();
+            ValidateDepartment();
 
             // Проверяем, есть ли ошибки валидации
             if (new[] { FullNameError, PositionError, DateOfBirthError, GenderError, SnilsError, PassportSeriesError,
                 PassportNumberError, PassportIssueDateError, PassportIssuedByError, MedicalPolicyError,
                 AddressError, PhoneError, MedicalOrganizationError, MedicalFacilityError, WorkplaceError,
-                OwnershipFormError, OkvedError, WorkExperienceError, SelectedOrderClausesError, WorkAddressError, DepartmentError}
+                OwnershipFormError, OkvedError, WorkExperienceYearsError, WorkExperienceMonthsError, SelectedOrderClausesError, WorkAddressError, DepartmentError}
                 .Any(error => !string.IsNullOrEmpty(error)))
             {
                 return; // Если есть ошибки, прерываем выполнение
@@ -683,29 +768,29 @@ namespace DocumentGenerator.ViewModels
 
             // Собираем данные пользователя в словарь
             var userData = new Dictionary<string, string>
-    {
-        { "FullName", FullName },
-        { "Position", Position },
-        { "DateOfBirth", DateOfBirth },
-        { "Gender", Gender },
-        { "Snils", Snils },
-        { "PassportSeries", PassportSeries },
-        { "PassportNumber", PassportNumber },
-        { "PassportIssueDate", PassportIssueDate },
-        { "PassportIssuedBy", PassportIssuedBy },
-        { "MedicalPolicy", MedicalPolicy },
-        { "Address", Address },
-        { "Phone", Phone },
-        { "MedicalOrganization", MedicalOrganization },
-        { "MedicalFacility", MedicalFacility },
-        { "Workplace", Workplace },
-        { "OwnershipForm", OwnershipForm },
-        { "Okved", Okved },
-        { "WorkExperience", WorkExperience },
-        { "OrderClause", string.Join(", ", SelectedOrderClauses) },
-        { "WorkAddress", WorkAddress }, // Добавляем
-        { "Department", Department }    // Добавляем
-    };
+            {
+                { "FullName", FullName },
+                { "Position", Position },
+                { "DateOfBirth", DateOfBirth },
+                { "Gender", Gender },
+                { "Snils", Snils },
+                { "PassportSeries", PassportSeries },
+                { "PassportNumber", PassportNumber },
+                { "PassportIssueDate", PassportIssueDate },
+                { "PassportIssuedBy", PassportIssuedBy },
+                { "MedicalPolicy", MedicalPolicy },
+                { "Address", Address },
+                { "Phone", Phone },
+                { "MedicalOrganization", MedicalOrganization },
+                { "MedicalFacility", MedicalFacility },
+                { "Workplace", Workplace },
+                { "OwnershipForm", OwnershipForm },
+                { "Okved", Okved },
+                { "WorkExperience", $"{WorkExperienceYears} лет {WorkExperienceMonths} месяцев" },
+                { "OrderClause", string.Join(", ", SelectedOrderClauses) },
+                { "WorkAddress", WorkAddress },
+                { "Department", Department }
+            };
 
             // Генерируем список врачей с учётом новых условий
             var doctors = _documentService.GenerateDoctorsList(SelectedOrderClauses.ToList(), isOver40, isFemale);

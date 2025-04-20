@@ -85,8 +85,11 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "Workplace", _viewModel.Workplace, font);
                     SetFieldValue(fields, "OwnershipForm", _viewModel.OwnershipForm, font);
                     SetFieldValue(fields, "Okved", _viewModel.Okved, font);
-                    SetFieldValue(fields, "WorkExperience", _viewModel.WorkExperience, font);
+                    SetFieldValue(fields, "WorkExperience", $"{_viewModel.WorkExperienceYears} лет {_viewModel.WorkExperienceMonths} месяцев", font);
                     SetFieldValue(fields, "OrderClause", string.Join(", ", _viewModel.SelectedOrderClauses), font);
+                    // Добавляем после других SetFieldValue
+                    SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
+                    SetFieldValue(fields, "Department", _viewModel.Department, font);
 
                     // Создаём список врачей с учётом условий
                     var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
@@ -163,7 +166,7 @@ namespace DocumentGenerator
                 "Электрокардиография в покое",
                 "Измерение артериального давления на периферических артериях",
                 "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
-                "Определение относительного сердечно-сосудистого риска",
+                isOver40 ? "Определение абсолютного сердечно-сосудистого риска" : "Определение относительного сердечно-сосудистого риска",
                 "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
                 "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
                 "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
@@ -172,7 +175,6 @@ namespace DocumentGenerator
 
             if (isOver40)
             {
-                mandatoryTests.Add("Определение абсолютного сердечно-сосудистого риска");
                 mandatoryTests.Add("Измерение внутриглазного давления");
             }
 

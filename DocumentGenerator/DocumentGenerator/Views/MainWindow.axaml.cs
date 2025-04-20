@@ -10,6 +10,8 @@ using System.IO;
 using System.Collections.Generic;
 using OfficeOpenXml;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia.VisualTree;
+using DynamicData;
 
 namespace DocumentGenerator
 {
@@ -62,24 +64,78 @@ namespace DocumentGenerator
                     FormatAndValidatePhone(text, textBox),
                 "OkvedTextBox" =>
                     FormatAndValidateOkved(text, textBox),
-                "WorkExperienceTextBox" =>
-                    FormatAndValidateWorkExperience(text, textBox),
+                "WorkExperienceYearsTextBox" => // Новое поле для лет
+                    FilterNumericInput(text, 2, textBox),
+                "WorkExperienceMonthsTextBox" => // Новое поле для месяцев
+                    FilterNumericInput(text, 2, textBox),
                 _ => (text, text.Length)
             };
 
-            if (text != filteredText)
+            if (ViewModel != null)
             {
-                textBox.Text = filteredText;
-                textBox.CaretIndex = caretIndex;
+                if (name == "WorkExperienceYearsTextBox" || name == "WorkExperienceMonthsTextBox")
+                {
+                    ViewModel.ValidateWorkExperience();
+                }
+
+                if (text != filteredText)
+                {
+                    textBox.Text = filteredText;
+                    textBox.CaretIndex = caretIndex;
+                }
+
+                ViewModel.GetType().GetMethod($"Validate{name.Replace("TextBox", "")}")?.Invoke(ViewModel, null);
+
+                int maxLength = GetMaxLengthForField(name);
+                if (filteredText.Length == maxLength)
+                {
+                    MoveFocusByTabIndex(textBox, true);
+                }
             }
 
-            ViewModel.GetType().GetMethod($"Validate{name.Replace("TextBox", "")}")?.Invoke(ViewModel, null);
-
-            int maxLength = GetMaxLengthForField(name);
-            if (filteredText.Length == maxLength)
+            // Управление фокусом
+            if (name == "WorkExperienceYearsTextBox" && filteredText.Length == 2) // Если заполнено поле "Годы" (2 цифры)
             {
-                MoveFocus(textBox, true);
+                var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
+                if (monthsTextBox != null)
+                {
+                    monthsTextBox.Focus();
+                }
             }
+            else if (name == "WorkExperienceMonthsTextBox" && filteredText.Length == 2) // Если заполнено поле "Месяцы" (2 цифры)
+            {
+                var saveButton = this.FindControl<Button>("SaveButton");
+                if (saveButton != null)
+                {
+                    saveButton.Focus();
+                }
+            }
+        }
+
+        private void HandleSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Фильтрация уже выполняется в ViewModel через привязку OrderClausesSearchText
+            // Здесь можно добавить дополнительную логику, если нужно, но в данном случае это не требуется
+        }
+
+        private bool ValidateWorkExperienceInput(string currentText, string input, string fieldType)
+        {
+            if (!input.All(char.IsDigit)) return false;
+
+            string digits = currentText + input;
+            int maxLength = fieldType == "Years" ? 2 : 2; // 2 цифры для лет и месяцев
+            if (digits.Length > maxLength) return false;
+
+            if (fieldType == "Months")
+            {
+                if (int.TryParse(digits, out int months) && months > 11) return false;
+            }
+            else if (fieldType == "Years")
+            {
+                if (int.TryParse(digits, out int years) && years > 80) return false;
+            }
+
+            return true;
         }
 
         private void RestrictInput(object sender, TextInputEventArgs e)
@@ -101,18 +157,21 @@ namespace DocumentGenerator
                     ValidateDateInput(currentText, e.Text),
                 "SnilsTextBox" =>
                     e.Text.All(char.IsDigit) && newText.Replace("-", "").Replace(" ", "").Length <= 11,
-                "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
+                "AddressTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
                     newText.Length <= 1000,
                 "PhoneTextBox" =>
                     ValidatePhoneInput(currentText, e.Text),
                 "OkvedTextBox" =>
                     ValidateOkvedInput(currentText, e.Text),
-                "WorkExperienceTextBox" =>
-                    e.Text.All(char.IsDigit) && newText.Replace(" лет", "").Length <= 2,
+                "WorkExperienceYearsTextBox" =>
+                    ValidateWorkExperienceInput(currentText, e.Text, "Years"),
+                "WorkExperienceMonthsTextBox" =>
+                    ValidateWorkExperienceInput(currentText, e.Text, "Months"),
+                "OrderClausesSearchBox" => true, // Разрешаем любой ввод в поле поиска
                 _ => true
             };
 
-            if (!isValid) e.Handled = true;
+            e.Handled = !isValid;
         }
 
         private void RestrictKeyDown(object sender, KeyEventArgs e)
@@ -121,7 +180,41 @@ namespace DocumentGenerator
 
             if (e.Key is Key.Enter or Key.Up or Key.Down)
             {
-                InputField_KeyDown(sender, e);
+                if (e.Key == Key.Enter)
+                {
+                    string name = textBox.Name ?? throw new InvalidOperationException("TextBox must have a Name");
+                    if (name == "WorkExperienceYearsTextBox")
+                    {
+                        var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
+                        if (monthsTextBox != null)
+                        {
+                            monthsTextBox.Focus();
+                            e.Handled = true;
+                        }
+                    }
+                    else if (name == "WorkExperienceMonthsTextBox")
+                    {
+                        var saveButton = this.FindControl<Button>("SaveButton");
+                        if (saveButton != null)
+                        {
+                            saveButton.Focus();
+                            if (ViewModel != null)
+                            {
+                                ViewModel.OnSave();
+                            }
+                            e.Handled = true;
+                        }
+                    }
+                    else
+                    {
+                        MoveFocusByTabIndex(textBox, true);
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    InputField_KeyDown(sender, e);
+                }
                 return;
             }
 
@@ -149,14 +242,17 @@ namespace DocumentGenerator
                             FormatAndValidateDate(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
                         "SnilsTextBox" =>
                             FormatAndValidateSnils(new string(clipboardText.Where(c => char.IsDigit(c) || c == '-' || c == ' ').ToArray()), textBox).filteredText,
-                        "AddressTextBox" or "MedicalOrganizationTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
+                        "AddressTextBox" or "WorkplaceTextBox" or "WorkAddressTextBox" or "DepartmentTextBox" =>
                             clipboardText.Length > 1000 ? clipboardText.Substring(0, 1000) : clipboardText,
                         "PhoneTextBox" =>
                             FormatAndValidatePhone(new string(clipboardText.Where(c => char.IsDigit(c) || c == '+' || c == ' ' || c == '(' || c == ')' || c == '-').ToArray()), textBox).filteredText,
                         "OkvedTextBox" =>
                             FormatAndValidateOkved(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
-                        "WorkExperienceTextBox" =>
-                            new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()) + " лет",
+                        "WorkExperienceYearsTextBox" =>
+                            new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
+                        "WorkExperienceMonthsTextBox" =>
+                            new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
+                        "OrderClausesSearchBox" => clipboardText, // Разрешаем вставку в поле поиска
                         _ => clipboardText
                     };
 
@@ -164,12 +260,6 @@ namespace DocumentGenerator
                     {
                         textBox.Text = filteredText;
                         textBox.CaretIndex = filteredText.Length;
-
-                        int maxLength = GetMaxLengthForField(name);
-                        if (filteredText.Length == maxLength)
-                        {
-                            MoveFocus(textBox, true);
-                        }
                     });
                 });
             }
@@ -509,12 +599,12 @@ namespace DocumentGenerator
             "SnilsTextBox" => 14,
             "AddressTextBox" => 1000,
             "PhoneTextBox" => 18,
-            "MedicalOrganizationTextBox" => 1000,
             "WorkplaceTextBox" => 1000,
             "OkvedTextBox" => 8,
-            "WorkExperienceTextBox" => 7,
-            "WorkAddressTextBox" => 1000, // Добавляем
-            "DepartmentTextBox" => 1000,  // Добавляем
+            "WorkExperienceYearsTextBox" => 2, // Для лет
+            "WorkExperienceMonthsTextBox" => 2, // Для месяцев
+            "WorkAddressTextBox" => 1000,
+            "DepartmentTextBox" => 1000,
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 
@@ -539,7 +629,8 @@ namespace DocumentGenerator
                 string.IsNullOrEmpty(ViewModel.WorkplaceError) &&
                 string.IsNullOrEmpty(ViewModel.OwnershipFormError) &&
                 string.IsNullOrEmpty(ViewModel.OkvedError) &&
-                string.IsNullOrEmpty(ViewModel.WorkExperienceError) &&
+                string.IsNullOrEmpty(ViewModel.WorkExperienceYearsError) &&
+                string.IsNullOrEmpty(ViewModel.WorkExperienceMonthsError) &&
                 string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError))
             {
                 var saveFileDialog = new SaveFileDialog
@@ -616,57 +707,122 @@ namespace DocumentGenerator
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender is Control control)
-                MoveFocus(control, true);
+                MoveFocusByTabIndex(control, true);
         }
 
         private void InputField_KeyDown(object sender, KeyEventArgs e)
         {
             if (sender is not Control control) return;
 
-            if (e.Key == Key.Enter)
+            // Закрываем выпадающий список ComboBox перед перемещением фокуса
+            if (control is ComboBox comboBox && comboBox.IsDropDownOpen)
             {
-                if (control.Name == "WorkExperienceTextBox")
+                if (e.Key == Key.Enter || e.Key == Key.Up || e.Key == Key.Down)
                 {
-                    var saveButton = this.FindControl<Button>("SaveButton");
-                    saveButton?.Focus();
+                    comboBox.IsDropDownOpen = false;
                 }
                 else
                 {
-                    MoveFocus(control, true);
+                    return; // Если выпадающий список открыт, и это не Enter/стрелки, не перемещаем фокус
                 }
-                e.Handled = true;
             }
-            else if (e.Key is Key.Up or Key.Down)
+
+            if (e.Key == Key.Enter)
             {
-                if (control is ComboBox comboBox && comboBox.IsDropDownOpen) return;
-                MoveFocus(control, e.Key == Key.Down);
+                // Специальная логика для полей "Годы" и "Месяцы"
+                if (control.Name == "WorkExperienceYearsTextBox")
+                {
+                    var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
+                    if (monthsTextBox != null)
+                    {
+                        monthsTextBox.Focus();
+                        e.Handled = true;
+                    }
+                }
+                else if (control.Name == "WorkExperienceMonthsTextBox")
+                {
+                    var saveButton = this.FindControl<Button>("SaveButton");
+                    if (saveButton != null)
+                    {
+                        saveButton.Focus();
+                        if (ViewModel != null)
+                        {
+                            ViewModel.OnSave();
+                        }
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    MoveFocusByTabIndex(control, true);
+                    e.Handled = true;
+                }
+            }
+            else if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                MoveFocusByTabIndex(control, e.Key == Key.Down);
                 e.Handled = true;
             }
         }
 
-        private void MoveFocus(Control currentControl, bool moveNext)
+        private void MoveFocusByTabIndex(Control currentControl, bool moveNext)
         {
             var stackPanel = this.FindControl<StackPanel>("MainStackPanel");
             if (stackPanel == null) return;
 
-            var children = stackPanel.Children;
-            int currentIndex = children.IndexOf(currentControl);
-            int step = moveNext ? 1 : -1;
-            int start = moveNext ? currentIndex + 1 : currentIndex - 1;
-            int end = moveNext ? children.Count : -1;
+            // Собираем все элементы управления с TabIndex
+            var focusableControls = new List<(Control Control, int TabIndex)>();
+            CollectFocusableControls(stackPanel, focusableControls);
 
-            for (int i = start; moveNext ? i < end : i >= end; i += step)
+            // Сортируем по TabIndex
+            focusableControls.Sort((a, b) => a.TabIndex.CompareTo(b.TabIndex));
+
+            // Находим текущий элемент
+            var current = focusableControls.FirstOrDefault(x => x.Control == currentControl);
+            if (current.Control == null) return;
+
+            int currentTabIndex = current.TabIndex;
+            Control nextControl = null;
+
+            if (moveNext)
             {
-                if (children[i] is TextBox or ComboBox or ListBox)
+                // Ищем следующий элемент с большим TabIndex
+                var next = focusableControls.FirstOrDefault(x => x.TabIndex > currentTabIndex);
+                nextControl = next.Control;
+            }
+            else
+            {
+                // Ищем предыдущий элемент с меньшим TabIndex
+                var previous = focusableControls.LastOrDefault(x => x.TabIndex < currentTabIndex);
+                nextControl = previous.Control;
+            }
+
+            if (nextControl != null)
+            {
+                nextControl.Focus();
+                if (nextControl is TextBox textBox)
                 {
-                    var nextControl = (Control)children[i];
-                    nextControl.Focus();
-                    if (nextControl is TextBox textBox)
+                    textBox.SelectionStart = 0;
+                    textBox.SelectionEnd = 0;
+                }
+            }
+        }
+
+        private void CollectFocusableControls(Control parent, List<(Control, int)> focusableControls)
+        {
+            foreach (var child in parent.GetVisualChildren().OfType<Control>())
+            {
+                if (child is TextBox || child is ComboBox || child is ListBox || child is Button)
+                {
+                    int tabIndex = child.GetValue(Control.TabIndexProperty);
+                    if (tabIndex >= 0) // Убедимся, что TabIndex задан
                     {
-                        textBox.SelectionStart = 0;
-                        textBox.SelectionEnd = 0;
+                        focusableControls.Add((child, tabIndex));
                     }
-                    break;
+                }
+                else if (child is Panel panel)
+                {
+                    CollectFocusableControls(panel, focusableControls);
                 }
             }
         }

@@ -47,7 +47,8 @@ namespace DocumentGenerator.ViewModels
                 Workplace = sourceViewModel.Workplace;
                 OwnershipForm = sourceViewModel.OwnershipForm;
                 Okved = sourceViewModel.Okved;
-                WorkExperience = sourceViewModel.WorkExperience;
+                WorkExperience = sourceViewModel.WorkExperienceYears;
+                WorkExperience = sourceViewModel.WorkExperienceMonths;
                 SelectedOrderClauses = new ObservableCollection<string>(sourceViewModel.SelectedOrderClauses);
             }
         }

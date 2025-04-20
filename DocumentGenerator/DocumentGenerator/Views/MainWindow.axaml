@@ -275,208 +275,250 @@
 			<!-- Уменьшено с 20 -->
 			<TextBlock Text="ФИО" />
 			<TextBox Name="FullNameTextBox"
-					 Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите ФИО" />
+                     Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите ФИО"
+                     TabIndex="1" />
 			<TextBlock Text="{Binding FullNameError}" Foreground="Red" />
 
 			<TextBlock Text="Должность" />
 			<TextBox Name="PositionTextBox"
-					 Text="{Binding Position, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите должность" />
+                     Text="{Binding Position, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите должность"
+                     TabIndex="2" />
 			<TextBlock Text="{Binding PositionError}" Foreground="Red" />
 
 			<TextBlock Text="Дата рождения (ДД.ММ.ГГГГ)" />
 			<TextBox Name="DateOfBirthTextBox"
-					 Text="{Binding DateOfBirth, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="ДД.ММ.ГГГГ" />
+                     Text="{Binding DateOfBirth, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="ДД.ММ.ГГГГ"
+                     TabIndex="3" />
 			<TextBlock Text="{Binding DateOfBirthError}" Foreground="Red" />
 
 			<TextBlock Text="Пол" />
 			<ComboBox Name="GenderComboBox"
-					  SelectedItem="{Binding Gender}"
-					  ItemsSource="{Binding GenderOptions}"
-					  SelectionChanged="ComboBox_SelectionChanged"
-					  GotFocus="ComboBox_GotFocus"
-					  KeyDown="InputField_KeyDown" />
+                      SelectedItem="{Binding Gender}"
+                      ItemsSource="{Binding GenderOptions}"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      GotFocus="ComboBox_GotFocus"
+                      KeyDown="InputField_KeyDown"
+                      TabIndex="4" />
 			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
 
 			<TextBlock Text="Пункты вредности (Выбрать несколько crtl+ЛКМ)" />
+			<TextBox Name="OrderClausesSearchBox"
+					 Text="{Binding OrderClausesSearchText, UpdateSourceTrigger=PropertyChanged}"
+					 TextChanged="HandleSearchTextChanged"
+					 Watermark="Поиск пунктов..."
+					 KeyDown="InputField_KeyDown"
+					 TabIndex="5" />
 			<ListBox Name="OrderClausesListBox"
-					 ItemsSource="{Binding OrderClauseOptions}"
+					 ItemsSource="{Binding FilteredOrderClauseOptions}"
 					 SelectedItems="{Binding SelectedOrderClauses}"
 					 SelectionMode="Multiple"
-					 Height="200"  
-			KeyDown="InputField_KeyDown" />
+					 Height="200"/>
 			<TextBlock Text="{Binding SelectedOrderClausesError}" Foreground="Red" />
 
 			<TextBlock Text="СНИЛС (XXX-XXX-XXX XX)" />
 			<TextBox Name="SnilsTextBox"
-					 Text="{Binding Snils, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="XXX-XXX-XXX XX" />
+                     Text="{Binding Snils, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XXX-XXX-XXX XX"
+                     TabIndex="6" />
 			<TextBlock Text="{Binding SnilsError}" Foreground="Red" />
 
 			<TextBlock Text="Серия паспорта (XXXX)" />
 			<TextBox Name="PassportSeriesTextBox"
-					 Text="{Binding PassportSeries, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="XXXX" />
+                     Text="{Binding PassportSeries, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XXXX"
+                     TabIndex="7" />
 			<TextBlock Text="{Binding PassportSeriesError}" Foreground="Red" />
 
 			<TextBlock Text="Номер паспорта (XXXXXX)" />
 			<TextBox Name="PassportNumberTextBox"
-					 Text="{Binding PassportNumber, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="XXXXXX" />
+                     Text="{Binding PassportNumber, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XXXXXX"
+                     TabIndex="8" />
 			<TextBlock Text="{Binding PassportNumberError}" Foreground="Red" />
 
 			<TextBlock Text="Дата выдачи паспорта (ДД.ММ.ГГГГ)" />
 			<TextBox Name="PassportIssueDateTextBox"
-					 Text="{Binding PassportIssueDate, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="ДД.ММ.ГГГГ" />
+                     Text="{Binding PassportIssueDate, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="ДД.ММ.ГГГГ"
+                     TabIndex="9" />
 			<TextBlock Text="{Binding PassportIssueDateError}" Foreground="Red" />
 
 			<TextBlock Text="Кем выдан паспорт" />
 			<TextBox Name="PassportIssuedByTextBox"
-					 Text="{Binding PassportIssuedBy, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите кем выдан" />
+                     Text="{Binding PassportIssuedBy, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите кем выдан"
+                     TabIndex="10" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
 
 			<TextBlock Text="Адрес" />
 			<TextBox Name="AddressTextBox"
-					 Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите адрес (город, улица, дом)" />
+                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите адрес (город, улица, дом)"
+                     TabIndex="11" />
 			<TextBlock Text="{Binding AddressError}" Foreground="Red" />
 
 			<TextBlock Text="Телефон (+X (XXX) XXX-XX-XX)" />
 			<TextBox Name="PhoneTextBox"
-					 Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="+X (XXX) XXX-XX-XX" />
+                     Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="+X (XXX) XXX-XX-XX"
+                     TabIndex="12" />
 			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
 
 			<TextBlock Text="Наименование страховой медицинской организации" />
-					<ComboBox Name="MedicalOrganizationComboBox"
-					  SelectedItem="{Binding MedicalOrganization}"
-					  ItemsSource="{Binding MedicalOrganizationOptions}"
-					  SelectionChanged="ComboBox_SelectionChanged"
-					  GotFocus="ComboBox_GotFocus"
-					  KeyDown="InputField_KeyDown" />
+			<ComboBox Name="MedicalOrganizationComboBox"
+                      SelectedItem="{Binding MedicalOrganization}"
+                      ItemsSource="{Binding MedicalOrganizationOptions}"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      GotFocus="ComboBox_GotFocus"
+                      KeyDown="InputField_KeyDown"
+                      TabIndex="13" />
 
 			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
 			<TextBox Name="MedicalPolicyTextBox"
-					 Text="{Binding MedicalPolicy, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="16 цифр" />
+                     Text="{Binding MedicalPolicy, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="16 цифр"
+                     TabIndex="14" />
 			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
 
 			<TextBlock Text="Наблюдается ЛПУ" />
 			<TextBox Name="MedicalFacilityTextBox"
-					 Text="{Binding MedicalFacility, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите название ЛПУ" />
+                     Text="{Binding MedicalFacility, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите название ЛПУ"
+                     TabIndex="15" />
 			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
 
 			<TextBlock Text="Место работы" />
 			<TextBox Name="WorkplaceTextBox"
-					 Text="{Binding Workplace, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите место работы" />
+                     Text="{Binding Workplace, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите место работы"
+                     TabIndex="16" />
 			<TextBlock Text="{Binding WorkplaceError}" Foreground="Red" />
-			
+
 			<TextBlock Text="Адрес работы" />
 			<TextBox Name="WorkAddressTextBox"
-					 Text="{Binding WorkAddress, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="Введите адрес работы" />
+                     Text="{Binding WorkAddress, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите адрес работы"
+                     TabIndex="17" />
 			<TextBlock Text="{Binding WorkAddressError}" Foreground="Red" />
-			
+
 			<TextBlock Text="Структурное подразделение" />
 			<TextBox Name="DepartmentTextBox"
-				 Text="{Binding Department, UpdateSourceTrigger=PropertyChanged}"
-				 TextChanged="HandleTextChanged"
-				 TextInput="RestrictInput"
-				 KeyDown="RestrictKeyDown"
-				 Watermark="Введите подразделение" />
+                     Text="{Binding Department, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="Введите подразделение"
+                     TabIndex="18" />
 			<TextBlock Text="{Binding DepartmentError}" Foreground="Red" />
 
 			<TextBlock Text="Форма собственности" />
 			<ComboBox Name="OwnershipFormComboBox"
-					  SelectedItem="{Binding OwnershipForm}"
-					  ItemsSource="{Binding OwnershipFormOptions}"
-					  SelectionChanged="ComboBox_SelectionChanged"
-					  GotFocus="ComboBox_GotFocus"
-					  KeyDown="InputField_KeyDown" />
+                      SelectedItem="{Binding OwnershipForm}"
+                      ItemsSource="{Binding OwnershipFormOptions}"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      GotFocus="ComboBox_GotFocus"
+                      KeyDown="InputField_KeyDown"
+                      TabIndex="19" />
 			<TextBlock Text="{Binding OwnershipFormError}" Foreground="Red" />
 
 			<TextBlock Text="ОКВЭД (XX.XX.XX)" />
 			<TextBox Name="OkvedTextBox"
-					 Text="{Binding Okved, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="XX.XX.XX" />
+                     Text="{Binding Okved, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleTextChanged"
+                     TextInput="RestrictInput"
+                     KeyDown="RestrictKeyDown"
+                     Watermark="XX.XX.XX"
+                     TabIndex="20" />
 			<TextBlock Text="{Binding OkvedError}" Foreground="Red" />
 
-			<TextBlock Text="Стаж работы общий (XX лет)" />
-			<TextBox Name="WorkExperienceTextBox"
-					 Text="{Binding WorkExperience, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleTextChanged"
-					 TextInput="RestrictInput"
-					 KeyDown="RestrictKeyDown"
-					 Watermark="XX лет" />
-			<TextBlock Text="{Binding WorkExperienceError}" Foreground="Red" />
+			<TextBlock Text="Стаж работы" />
+			<StackPanel Orientation="Horizontal">
+				<TextBox Name="WorkExperienceYearsTextBox"
+                         Text="{Binding WorkExperienceYears, UpdateSourceTrigger=PropertyChanged}"
+                         TextChanged="HandleTextChanged"
+                         TextInput="RestrictInput"
+                         KeyDown="RestrictKeyDown"
+                         Watermark="Годы"
+                         Width="100"
+                         TabIndex="21" />
+				<TextBlock Text=" лет " />
+				<TextBox Name="WorkExperienceMonthsTextBox"
+                         Text="{Binding WorkExperienceMonths, UpdateSourceTrigger=PropertyChanged}"
+                         TextChanged="HandleTextChanged"
+                         TextInput="RestrictInput"
+                         KeyDown="RestrictKeyDown"
+                         Watermark="Месяцы"
+                         Width="100"
+                         TabIndex="22" />
+				<TextBlock Text=" месяцев" />
+			</StackPanel>
+			<TextBlock Text="{Binding WorkExperienceYearsError}" Foreground="Red" />
+			<TextBlock Text="{Binding WorkExperienceMonthsError}" Foreground="Red" />
 
 			<Button Name="SaveButton"
-					Content="Сохранить"
-					Click="Save_Click"
-					HorizontalAlignment="Center"
-					Margin="10"
-					KeyDown="SaveButton_KeyDown" />
+                    Content="Сохранить"
+                    Click="Save_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    KeyDown="SaveButton_KeyDown"
+                    TabIndex="23" />
 			<Button Name="LoadExcelButton"
-					Content="Загрузить Excel"
-					Click="LoadExcel_Click"
-					HorizontalAlignment="Center"
-					Margin="10" />
+                    Content="Загрузить Excel"
+                    Click="LoadExcel_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    TabIndex="24" />
 			<Button Name="BackToMenuButton"
-					Content="Назад в главное меню"
-					Click="BackToMenu_Click"
-					HorizontalAlignment="Center"
-					Margin="10" />
+                    Content="Назад в главное меню"
+                    Click="BackToMenu_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    TabIndex="25" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>
