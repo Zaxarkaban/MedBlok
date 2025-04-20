@@ -1,0 +1,12 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:DocumentGenerator.ViewModels"
+        x:Class="DocumentGenerator.MenuWindow"
+        Title="Главное меню"
+        Width="400" Height="300"
+        WindowStartupLocation="CenterScreen">
+	<StackPanel Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+		<TextBlock Text="Добро пожаловать!" FontSize="20" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+		<Button Content="Открыть основное окно" x:Name="OpenMainWindowButton" Width="200" Height="40" Click="OpenMainWindowButton_Click"/>
+	</StackPanel>
+</Window>

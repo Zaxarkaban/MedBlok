@@ -25,9 +25,12 @@ namespace DocumentGenerator
                 // Регистрация главного окна
                 services.AddTransient<MainWindow>();
 
+                // Регистрация окна меню
+                services.AddTransient<MenuWindow>();
+
                 var serviceProvider = services.BuildServiceProvider();
 
-                desktop.MainWindow = serviceProvider.GetRequiredService<MainWindow>();
+                desktop.MainWindow = serviceProvider.GetRequiredService<MenuWindow>();
             }
 
             base.OnFrameworkInitializationCompleted();

@@ -7,15 +7,19 @@ namespace DocumentGenerator
 {
     public class ViewLocator : IDataTemplate
     {
-
         public Control? Build(object? param)
         {
             if (param is null)
                 return null;
 
-            var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-            var type = Type.GetType(name);
+            // Получаем имя ViewModel (например, "MainWindowViewModel")
+            var viewModelName = param.GetType().Name;
+            // Убираем "ViewModel" из имени (получаем "MainWindow")
+            var viewName = viewModelName.Replace("ViewModel", "");
+            // Формируем имя типа представления в пространстве имен DocumentGenerator
+            var name = $"DocumentGenerator.{viewName}";
 
+            var type = Type.GetType(name);
             if (type != null)
             {
                 return (Control)Activator.CreateInstance(type)!;
