@@ -57,7 +57,7 @@ namespace DocumentGenerator.Services
             return allDoctors;
         }
 
-        public List<string> GenerateTestsList(bool isOver40, bool isFemale)
+        public List<string> GenerateTestsList(bool isOver40, bool isFemale, List<string> selectedClauses)
         {
             var mandatoryTests = new List<string>
             {
@@ -87,6 +87,18 @@ namespace DocumentGenerator.Services
             {
                 mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
             }
+
+            var testsFromClauses = new List<string>();
+            foreach (var clause in selectedClauses)
+            {
+                if (Dictionaries.OrderClauseDataMap.TryGetValue(clause, out var clauseData))
+                {
+                    testsFromClauses.AddRange(clauseData.Tests);
+                }
+            }
+
+            // Добавляем уникальные анализы из пунктов в конец списка
+            mandatoryTests.AddRange(testsFromClauses.Distinct().Except(mandatoryTests));
 
             return mandatoryTests;
         }
@@ -161,7 +173,7 @@ namespace DocumentGenerator.Services
                     }
                     bool isOver40 = age > 40;
 
-                    var tests = GenerateTestsList(isOver40, isFemale);
+                    var tests = GenerateTestsList(isOver40, isFemale, userData.TryGetValue("OrderClause", out var clauses) ? clauses.Split(", ").ToList() : new List<string>());
                     AddTestsPage(pdfDocument, tests, font);
 
                     form.FlattenFields();

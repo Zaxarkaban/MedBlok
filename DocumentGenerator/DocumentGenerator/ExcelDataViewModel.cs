@@ -228,7 +228,8 @@ namespace DocumentGenerator.ViewModels
                                 // Добавляем страницу с анализами
                                 bool isFemale = record.Gender == "Женский" || record.Gender == "ж";
                                 bool isOver40 = record.Age > 40;
-                                var tests = _documentService.GenerateTestsList(isOver40, isFemale);
+                                // Извлекаем selectedClauses из record.OrderClause
+                                var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
                                 AddTestsPage(pdf, tests, font);
 
                                 // Закрываем документ

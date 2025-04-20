@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Geom;
 using iText.Layout.Element;
+using DocumentGenerator.Models;
 
 namespace DocumentGenerator
 {
@@ -188,6 +189,18 @@ namespace DocumentGenerator
             {
                 mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
             }
+            // Добавляем анализы из выбранных пунктов
+            var testsFromClauses = new List<string>();
+            foreach (var clause in _viewModel.SelectedOrderClauses)
+            {
+                if (Dictionaries.OrderClauseDataMap.TryGetValue(clause, out var clauseData))
+                {
+                    testsFromClauses.AddRange(clauseData.Tests);
+                }
+            }
+
+            // Добавляем уникальные анализы из пунктов в конец списка
+            mandatoryTests.AddRange(testsFromClauses.Distinct().Except(mandatoryTests));
 
             return mandatoryTests;
         }
