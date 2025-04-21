@@ -2,7 +2,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using DocumentGenerator.ViewModels;
+using DocumentGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using ReactiveUI;
+using System.Reactive.Concurrency;
 
 namespace DocumentGenerator
 {
@@ -12,18 +16,27 @@ namespace DocumentGenerator
 
         public override void OnFrameworkInitializationCompleted()
         {
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 var services = new ServiceCollection();
 
-                // Регистрация MainWindowViewModel
+                // Регистрация ViewModels
                 services.AddTransient<MainWindowViewModel>();
+                services.AddTransient<NewFormViewModel>();
+                services.AddTransient<ExcelDataViewModel>();
 
-                // Регистрация главного окна
+                // Регистрация сервисов
+                services.AddTransient<DocumentService>();
+                services.AddTransient<NewFormPdfGenerator>();
+
+                // Регистрация окон
                 services.AddTransient<MainWindow>(provider => new MainWindow(provider));
-
-                // Регистрация окна меню
+                services.AddTransient<NewForm>(provider => new NewForm(provider));
                 services.AddTransient<MenuWindow>(provider => new MenuWindow(provider));
+
+                // Регистрация IServiceProvider
+                services.AddSingleton<IServiceProvider>(sp => sp);
 
                 var serviceProvider = services.BuildServiceProvider();
 
@@ -33,6 +46,6 @@ namespace DocumentGenerator
 
             base.OnFrameworkInitializationCompleted();
         }
-    }
 
+    }
 }

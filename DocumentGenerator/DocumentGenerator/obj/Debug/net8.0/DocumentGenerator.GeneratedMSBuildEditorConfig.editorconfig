@@ -32,3 +32,6 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/MenuWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/NewForm.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

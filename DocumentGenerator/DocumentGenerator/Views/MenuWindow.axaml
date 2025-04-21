@@ -3,7 +3,7 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MenuWindow"
         Title="Главное меню"
-        Width="600" Height="400"
+        Width="600" Height="500"
         WindowStartupLocation="CenterScreen">
 	<!-- Многослойный фон -->
 	<Window.Background>
@@ -157,6 +157,16 @@
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
 							<TextBlock Text="📝" FontSize="20" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</Button.ContentTemplate>
+			</Button>
+			<Button x:Name="NewFormButton" Content="Новая форма">
+				<Button.ContentTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<TextBlock Text="📋" FontSize="20" VerticalAlignment="Center"/>
 							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
 						</StackPanel>
 					</DataTemplate>

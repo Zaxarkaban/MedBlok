@@ -290,3 +290,4 @@ C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\Document
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Document.A0662DA9.Up2Date
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.genruntimeconfig.cache
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\ref\DocumentGenerator.dll
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\bin\Debug\net8.0\карта водительская комиссия.pdf

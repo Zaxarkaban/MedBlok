@@ -1,0 +1,254 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
+        x:Class="DocumentGenerator.NewForm"
+        x:DataType="vm:NewFormViewModel"
+        Title="Новая форма" Width="450" Height="700">
+	<!-- Многослойный фон -->
+	<Window.Background>
+		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Color="#04261f" Offset="0"/>
+			<GradientStop Color="#0d3b31" Offset="0.5"/>
+			<GradientStop Color="#04261f" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>
+	<!-- Стили -->
+	<Window.Styles>
+		<!-- Стиль для TextBlock -->
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground" Value="#d9e1e8"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,5,0,3"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="3" OffsetX="1" OffsetY="1" Opacity="0.5"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<!-- Стиль для TextBlock с ошибками -->
+		<Style Selector="TextBlock[Foreground=Red]">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Margin" Value="0,2,0,0"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="2" OffsetX="1" OffsetY="1" Opacity="0.3"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<!-- Стиль для TextBox -->
+		<Style Selector="TextBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="4" OffsetX="2" OffsetY="2" Opacity="0.4"/>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.3"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<!-- Стиль для TextBox при наведении -->
+		<Style Selector="TextBox:pointerover">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ab091" Offset="0"/>
+						<GradientStop Color="#116d5a" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<!-- Стиль для ComboBox -->
+		<Style Selector="ComboBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="4" OffsetX="2" OffsetY="2" Opacity="0.4"/>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.3"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<!-- Стиль для ComboBox при наведении -->
+		<Style Selector="ComboBox:pointerover">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ab091" Offset="0"/>
+						<GradientStop Color="#116d5a" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<!-- Стиль для кнопок -->
+		<Style Selector="Button">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Width" Value="200"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,10"/>
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Opacity" Value="0.9"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="8" OffsetX="3" OffsetY="3" Opacity="0.5"/>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.3"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<!-- Стиль при наведении -->
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ab091" Offset="0"/>
+						<GradientStop Color="#116d5a" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<!-- Стиль при нажатии -->
+		<Style Selector="Button:pressed">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#0a584a" Offset="0"/>
+						<GradientStop Color="#04261f" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Opacity" Value="0.8"/>
+		</Style>
+	</Window.Styles>
+	<!-- Основной контент -->
+	<Design.DataContext>
+		<vm:NewFormViewModel />
+	</Design.DataContext>
+	<ScrollViewer>
+		<StackPanel Margin="10" Name="MainStackPanel">
+			<TextBlock Text="Серия медицинского освидетельствования" />
+			<TextBox Name="MedicalSeriesTextBox" Text="{Binding MedicalSeries, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" />
+			<TextBlock Text="{Binding MedicalSeriesError}" Foreground="Red" />
+
+			<TextBlock Text="Номер медицинского освидетельствования" />
+			<TextBox Name="MedicalNumberTextBox" Text="{Binding MedicalNumber, UpdateSourceTrigger=PropertyChanged}" TabIndex="2" />
+			<TextBlock Text="{Binding MedicalNumberError}" Foreground="Red" />
+
+			<TextBlock Text="Ф.И.О." />
+			<TextBox Name="FullNameTextBox" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" TabIndex="3" />
+			<TextBlock Text="{Binding FullNameError}" Foreground="Red" />
+
+			<TextBlock Text="Дата рождения" />
+			<TextBox Name="DateOfBirthTextBox" Text="{Binding DateOfBirth, UpdateSourceTrigger=PropertyChanged}" TabIndex="4" />
+			<TextBlock Text="{Binding DateOfBirthError}" Foreground="Red" />
+
+			<TextBlock Text="Пол" />
+			<ComboBox Name="GenderComboBox" SelectedItem="{Binding Gender}" ItemsSource="{Binding GenderOptions}" TabIndex="5" />
+			<TextBlock Text="{Binding GenderError}" Foreground="Red" />
+
+			<TextBlock Text="Серия паспорта" />
+			<TextBox Name="PassportSeriesTextBox" Text="{Binding PassportSeries, UpdateSourceTrigger=PropertyChanged}" TabIndex="6" />
+			<TextBlock Text="{Binding PassportSeriesError}" Foreground="Red" />
+
+			<TextBlock Text="Номер паспорта" />
+			<TextBox Name="PassportNumberTextBox" Text="{Binding PassportNumber, UpdateSourceTrigger=PropertyChanged}" TabIndex="7" />
+			<TextBlock Text="{Binding PassportNumberError}" Foreground="Red" />
+
+			<TextBlock Text="Кем выдан паспорт" />
+			<TextBox Name="PassportIssuedByTextBox" Text="{Binding PassportIssuedBy, UpdateSourceTrigger=PropertyChanged}" TabIndex="8" />
+			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
+
+			<TextBlock Text="Группа крови" />
+			<ComboBox Name="BloodGroupComboBox" SelectedItem="{Binding BloodGroup}" ItemsSource="{Binding BloodGroupOptions}" TabIndex="9" />
+			<TextBlock Text="{Binding BloodGroupError}" Foreground="Red" />
+
+			<TextBlock Text="Резус фактор" />
+			<ComboBox Name="RhFactorComboBox" SelectedItem="{Binding RhFactor}" ItemsSource="{Binding RhFactorOptions}" TabIndex="10" />
+			<TextBlock Text="{Binding RhFactorError}" Foreground="Red" />
+
+			<TextBlock Text="Телефон" />
+			<TextBox Name="PhoneTextBox" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" TabIndex="11" />
+			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
+
+			<TextBlock Text="Адрес регистрации" />
+			<TextBox Name="AddressTextBox" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" TabIndex="12" />
+			<TextBlock Text="{Binding AddressError}" Foreground="Red" />
+
+			<TextBlock Text="Водительский стаж" />
+			<TextBox Name="DrivingExperienceTextBox" Text="{Binding DrivingExperience, UpdateSourceTrigger=PropertyChanged}" TabIndex="13" />
+			<TextBlock Text="{Binding DrivingExperienceError}" Foreground="Red" />
+
+			<TextBlock Text="СНИЛС" />
+			<TextBox Name="SnilsTextBox" Text="{Binding Snils, UpdateSourceTrigger=PropertyChanged}" TabIndex="14" />
+			<TextBlock Text="{Binding SnilsError}" Foreground="Red" />
+
+			<TextBlock Text="Флюорография" />
+			<TextBox Name="FluorographyTextBox" Text="{Binding Fluorography, UpdateSourceTrigger=PropertyChanged}" TabIndex="15" />
+			<TextBlock Text="{Binding FluorographyError}" Foreground="Red" />
+
+			<TextBlock Text="Гинеколог" />
+			<TextBox Name="GynecologistTextBox" Text="{Binding Gynecologist, UpdateSourceTrigger=PropertyChanged}" TabIndex="16" />
+			<TextBlock Text="{Binding GynecologistError}" Foreground="Red" />
+
+			<Button Name="SaveButton" Content="Сохранить" TabIndex="17" />
+		</StackPanel>
+	</ScrollViewer>
+</Window>

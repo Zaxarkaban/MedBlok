@@ -40,6 +40,9 @@ namespace DocumentGenerator
             var newDocumentButton = this.FindControl<Button>("NewDocumentButton");
             newDocumentButton?.AddHandler(Button.ClickEvent, NewDocumentButton_Click);
 
+            var newFormButton = this.FindControl<Button>("NewFormButton");
+            newFormButton?.AddHandler(Button.ClickEvent, NewFormButton_Click);
+
             var exitButton = this.FindControl<Button>("ExitButton");
             exitButton?.AddHandler(Button.ClickEvent, ExitButton_Click);
 
@@ -314,6 +317,12 @@ namespace DocumentGenerator
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             this.Close();
+        }
+
+        private void NewFormButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var newForm = _serviceProvider.GetRequiredService<NewForm>();
+            newForm.Show();
         }
 
         private void ExitButton_Click(object? sender, RoutedEventArgs e)
