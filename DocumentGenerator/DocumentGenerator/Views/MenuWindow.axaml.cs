@@ -14,6 +14,7 @@ using Avalonia.Styling;
 using Avalonia.Controls.Templates;
 using System.Linq;
 
+
 namespace DocumentGenerator
 {
     public partial class MenuWindow : Window
@@ -45,6 +46,10 @@ namespace DocumentGenerator
 
             var exitButton = this.FindControl<Button>("ExitButton");
             exitButton?.AddHandler(Button.ClickEvent, ExitButton_Click);
+
+            var analisisButton = this.FindControl<Button>("AnalysisButton");
+            analisisButton?.AddHandler(Button.ClickEvent, AnalysisButton_Click);
+
 
             // Добавляем обработчик для эффекта волны
             newDocumentButton?.AddHandler(Button.PointerPressedEvent, OnButtonPressed);
@@ -324,6 +329,13 @@ namespace DocumentGenerator
             var newForm = _serviceProvider.GetRequiredService<NewForm>();
             newForm.Show();
         }
+
+        private void AnalysisButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var analysisView = _serviceProvider.GetRequiredService<AnalysisView>();
+            analysisView.Show();
+
+        } 
 
         private void ExitButton_Click(object? sender, RoutedEventArgs e)
         {

@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DocumentGenerator.AnalysisView"
+        Title="Анализ медицинских осмотров"
+        xmlns:vm="using:DocumentGenerator.ViewModels"
+  
+		Width="1000" Height="600"
+        WindowStartupLocation="CenterScreen"
+        Background="#1a1a1a">
+    <Window.Styles>
+        <!-- Стили для кнопок -->
+        <Style Selector="Button">
+            <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#2ed1b5" Offset="0"/>
+                    <GradientStop Color="#0a5c4e" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="CornerRadius" Value="25"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Effect">
+                <DropShadowEffect Color="Black" BlurRadius="10" OffsetX="3" OffsetY="3" Opacity="0.5"/>
+            </Setter>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="RenderTransform" Value="scale(1.05)"/>
+        </Style>
+        <!-- Стили для ListBox -->
+        <Style Selector="ListBox">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2ed1b5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <!-- Стили для TextBox -->
+        <Style Selector="TextBox">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2ed1b5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <!-- Стили для TextBlock -->
+        <Style Selector="TextBlock.output">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <!-- Стили для Ripple-эффекта -->
+        <Style Selector="Ellipse.ripple">
+            <Setter Property="Fill" Value="White"/>
+            <Setter Property="Opacity" Value="0.3"/>
+            <Setter Property="Width" Value="0"/>
+            <Setter Property="Height" Value="0"/>
+            <Setter Property="ZIndex" Value="-1"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Width" Duration="0:0:0.5"/>
+                    <DoubleTransition Property="Height" Duration="0:0:0.5"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <!-- Стили для анимации столбцов -->
+        <Style Selector="StackPanel.column">
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+                </Transitions>
+            </Setter>
+        </Style>
+    </Window.Styles>
+    <StackPanel Margin="10">
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="AddColumnButton" Content="+"/>
+        </StackPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="AnalisGrid" ColumnDefinitions="Auto,Auto,Auto,Auto">
+                <!-- Столбцы добавляются динамически -->
+            </Grid>
+        </ScrollViewer>
+    </StackPanel>
+</Window>

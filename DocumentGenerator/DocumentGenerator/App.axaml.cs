@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using ReactiveUI;
 using System.Reactive.Concurrency;
+//using DocumentGenerator.Views;
 
 namespace DocumentGenerator
 {
@@ -34,6 +35,7 @@ namespace DocumentGenerator
                 services.AddTransient<MainWindow>(provider => new MainWindow(provider));
                 services.AddTransient<NewForm>(provider => new NewForm(provider));
                 services.AddTransient<MenuWindow>(provider => new MenuWindow(provider));
+                services.AddTransient<AnalysisView>(provider => new AnalysisView(provider));
 
                 // Регистрация IServiceProvider
                 services.AddSingleton<IServiceProvider>(sp => sp);
