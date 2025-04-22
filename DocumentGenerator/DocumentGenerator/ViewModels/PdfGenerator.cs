@@ -100,22 +100,10 @@ namespace DocumentGenerator
                         .Distinct()
                         .ToList();
 
-                    if (isOver40)
-                    {
-                        if (!allDoctors.Contains("Офтальмолог"))
-                            allDoctors.Add("Офтальмолог");
-                    }
-
                     if (isFemale)
                     {
                         if (!allDoctors.Contains("Акушер-гинеколог"))
                             allDoctors.Add("Акушер-гинеколог");
-                    }
-
-                    if (isFemale && isOver40)
-                    {
-                        if (!allDoctors.Contains("Радиолог"))
-                            allDoctors.Add("Радиолог");
                     }
 
                     allDoctors.Add("Профпатолог");

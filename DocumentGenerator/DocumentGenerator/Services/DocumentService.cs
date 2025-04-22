@@ -41,30 +41,12 @@ namespace DocumentGenerator.Services
                 .ToList();
             LogToFile($"Все врачи после объединения и удаления дубликатов: {string.Join(", ", allDoctors)}");
 
-            if (isOver40)
-            {
-                if (!allDoctors.Contains("Офтальмолог"))
-                {
-                    allDoctors.Add("Офтальмолог");
-                    LogToFile("Добавлен Офтальмолог (возраст > 40).");
-                }
-            }
-
             if (isFemale)
             {
                 if (!allDoctors.Contains("Акушер-гинеколог"))
                 {
                     allDoctors.Add("Акушер-гинеколог");
                     LogToFile("Добавлен Акушер-гинеколог (женский пол).");
-                }
-            }
-
-            if (isFemale && isOver40)
-            {
-                if (!allDoctors.Contains("Радиолог"))
-                {
-                    allDoctors.Add("Радиолог");
-                    LogToFile("Добавлен Радиолог (женский пол и возраст > 40).");
                 }
             }
 
