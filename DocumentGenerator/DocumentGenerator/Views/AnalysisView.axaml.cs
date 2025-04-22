@@ -255,10 +255,10 @@ namespace DocumentGenerator
                     }
                 }
 
-                // Подсчёт анализов
+                // Подсчёт исследований
                 var testCounts = new Dictionary<string, int>();
 
-                // Анализы для каждого человека
+                // Исследования для каждого человека
                 var peopleTests = new List<HashSet<string>>();
                 for (int i = 0; i < totalPeople; i++)
                 {
@@ -283,7 +283,7 @@ namespace DocumentGenerator
                     peopleTests[personIndex++].AddRange(GetTestsForPerson(selectedClauses, true, true));
                 }
 
-                // Подсчитываем количество анализов
+                // Подсчитываем количество исследований
                 foreach (var tests in peopleTests)
                 {
                     foreach (var test in tests)
@@ -297,8 +297,8 @@ namespace DocumentGenerator
                 }
 
                 // Формирование вывода
-                var output = $"Уникальных анализов: {testCounts.Count}\n";
-                output += "Анализы:\n";
+                var output = $"Уникальных исследований: {testCounts.Count}\n";
+                output += "Исследования:\n";
                 output += string.Join("\n", testCounts.Select(kv => $"- {kv.Key}: {kv.Value} раз"));
 
                 output += $"\nУникальных врачей: {doctorVisits.Count}\n";
@@ -332,17 +332,17 @@ namespace DocumentGenerator
             {
                 var tests = new HashSet<string>();
 
-                // Добавляем обязательные анализы для каждого человека
+                // Добавляем обязательные исследования для каждого человека
                 tests.AddRange(MandatoryTests);
 
-                // Анализы из пунктов вредности
+                // Исследований из пунктов вредности
                 foreach (var clause in selectedClauses)
                 {
                     var data = Dictionaries.OrderClauseDataMap[clause];
                     tests.AddRange(data.Tests);
                 }
 
-                // Дополнительные анализы
+                // Дополнительные исследования
                 if (isWoman && !isOver40) // Женщины младше 40
                 {
                     tests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");

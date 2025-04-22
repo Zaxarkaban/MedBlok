@@ -205,25 +205,32 @@ namespace DocumentGenerator.Services
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
+            // Убедимся, что в документе есть как минимум 2 страницы
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 3)
+            while (currentPageCount < 2)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            var page = pdfDocument.GetPage(3);
+            // Получаем вторую страницу
+            var page = pdfDocument.GetPage(2);
             var pageSize = page.GetPageSize();
-            var canvas = new PdfCanvas(page);
 
-            var column = new iText.Kernel.Pdf.Canvas.PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72));
+            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
+            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
 
+            // Создаём ColumnText для управления позицией текста
+            var column = new PdfCanvas(page);
+            var columnText = new iText.Layout.Canvas(column, leftHalf);
+
+            // Создаём параграф с текстом
             var paragraph = new Paragraph()
                 .SetFont(font)
-                .SetFontSize(12);
+                .SetFontSize(7);
 
-            paragraph.Add(new Text("Список необходимых анализов:\n\n"));
+            // Меняем заголовок на "Список исследований"
+            paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
             {
@@ -231,6 +238,7 @@ namespace DocumentGenerator.Services
                 testNumber++;
             }
 
+            // Добавляем параграф на вторую страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

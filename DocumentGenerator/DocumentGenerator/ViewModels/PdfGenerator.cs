@@ -91,6 +91,13 @@ namespace DocumentGenerator
                     // Добавляем после других SetFieldValue
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
                     SetFieldValue(fields, "Department", _viewModel.Department, font);
+                    int currentYear = DateTime.Now.Year;
+                    if (fields.TryGetValue("CurrentYear", out var field))
+                    {
+                        var pdfField = (PdfFormField)field;
+                        pdfField.SetValue(currentYear.ToString());
+                        pdfField.SetFontAndSize(font, 24); // Увеличиваем шрифт до 16
+                    }
 
                     // Создаём список врачей с учётом условий
                     var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
@@ -120,10 +127,10 @@ namespace DocumentGenerator
                         Console.WriteLine($"Внимание: В списке {allDoctors.Count} врачей, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
                     }
 
-                    // Генерируем список анализов
+                    // Генерируем список исследований
                     var tests = GenerateTestsList(isOver40, isFemale);
 
-                    // Добавляем новый лист с анализами на третью страницу
+                    // Добавляем новый лист с исследованиями на третью страницу
                     AddTestsPage(pdf, tests, font);
 
                     // Сохраняем изменения
@@ -177,7 +184,7 @@ namespace DocumentGenerator
             {
                 mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
             }
-            // Добавляем анализы из выбранных пунктов
+            // Добавляем исследования из выбранных пунктов
             var testsFromClauses = new List<string>();
             foreach (var clause in _viewModel.SelectedOrderClauses)
             {
@@ -187,7 +194,7 @@ namespace DocumentGenerator
                 }
             }
 
-            // Добавляем уникальные анализы из пунктов в конец списка
+            // Добавляем уникальные исследования из пунктов в конец списка
             mandatoryTests.AddRange(testsFromClauses.Distinct().Except(mandatoryTests));
 
             return mandatoryTests;
@@ -195,29 +202,32 @@ namespace DocumentGenerator
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 3 страницы
+            // Убедимся, что в документе есть как минимум 2 страницы
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 3)
+            while (currentPageCount < 2)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            // Получаем третью страницу
-            var page = pdfDocument.GetPage(3);
+            // Получаем вторую страницу
+            var page = pdfDocument.GetPage(2);
             var pageSize = page.GetPageSize();
-            var canvas = new PdfCanvas(page);
+
+            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
+            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
 
             // Создаём ColumnText для управления позицией текста
-            var column = new iText.Kernel.Pdf.Canvas.PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72));
+            var column = new PdfCanvas(page);
+            var columnText = new iText.Layout.Canvas(column, leftHalf);
 
             // Создаём параграф с текстом
             var paragraph = new Paragraph()
                 .SetFont(font)
-                .SetFontSize(12);
+                .SetFontSize(7);
 
-            paragraph.Add(new Text("Список необходимых анализов:\n\n"));
+            // Меняем заголовок на "Список исследований"
+            paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
             {
@@ -225,7 +235,7 @@ namespace DocumentGenerator
                 testNumber++;
             }
 
-            // Добавляем параграф на третью страницу
+            // Добавляем параграф на вторую страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

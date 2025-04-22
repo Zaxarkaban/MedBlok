@@ -224,6 +224,13 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "WorkExperience", "", font);
                                 SetFieldValue(fields, "MedicalOrganization", "", font);
                                 SetFieldValue(fields, "Okved", "", font);
+                                int currentYear = DateTime.Now.Year;
+                                if (fields.TryGetValue("CurrentYear", out var field))
+                                {
+                                    var pdfField = (PdfFormField)field;
+                                    pdfField.SetValue(currentYear.ToString());
+                                    pdfField.SetFontAndSize(font, 24); // Увеличиваем шрифт до 16
+                                }
 
                                 var selectedClauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(clause => clause.Trim())
@@ -271,13 +278,13 @@ namespace DocumentGenerator.ViewModels
                                 bool isOver40 = record.Age > 40;
                                 var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
 
-                                LogToFile($"Список анализов для {record.FullName}: {string.Join(", ", tests)}");
-                                LogToFile($"Количество анализов для {record.FullName}: {tests.Count}");
+                                LogToFile($"Список исследований для {record.FullName}: {string.Join(", ", tests)}");
+                                LogToFile($"Количество исследований для {record.FullName}: {tests.Count}");
 
                                 var uniqueTests = tests.Distinct().ToList();
                                 if (uniqueTests.Count != tests.Count)
                                 {
-                                    LogToFile($"Обнаружены дубликаты анализов для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueTests)}");
+                                    LogToFile($"Обнаружены дубликаты исследований для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueTests)}");
                                 }
 
                                 foreach (var test in uniqueTests)
@@ -285,12 +292,12 @@ namespace DocumentGenerator.ViewModels
                                     if (_testCounts.ContainsKey(test))
                                     {
                                         _testCounts[test]++;
-                                        LogToFile($"Увеличено количество для анализа {test}: {_testCounts[test]}");
+                                        LogToFile($"Увеличено количество для исследования {test}: {_testCounts[test]}");
                                     }
                                     else
                                     {
                                         _testCounts[test] = 1;
-                                        LogToFile($"Добавлен новый анализ {test}: 1");
+                                        LogToFile($"Добавлен новый исследования {test}: 1");
                                     }
                                 }
 
@@ -337,7 +344,7 @@ namespace DocumentGenerator.ViewModels
                     LogToFile($"{kvp.Key}: {kvp.Value}");
                 }
 
-                LogToFile("Итоговый подсчёт анализов:");
+                LogToFile("Итоговый подсчёт исследований:");
                 foreach (var kvp in _testCounts.OrderBy(k => k.Key))
                 {
                     LogToFile($"{kvp.Key}: {kvp.Value}");
@@ -345,7 +352,7 @@ namespace DocumentGenerator.ViewModels
 
                 await SaveStatisticsToExcel(folderPath);
 
-                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}\nСтатистика врачей и анализов сохранена в Statistics.xlsx", "Успех");
+                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}\nСтатистика врачей и исследований сохранена в Statistics.xlsx", "Успех");
             }
             catch (Exception ex)
             {
@@ -382,7 +389,7 @@ namespace DocumentGenerator.ViewModels
                     doctorsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
 
                     var testsSheet = package.Workbook.Worksheets.Add("Tests");
-                    testsSheet.Cells[1, 1].Value = "Анализ";
+                    testsSheet.Cells[1, 1].Value = "Исследование";
                     testsSheet.Cells[1, 2].Value = "Количество";
 
                     row = 2;
@@ -426,40 +433,42 @@ namespace DocumentGenerator.ViewModels
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
+            // Убедимся, что в документе есть как минимум 2 страницы
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            LogToFile($"Количество страниц в документе: {currentPageCount}");
-
-            if (currentPageCount < 3)
+            while (currentPageCount < 2)
             {
-                LogToFile($"Ошибка: В шаблоне меньше 3 страниц ({currentPageCount}). Требуется шаблон с минимум 3 страницами.");
-                throw new InvalidOperationException("Шаблон PDF должен содержать минимум 3 страницы.");
+                pdfDocument.AddNewPage();
+                currentPageCount++;
             }
 
-            var page = pdfDocument.GetPage(3);
-            LogToFile($"Работа с третьей страницей (страница №3 из {currentPageCount})");
+            // Получаем вторую страницу
+            var page = pdfDocument.GetPage(2);
+            var pageSize = page.GetPageSize();
 
-            PdfCanvas pdfCanvas = new PdfCanvas(page);
-            pdfCanvas.BeginText();
-            pdfCanvas.SetFontAndSize(font, 12);
+            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
+            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
 
-            float yPosition = page.GetPageSize().GetHeight() - 50;
-            float xPosition = 36;
-            float lineHeight = 15;
+            // Создаём ColumnText для управления позицией текста
+            var column = new PdfCanvas(page);
+            var columnText = new iText.Layout.Canvas(column, leftHalf);
 
-            pdfCanvas.SetTextMatrix(xPosition, yPosition);
-            pdfCanvas.ShowText("Список необходимых анализов:");
-            yPosition -= lineHeight * 2;
+            // Создаём параграф с текстом
+            var paragraph = new Paragraph()
+                .SetFont(font)
+                .SetFontSize(7);
 
+            // Меняем заголовок на "Список исследований"
+            paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
             {
-                pdfCanvas.SetTextMatrix(xPosition, yPosition);
-                pdfCanvas.ShowText($"{testNumber}. {test}");
-                yPosition -= lineHeight;
+                paragraph.Add(new Text($"{testNumber}. {test}\n"));
                 testNumber++;
             }
 
-            pdfCanvas.EndText();
+            // Добавляем параграф на вторую страницу
+            columnText.Add(paragraph);
+            columnText.Close();
         }
 
         private string SanitizeFileName(string fileName)
