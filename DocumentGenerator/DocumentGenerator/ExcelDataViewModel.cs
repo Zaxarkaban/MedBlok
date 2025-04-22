@@ -24,11 +24,11 @@ namespace DocumentGenerator.ViewModels
         public class Record
         {
             public string? FullName { get; set; } = "";
-            public string? Position { get; set; } = "";
+            public string? Position { get; set; }
             public string? DateOfBirth { get; set; } = "";
             public int Age { get; set; }
             public string? Gender { get; set; } = "";
-            public string? OrderClause { get; set; } = "";
+            public string? OrderClause { get; set; }
             public string? Snils { get; set; } = "";
             public string? MedicalPolicy { get; set; } = "";
             public string? PassportSeries { get; set; } = "";
@@ -39,7 +39,10 @@ namespace DocumentGenerator.ViewModels
 
         public List<Record> Records { get; set; } = new List<Record>();
         private readonly DocumentService _documentService;
-        private readonly object _pdfLock = new object(); // Для синхронизации доступа к PDF-операциям
+        private readonly object _pdfLock = new object();
+        private Dictionary<string, int> _doctorCounts = new Dictionary<string, int>();
+        private Dictionary<string, int> _testCounts = new Dictionary<string, int>();
+        private bool _isProcessing = false;
 
         public ExcelDataViewModel()
         {
@@ -65,18 +68,23 @@ namespace DocumentGenerator.ViewModels
                     {
                         var record = new Record
                         {
-                            FullName = worksheet.Cells[row, 2].Text,
-                            Position = worksheet.Cells[row, 3].Text,
-                            DateOfBirth = worksheet.Cells[row, 5].Text,
-                            Gender = worksheet.Cells[row, 7].Text,
-                            OrderClause = worksheet.Cells[row, 8].Text,
-                            Snils = worksheet.Cells[row, 9].Text,
-                            MedicalPolicy = worksheet.Cells[row, 10].Text,
-                            PassportSeries = worksheet.Cells[row, 11].Text,
-                            PassportNumber = worksheet.Cells[row, 12].Text,
-                            PassportIssueDate = worksheet.Cells[row, 13].Text,
-                            PassportIssuedBy = worksheet.Cells[row, 14].Text
+                            FullName = worksheet.Cells[row, 2].Text?.Trim(),
+                            Position = worksheet.Cells[row, 3].Text?.Trim(),
+                            DateOfBirth = worksheet.Cells[row, 5].Text?.Trim(),
+                            Gender = worksheet.Cells[row, 7].Text?.Trim(),
+                            OrderClause = worksheet.Cells[row, 8].Text?.Trim(),
+                            Snils = worksheet.Cells[row, 9].Text?.Trim(),
+                            MedicalPolicy = worksheet.Cells[row, 10].Text?.Trim(),
+                            PassportSeries = worksheet.Cells[row, 11].Text?.Trim(),
+                            PassportNumber = worksheet.Cells[row, 12].Text?.Trim(),
+                            PassportIssueDate = worksheet.Cells[row, 13].Text?.Trim(),
+                            PassportIssuedBy = worksheet.Cells[row, 14].Text?.Trim()
                         };
+
+                        if (string.IsNullOrWhiteSpace(record.FullName))
+                        {
+                            continue;
+                        }
 
                         if (double.TryParse(record.DateOfBirth, out double dateOfBirthDays))
                         {
@@ -99,7 +107,10 @@ namespace DocumentGenerator.ViewModels
                         }
 
                         Records.Add(record);
+                        LogToFile($"Добавлена запись: {record.FullName}, возраст: {record.Age}, пол: {record.Gender}");
                     }
+
+                    LogToFile($"Всего добавлено записей: {Records.Count}");
                 }
             }
             catch (Exception ex)
@@ -111,6 +122,16 @@ namespace DocumentGenerator.ViewModels
 
         public async Task SaveToPdf(Window parentWindow)
         {
+            if (_isProcessing)
+            {
+                LogToFile("Метод SaveToPdf уже выполняется, повторный вызов проигнорирован.");
+                await ShowMessageBox(parentWindow, "Обработка уже выполняется. Пожалуйста, подождите.", "Предупреждение");
+                return;
+            }
+
+            _isProcessing = true;
+            LogToFile("Начало выполнения метода SaveToPdf.");
+
             try
             {
                 var storageProvider = parentWindow.StorageProvider;
@@ -142,29 +163,30 @@ namespace DocumentGenerator.ViewModels
                     throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
                 }
 
+                LogToFile("Очистка словарей перед началом обработки.");
+                _doctorCounts.Clear();
+                _testCounts.Clear();
+
                 int recordNumber = 1;
                 foreach (var record in Records)
                 {
                     string safeFileName = SanitizeFileName(record.FullName ?? $"Record_{recordNumber}");
                     string outputPath = System.IO.Path.Combine(folderPath, $"{safeFileName}.pdf");
 
-                    // Копируем шаблон во временный файл, чтобы избежать блокировки
                     string tempTemplatePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"Template_{Guid.NewGuid()}.pdf");
                     try
                     {
                         File.Copy(templatePath, tempTemplatePath, true);
                         LogToFile($"Создана временная копия шаблона: {tempTemplatePath}");
 
-                        lock (_pdfLock) // Синхронизируем доступ к операциям с PDF
+                        lock (_pdfLock)
                         {
-                            // Создаём PdfReader и PdfWriter для каждого документа
                             using (var writer = new PdfWriter(outputPath))
                             using (var reader = new PdfReader(tempTemplatePath))
                             using (var pdf = new PdfDocument(reader, writer))
                             {
                                 LogToFile($"Начало обработки PDF для {record.FullName} (№{recordNumber})");
 
-                                // Создаём шрифт для каждого документа
                                 PdfFont font;
                                 try
                                 {
@@ -180,7 +202,6 @@ namespace DocumentGenerator.ViewModels
                                     throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
                                 }
 
-                                // Заполняем поля формы
                                 var form = PdfAcroForm.GetAcroForm(pdf, true);
                                 var fields = form.GetAllFormFields();
 
@@ -209,30 +230,72 @@ namespace DocumentGenerator.ViewModels
                                     .ToList() ?? new List<string>();
                                 var doctors = _documentService.GenerateDoctorsList(selectedClauses, record.Age > 40, record.Gender == "Женский" || record.Gender == "ж");
 
-                                LogToFile($"Заполнение списка врачей для {record.FullName}, количество врачей: {doctors.Count}");
-                                for (int i = 0; i < doctors.Count && i < 12; i++)
+                                LogToFile($"Список врачей для {record.FullName}: {string.Join(", ", doctors)}");
+                                LogToFile($"Количество врачей для {record.FullName}: {doctors.Count}");
+
+                                var uniqueDoctors = doctors.Distinct().ToList();
+                                if (uniqueDoctors.Count != doctors.Count)
+                                {
+                                    LogToFile($"Обнаружены дубликаты врачей для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueDoctors)}");
+                                }
+
+                                foreach (var doctor in uniqueDoctors)
+                                {
+                                    if (_doctorCounts.ContainsKey(doctor))
+                                    {
+                                        _doctorCounts[doctor]++;
+                                        LogToFile($"Увеличено количество для врача {doctor}: {_doctorCounts[doctor]}");
+                                    }
+                                    else
+                                    {
+                                        _doctorCounts[doctor] = 1;
+                                        LogToFile($"Добавлен новый врач {doctor}: 1");
+                                    }
+                                }
+
+                                LogToFile($"Заполнение списка врачей для {record.FullName}, количество врачей: {uniqueDoctors.Count}");
+                                for (int i = 0; i < uniqueDoctors.Count && i < 12; i++)
                                 {
                                     string fieldName = $"Doctor_{i + 1}";
-                                    SetFieldValue(fields, fieldName, doctors[i], font);
+                                    SetFieldValue(fields, fieldName, uniqueDoctors[i], font);
                                 }
 
-                                if (doctors.Count > 12)
+                                if (uniqueDoctors.Count > 12)
                                 {
-                                    LogToFile($"Внимание: В списке {doctors.Count} врачей для записи {record.FullName}, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
+                                    LogToFile($"Внимание: В списке {uniqueDoctors.Count} врачей для записи {record.FullName}, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
                                 }
 
-                                // Финализируем форму
-                                LogToFile($"Финализация формы для {record.FullName}");
                                 form.FlattenFields();
 
-                                // Добавляем страницу с анализами
                                 bool isFemale = record.Gender == "Женский" || record.Gender == "ж";
                                 bool isOver40 = record.Age > 40;
-                                // Извлекаем selectedClauses из record.OrderClause
                                 var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
-                                AddTestsPage(pdf, tests, font);
 
-                                // Закрываем документ
+                                LogToFile($"Список анализов для {record.FullName}: {string.Join(", ", tests)}");
+                                LogToFile($"Количество анализов для {record.FullName}: {tests.Count}");
+
+                                var uniqueTests = tests.Distinct().ToList();
+                                if (uniqueTests.Count != tests.Count)
+                                {
+                                    LogToFile($"Обнаружены дубликаты анализов для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueTests)}");
+                                }
+
+                                foreach (var test in uniqueTests)
+                                {
+                                    if (_testCounts.ContainsKey(test))
+                                    {
+                                        _testCounts[test]++;
+                                        LogToFile($"Увеличено количество для анализа {test}: {_testCounts[test]}");
+                                    }
+                                    else
+                                    {
+                                        _testCounts[test] = 1;
+                                        LogToFile($"Добавлен новый анализ {test}: 1");
+                                    }
+                                }
+
+                                AddTestsPage(pdf, uniqueTests, font);
+
                                 LogToFile($"Закрытие документа для {record.FullName}");
                                 pdf.Close();
                                 LogToFile($"PDF успешно создан: {outputPath}");
@@ -251,7 +314,6 @@ namespace DocumentGenerator.ViewModels
                     }
                     finally
                     {
-                        // Удаляем временный файл
                         if (File.Exists(tempTemplatePath))
                         {
                             try
@@ -269,12 +331,79 @@ namespace DocumentGenerator.ViewModels
                     recordNumber++;
                 }
 
-                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}", "Успех");
+                LogToFile("Итоговый подсчёт врачей:");
+                foreach (var kvp in _doctorCounts.OrderBy(k => k.Key))
+                {
+                    LogToFile($"{kvp.Key}: {kvp.Value}");
+                }
+
+                LogToFile("Итоговый подсчёт анализов:");
+                foreach (var kvp in _testCounts.OrderBy(k => k.Key))
+                {
+                    LogToFile($"{kvp.Key}: {kvp.Value}");
+                }
+
+                await SaveStatisticsToExcel(folderPath);
+
+                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}\nСтатистика врачей и анализов сохранена в Statistics.xlsx", "Успех");
             }
             catch (Exception ex)
             {
                 LogToFile($"Ошибка при сохранении PDF: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 await ShowMessageBox(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка");
+            }
+            finally
+            {
+                _isProcessing = false;
+                LogToFile("Метод SaveToPdf завершён.");
+            }
+        }
+
+        private async Task SaveStatisticsToExcel(string folderPath)
+        {
+            try
+            {
+                string outputPath = System.IO.Path.Combine(folderPath, "Statistics.xlsx");
+                using (var package = new ExcelPackage())
+                {
+                    var doctorsSheet = package.Workbook.Worksheets.Add("Doctors");
+                    doctorsSheet.Cells[1, 1].Value = "Врач";
+                    doctorsSheet.Cells[1, 2].Value = "Количество";
+
+                    int row = 2;
+                    foreach (var doctor in _doctorCounts.OrderBy(d => d.Key))
+                    {
+                        doctorsSheet.Cells[row, 1].Value = doctor.Key;
+                        doctorsSheet.Cells[row, 2].Value = doctor.Value;
+                        row++;
+                    }
+
+                    // Автоматическая подстройка ширины столбцов на листе Doctors
+                    doctorsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
+
+                    var testsSheet = package.Workbook.Worksheets.Add("Tests");
+                    testsSheet.Cells[1, 1].Value = "Анализ";
+                    testsSheet.Cells[1, 2].Value = "Количество";
+
+                    row = 2;
+                    foreach (var test in _testCounts.OrderBy(t => t.Key))
+                    {
+                        testsSheet.Cells[row, 1].Value = test.Key;
+                        testsSheet.Cells[row, 2].Value = test.Value;
+                        row++;
+                    }
+
+                    // Автоматическая подстройка ширины столбцов на листе Tests
+                    testsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
+
+                    File.WriteAllBytes(outputPath, package.GetAsByteArray());
+                    LogToFile($"Статистика успешно сохранена в {outputPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogToFile($"Ошибка при сохранении статистики в Excel: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                throw new Exception($"Ошибка при сохранении статистики в Excel: {ex.Message}", ex);
             }
         }
 
@@ -297,36 +426,30 @@ namespace DocumentGenerator.ViewModels
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Проверяем количество страниц в документе
             int currentPageCount = pdfDocument.GetNumberOfPages();
             LogToFile($"Количество страниц в документе: {currentPageCount}");
 
-            // Предполагаем, что в шаблоне уже есть 3 страницы
             if (currentPageCount < 3)
             {
                 LogToFile($"Ошибка: В шаблоне меньше 3 страниц ({currentPageCount}). Требуется шаблон с минимум 3 страницами.");
                 throw new InvalidOperationException("Шаблон PDF должен содержать минимум 3 страницы.");
             }
 
-            // Получаем третью страницу
             var page = pdfDocument.GetPage(3);
             LogToFile($"Работа с третьей страницей (страница №3 из {currentPageCount})");
 
-            // Используем PdfCanvas для низкоуровневого рисования
             PdfCanvas pdfCanvas = new PdfCanvas(page);
             pdfCanvas.BeginText();
             pdfCanvas.SetFontAndSize(font, 12);
 
-            float yPosition = page.GetPageSize().GetHeight() - 50; // Начальная позиция Y (сверху страницы)
-            float xPosition = 36; // Отступ слева
-            float lineHeight = 15; // Высота строки
+            float yPosition = page.GetPageSize().GetHeight() - 50;
+            float xPosition = 36;
+            float lineHeight = 15;
 
-            // Добавляем заголовок
             pdfCanvas.SetTextMatrix(xPosition, yPosition);
             pdfCanvas.ShowText("Список необходимых анализов:");
-            yPosition -= lineHeight * 2; // Двойной отступ после заголовка
+            yPosition -= lineHeight * 2;
 
-            // Добавляем список анализов
             int testNumber = 1;
             foreach (var test in tests)
             {
@@ -388,9 +511,9 @@ namespace DocumentGenerator.ViewModels
             try
             {
                 string logPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
-                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}\n";
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - ExcelDataViewModel - {message}\n";
                 File.AppendAllText(logPath, logEntry);
-                Console.WriteLine(logEntry); // Также выводим в консоль для Visual Studio
+                Console.WriteLine(logEntry);
             }
             catch (Exception ex)
             {
