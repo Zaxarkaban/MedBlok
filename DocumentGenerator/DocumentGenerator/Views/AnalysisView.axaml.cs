@@ -19,15 +19,14 @@ namespace DocumentGenerator
     public partial class AnalysisView : Window
     {
         private readonly List<ColumnData> _columns = new List<ColumnData>();
-        
-      
 
         public AnalysisView(IServiceProvider provider)
         {
             InitializeComponent();
-           
-                AddColumnButton.Click += AddColumnButton_Click;
-            
+            if (this.FindControl<Button>("AddColumnButton") is Button addColumnButton)
+            {
+                addColumnButton.Click += AddColumnButton_Click;
+            }
             AddNewColumn(); // Первый столбец по умолчанию
         }
 
@@ -42,25 +41,19 @@ namespace DocumentGenerator
             var grid = this.FindControl<Grid>("AnalisGrid");
             if (grid == null) return;
 
-            // Проверяем, существует ли columnData в _columns
             if (!_columns.Contains(columnData)) return;
 
-            // Отключаем кнопку, чтобы избежать повторных нажатий
             if (sender is Button button)
             {
                 button.IsEnabled = false;
             }
 
-            // Удаляем StackPanel из Grid
             grid.Children.Remove(columnData.StackPanel);
-            // Удаляем columnData из _columns
             _columns.Remove(columnData);
 
-            // Перестраиваем ColumnDefinitions и индексы столбцов
             grid.ColumnDefinitions.Clear();
-            grid.Children.Clear(); // Очищаем Grid.Children для синхронизации
+            grid.Children.Clear();
 
-            // Заново добавляем оставшиеся столбцы
             for (int i = 0; i < _columns.Count; i++)
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -73,24 +66,20 @@ namespace DocumentGenerator
         {
             var grid = this.FindControl<Grid>("AnalisGrid");
             if (grid == null) return;
+
             int columnIndex = _columns.Count;
 
-            // Новый столбец
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            // Элементы управления
             var items = new ObservableCollection<string>(Dictionaries.OrderClauseDataMap.Keys);
-            var selectedItems = new ObservableCollection<string>(); 
+            var selectedItems = new ObservableCollection<string>();
 
             var listBox = new ListBox
             {
-                Name = $"ListBox_{columnIndex}", // Уникальное имя для каждого ListBox
+                Name = $"ListBox_{columnIndex}",
                 ItemsSource = items,
                 SelectionMode = SelectionMode.Multiple,
-                // SelectedItems привязан к локальной коллекции
             };
-
-            
 
             var removeButton = new Button { Content = "–" };
             var menUnder40TextBox = new TextBox { Watermark = "Мужчины <40" };
@@ -99,7 +88,6 @@ namespace DocumentGenerator
             var womenOver40TextBox = new TextBox { Watermark = "Женщины >40" };
             var outputTextBlock = new TextBlock { Classes = { "output" } };
 
-            // Создаём columnData до использования в лямбда-выражениях
             var columnData = new ColumnData
             {
                 StackPanel = new StackPanel(),
@@ -114,18 +102,6 @@ namespace DocumentGenerator
                 RemoveButton = removeButton
             };
 
-            // Синхронизируем SelectedItems с нашей коллекцией
-            listBox.SelectionChanged += (s, e) =>
-            {
-                selectedItems.Clear();
-                foreach (var item in listBox.SelectedItems?.Cast<string>() ?? new List<string>())
-                {
-                    selectedItems.Add(item);
-                }
-                columnData.UpdateOutput();
-            };
-
-            // Валидация ввода
             void ValidateTextBox(TextBox textBox, TextChangedEventArgs e)
             {
                 if (!string.IsNullOrWhiteSpace(textBox.Text) && (!int.TryParse(textBox.Text, out int value) || value < 0))
@@ -139,13 +115,20 @@ namespace DocumentGenerator
                 columnData.UpdateOutput();
             }
 
+            listBox.SelectionChanged += (s, e) =>
+            {
+                selectedItems.Clear();
+                foreach (var item in listBox.SelectedItems?.Cast<string>() ?? new List<string>())
+                {
+                    selectedItems.Add(item);
+                }
+                columnData.UpdateOutput();
+            };
+
             menUnder40TextBox.TextChanged += (s, e) => ValidateTextBox(menUnder40TextBox, e);
             menOver40TextBox.TextChanged += (s, e) => ValidateTextBox(menOver40TextBox, e);
             womenUnder40TextBox.TextChanged += (s, e) => ValidateTextBox(womenUnder40TextBox, e);
             womenOver40TextBox.TextChanged += (s, e) => ValidateTextBox(womenOver40TextBox, e);
-
-
-            // Размещение элементов
 
             columnData.StackPanel = new StackPanel
             {
@@ -155,15 +138,12 @@ namespace DocumentGenerator
             Grid.SetColumn(columnData.StackPanel, columnIndex);
             grid.Children.Add(columnData.StackPanel);
 
-            // Анимация появления
             columnData.StackPanel.Opacity = 0;
             Dispatcher.UIThread.Post(async () =>
             {
-                await Task.Delay(10); // Небольшая задержка для рендеринга
+                await Task.Delay(10);
                 columnData.StackPanel.Opacity = 1;
             });
-
-            
 
             removeButton.Click += (s, e) => RemoveColumnButton_Click(s, e, columnData);
 
@@ -203,13 +183,26 @@ namespace DocumentGenerator
             public StackPanel StackPanel { get; set; }
             public Button RemoveButton { get; set; }
             public ListBox ListBox { get; set; }
+            public ObservableCollection<string> Items { get; set; }
+            public ObservableCollection<string> SelectedItems { get; set; }
             public TextBox MenUnder40TextBox { get; set; }
             public TextBox MenOver40TextBox { get; set; }
             public TextBox WomenUnder40TextBox { get; set; }
             public TextBox WomenOver40TextBox { get; set; }
             public TextBlock OutputTextBlock { get; set; }
-            public ObservableCollection<string> Items { get; set; } // Добавлено для хранения элементов
-            public ObservableCollection<string> SelectedItems { get; set; } // Добавлено для хранения выбранных элементов
+
+            private static readonly List<string> MandatoryTests = new List<string>
+            {
+                "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
+                "Электрокардиография в покое",
+                "Измерение артериального давления на периферических артериях",
+                "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
+                "Определение относительного сердечно-сосудистого риска",
+                "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
+                "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
+                "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
+                "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
+            };
 
             public void UpdateOutput()
             {
@@ -220,44 +213,156 @@ namespace DocumentGenerator
                 int womenOver40 = int.TryParse(WomenOver40TextBox.Text, out int w2) ? w2 : 0;
                 int totalPeople = menUnder40 + menOver40 + womenUnder40 + womenOver40;
 
-                // Уникальные врачи и анализы
-                var uniqueDoctors = new HashSet<string>();
-                var uniqueTests = new HashSet<string>();
+                // Подсчёт врачей
+                var doctorVisits = new Dictionary<string, int>();
 
-                foreach (var clause in selectedClauses)
+                // Посещения врачей для каждого человека
+                var peopleDoctors = new List<HashSet<string>>();
+                for (int i = 0; i < totalPeople; i++)
                 {
-                    var data = Dictionaries.OrderClauseDataMap[clause];
-                    uniqueDoctors.UnionWith(data.Doctors);
-                    uniqueTests.UnionWith(data.Tests);
+                    peopleDoctors.Add(new HashSet<string>());
                 }
 
-                // Дополнительные анализы
-                if (womenUnder40 > 0)
+                // Распределяем людей по категориям
+                int personIndex = 0;
+                for (int i = 0; i < menUnder40; i++)
                 {
-                    uniqueTests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
-                    uniqueTests.Add("Ультразвуковое исследование органов малого таза");
+                    peopleDoctors[personIndex++].AddRange(GetDoctorsForPerson(selectedClauses, false, false));
                 }
-                if (womenOver40 > 0)
+                for (int i = 0; i < menOver40; i++)
                 {
-                    uniqueTests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
-                    uniqueTests.Add("Ультразвуковое исследование органов малого таза");
-                    uniqueTests.Add("Маммография обеих молочных желез в двух проекциях");
+                    peopleDoctors[personIndex++].AddRange(GetDoctorsForPerson(selectedClauses, false, true));
                 }
-                if (menOver40 > 0)
+                for (int i = 0; i < womenUnder40; i++)
                 {
-                    uniqueTests.Add("Измерение внутриглазного давления");
+                    peopleDoctors[personIndex++].AddRange(GetDoctorsForPerson(selectedClauses, true, false));
+                }
+                for (int i = 0; i < womenOver40; i++)
+                {
+                    peopleDoctors[personIndex++].AddRange(GetDoctorsForPerson(selectedClauses, true, true));
+                }
+
+                // Подсчитываем посещения врачей
+                foreach (var doctors in peopleDoctors)
+                {
+                    foreach (var doctor in doctors)
+                    {
+                        if (!doctorVisits.ContainsKey(doctor))
+                        {
+                            doctorVisits[doctor] = 0;
+                        }
+                        doctorVisits[doctor]++;
+                    }
+                }
+
+                // Подсчёт анализов
+                var testCounts = new Dictionary<string, int>();
+
+                // Анализы для каждого человека
+                var peopleTests = new List<HashSet<string>>();
+                for (int i = 0; i < totalPeople; i++)
+                {
+                    peopleTests.Add(new HashSet<string>());
+                }
+
+                personIndex = 0;
+                for (int i = 0; i < menUnder40; i++)
+                {
+                    peopleTests[personIndex++].AddRange(GetTestsForPerson(selectedClauses, false, false));
+                }
+                for (int i = 0; i < menOver40; i++)
+                {
+                    peopleTests[personIndex++].AddRange(GetTestsForPerson(selectedClauses, false, true));
+                }
+                for (int i = 0; i < womenUnder40; i++)
+                {
+                    peopleTests[personIndex++].AddRange(GetTestsForPerson(selectedClauses, true, false));
+                }
+                for (int i = 0; i < womenOver40; i++)
+                {
+                    peopleTests[personIndex++].AddRange(GetTestsForPerson(selectedClauses, true, true));
+                }
+
+                // Подсчитываем количество анализов
+                foreach (var tests in peopleTests)
+                {
+                    foreach (var test in tests)
+                    {
+                        if (!testCounts.ContainsKey(test))
+                        {
+                            testCounts[test] = 0;
+                        }
+                        testCounts[test]++;
+                    }
                 }
 
                 // Формирование вывода
-                var output = $"Уникальных анализов: {uniqueTests.Count}\n" +
-                             $"Анализы: {string.Join(", ", uniqueTests)}\n" +
-                             $"Уникальных врачей: {uniqueDoctors.Count}\n" +
-                             $"Врачи:\n{string.Join("\n", uniqueDoctors.Select(d => $"- {d}: {totalPeople} посещений"))}";
+                var output = $"Уникальных анализов: {testCounts.Count}\n";
+                output += "Анализы:\n";
+                output += string.Join("\n", testCounts.Select(kv => $"- {kv.Key}: {kv.Value} раз"));
+
+                output += $"\nУникальных врачей: {doctorVisits.Count}\n";
+                output += "Врачи:\n";
+                output += string.Join("\n", doctorVisits.Select(kv => $"- {kv.Key}: {kv.Value} посещений"));
+
                 OutputTextBlock.Text = output;
+            }
+
+            private IEnumerable<string> GetDoctorsForPerson(List<string> selectedClauses, bool isWoman, bool isOver40)
+            {
+                var doctors = new HashSet<string>();
+
+                // Врачи из пунктов вредности
+                foreach (var clause in selectedClauses)
+                {
+                    var data = Dictionaries.OrderClauseDataMap[clause];
+                    doctors.AddRange(data.Doctors);
+                }
+
+                // Дополнительные врачи
+                if (isWoman)
+                {
+                    doctors.Add("Гинеколог");
+                }
+
+                return doctors;
+            }
+
+            private IEnumerable<string> GetTestsForPerson(List<string> selectedClauses, bool isWoman, bool isOver40)
+            {
+                var tests = new HashSet<string>();
+
+                // Добавляем обязательные анализы для каждого человека
+                tests.AddRange(MandatoryTests);
+
+                // Анализы из пунктов вредности
+                foreach (var clause in selectedClauses)
+                {
+                    var data = Dictionaries.OrderClauseDataMap[clause];
+                    tests.AddRange(data.Tests);
+                }
+
+                // Дополнительные анализы
+                if (isWoman && !isOver40) // Женщины младше 40
+                {
+                    tests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
+                    tests.Add("Ультразвуковое исследование органов малого таза");
+                }
+                if (isWoman && isOver40) // Женщины старше 40
+                {
+                    tests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
+                    tests.Add("Ультразвуковое исследование органов малого таза");
+                    tests.Add("Маммография обеих молочных желез в двух проекциях");
+                }
+                if (!isWoman && isOver40) // Мужчины старше 40
+                {
+                    tests.Add("Измерение внутриглазного давления");
+                }
+
+                return tests;
             }
         }
 
-        // Вспомогательный класс для показа MessageBox
         private static class MessageBox
         {
             public static Task Show(Window owner, string message, string title, MessageBoxButtons buttons)
@@ -300,6 +405,17 @@ namespace DocumentGenerator
             public enum MessageBoxButtons
             {
                 Ok
+            }
+        }
+    }
+
+    public static class HashSetExtensions
+    {
+        public static void AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                hashSet.Add(item);
             }
         }
     }

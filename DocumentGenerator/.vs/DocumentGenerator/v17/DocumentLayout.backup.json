@@ -9,14 +9,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\zakhar\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\analysisview.axaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\analysisview.axaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\zakhar\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\mainwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\mainwindow.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\zakhar\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\app.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,34 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainWindow.axaml.cs",
-              "DocumentMoniker": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\MainWindow.axaml.cs",
-              "ToolTip": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml.cs",
-              "RelativeToolTip": "DocumentGenerator\\Views\\MainWindow.axaml.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAH4CAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T11:54:55.136Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "App.axaml.cs",
-              "DocumentMoniker": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\App.axaml.cs",
-              "ToolTip": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\App.axaml.cs",
-              "RelativeToolTip": "DocumentGenerator\\App.axaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T11:38:48.298Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -62,9 +28,9 @@
               "RelativeDocumentMoniker": "DocumentGenerator\\Views\\AnalysisView.axaml",
               "ToolTip": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\AnalysisView.axaml",
               "RelativeToolTip": "DocumentGenerator\\Views\\AnalysisView.axaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAcwF4AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-04-21T11:28:00.918Z",
+              "WhenOpened": "2025-04-22T14:28:06.324Z",
               "EditorCaption": ""
             },
             {
@@ -75,9 +41,9 @@
               "RelativeDocumentMoniker": "DocumentGenerator\\Views\\AnalysisView.axaml.cs",
               "ToolTip": "C:\\Users\\Zakhar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\AnalysisView.axaml.cs*",
               "RelativeToolTip": "DocumentGenerator\\Views\\AnalysisView.axaml.cs*",
-              "ViewState": "AgIAACsAAAAAAAAAAAAAwJUAAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T11:28:03.076Z",
+              "WhenOpened": "2025-04-22T14:28:02.465Z",
               "EditorCaption": ""
             }
           ]

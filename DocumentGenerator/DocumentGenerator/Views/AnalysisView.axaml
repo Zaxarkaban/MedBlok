@@ -86,14 +86,16 @@
             </Setter>
         </Style>
     </Window.Styles>
-    <StackPanel Margin="10">
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="AddColumnButton" Content="+"/>
-        </StackPanel>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid x:Name="AnalisGrid" ColumnDefinitions="Auto,Auto,Auto,Auto">
-                <!-- Столбцы добавляются динамически -->
-            </Grid>
-        </ScrollViewer>
-    </StackPanel>
+	<ScrollViewer>
+		<StackPanel Margin="10">
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="AddColumnButton" Content="+"/>
+			</StackPanel>
+			<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+				<Grid x:Name="AnalisGrid" ColumnDefinitions="Auto,Auto,Auto,Auto">
+					<!-- Столбцы добавляются динамически -->
+				</Grid>
+			</ScrollViewer>
+		</StackPanel>
+	</ScrollViewer>
 </Window>
