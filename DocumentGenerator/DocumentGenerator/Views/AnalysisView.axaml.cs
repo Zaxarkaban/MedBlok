@@ -1,18 +1,17 @@
-﻿using Avalonia.Controls.Shapes;
+﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia;
 using DocumentGenerator.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using iText.Commons.Bouncycastle.Asn1.X509;
-using System.Collections;
 using System.Collections.ObjectModel;
-
+using System.Linq;
+using System.Threading.Tasks;
+using OfficeOpenXml;
+using System.IO;
 
 namespace DocumentGenerator
 {
@@ -27,7 +26,131 @@ namespace DocumentGenerator
             {
                 addColumnButton.Click += AddColumnButton_Click;
             }
+            if (this.FindControl<Button>("ExportToExcelButton") is Button exportButton)
+            {
+                exportButton.Click += ExportToExcelButton_Click;
+            }
             AddNewColumn(); // Первый столбец по умолчанию
+        }
+
+        private async void ExportToExcelButton_Click(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Устанавливаем лицензию EPPlus (для некоммерческого использования)
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                // Суммируем данные из всех колонок
+                var doctorVisits = new Dictionary<string, int>();
+                var testCounts = new Dictionary<string, int>();
+
+                foreach (var column in _columns)
+                {
+                    // Получаем данные из OutputTextBlock
+                    var outputLines = column.OutputTextBlock.Text?.Split('\n') ?? Array.Empty<string>();
+                    bool isTestsSection = false;
+                    bool isDoctorsSection = false;
+
+                    foreach (var line in outputLines)
+                    {
+                        if (line.StartsWith("Исследования:"))
+                        {
+                            isTestsSection = true;
+                            isDoctorsSection = false;
+                            continue;
+                        }
+                        else if (line.StartsWith("Врачи:"))
+                        {
+                            isTestsSection = false;
+                            isDoctorsSection = true;
+                            continue;
+                        }
+
+                        if (isTestsSection && line.StartsWith("- "))
+                        {
+                            var parts = line.Substring(2).Split(": ");
+                            if (parts.Length == 2 && int.TryParse(parts[1].Replace(" раз", ""), out int count))
+                            {
+                                var testName = parts[0];
+                                if (!testCounts.ContainsKey(testName))
+                                {
+                                    testCounts[testName] = 0;
+                                }
+                                testCounts[testName] += count;
+                            }
+                        }
+                        else if (isDoctorsSection && line.StartsWith("- "))
+                        {
+                            var parts = line.Substring(2).Split(": ");
+                            if (parts.Length == 2 && int.TryParse(parts[1].Replace(" посещений", ""), out int count))
+                            {
+                                var doctorName = parts[0];
+                                if (!doctorVisits.ContainsKey(doctorName))
+                                {
+                                    doctorVisits[doctorName] = 0;
+                                }
+                                doctorVisits[doctorName] += count;
+                            }
+                        }
+                    }
+                }
+
+                // Создаём Excel-файл
+                using var package = new ExcelPackage();
+
+                // Лист для врачей
+                var doctorsSheet = package.Workbook.Worksheets.Add("Врачи");
+                doctorsSheet.Cells[1, 1].Value = "Врач";
+                doctorsSheet.Cells[1, 2].Value = "Посещения";
+                int row = 2;
+                foreach (var kvp in doctorVisits.OrderBy(x => x.Key))
+                {
+                    doctorsSheet.Cells[row, 1].Value = kvp.Key;
+                    doctorsSheet.Cells[row, 2].Value = kvp.Value;
+                    row++;
+                }
+                doctorsSheet.Cells.AutoFitColumns();
+
+                // Лист для исследований
+                var testsSheet = package.Workbook.Worksheets.Add("Исследования");
+                testsSheet.Cells[1, 1].Value = "Исследование";
+                testsSheet.Cells[1, 2].Value = "Количество";
+                row = 2;
+                foreach (var kvp in testCounts.OrderBy(x => x.Key))
+                {
+                    testsSheet.Cells[row, 1].Value = kvp.Key;
+                    testsSheet.Cells[row, 2].Value = kvp.Value;
+                    row++;
+                }
+                testsSheet.Cells.AutoFitColumns();
+
+                // Сохраняем файл через диалог (для Avalonia 0.10.x)
+                var saveFileDialog = new SaveFileDialog
+                {
+                    DefaultExtension = "xlsx",
+                    InitialFileName = "MedicalAnalysisReport.xlsx",
+                    Filters = new List<FileDialogFilter>
+                    {
+                        new FileDialogFilter
+                        {
+                            Name = "Excel Files",
+                            Extensions = new List<string> { "xlsx" }
+                        }
+                    }
+                };
+
+                var result = await saveFileDialog.ShowAsync(this);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    using var stream = new FileStream(result, FileMode.Create, FileAccess.Write);
+                    package.SaveAs(stream);
+                    await MessageBox.Show(this, "Файл успешно сохранён!", "Успех", MessageBox.MessageBoxButtons.Ok);
+                }
+            }
+            catch (Exception ex)
+            {
+                await MessageBox.Show(this, $"Произошла ошибка при экспорте: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+            }
         }
 
         private void AddColumnButton_Click(object? sender, RoutedEventArgs e)
@@ -335,7 +458,7 @@ namespace DocumentGenerator
                 // Добавляем обязательные исследования для каждого человека
                 tests.AddRange(MandatoryTests);
 
-                // Исследований из пунктов вредности
+                // Исследования из пунктов вредности
                 foreach (var clause in selectedClauses)
                 {
                     var data = Dictionaries.OrderClauseDataMap[clause];
