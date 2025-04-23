@@ -327,6 +327,8 @@ namespace DocumentGenerator
                 "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
             };
 
+            private static readonly List<string> MandatoryDoctors = new List<string>{ "Терапевт", "Невролог", "Психиатр", "Нарколог",  "Профпатолог" };
+
             public void UpdateOutput()
             {
                 var selectedClauses = SelectedItems.ToList();
@@ -442,10 +444,14 @@ namespace DocumentGenerator
                     doctors.AddRange(data.Doctors);
                 }
 
+                // Добавляем обязательные исследования для каждого человека
+                doctors.AddRange(MandatoryDoctors);
+
+
                 // Дополнительные врачи
                 if (isWoman)
                 {
-                    doctors.Add("Гинеколог");
+                    doctors.Add("Акушер-гинеколог");
                 }
 
                 return doctors;
