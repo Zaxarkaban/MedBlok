@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using DocumentGenerator.Models;
 using DocumentGenerator.Services;
+using System.IO;
+using System.Text.Json;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -31,6 +33,7 @@ namespace DocumentGenerator.ViewModels
         private string _workExperienceMonths = "";
         private string _workAddress = "";
         private string _department = "";
+        private string _servicePoint = ""; // Новое поле для пункта обслуживания
 
         private string _fullNameError = "";
         private string _positionError = "";
@@ -54,26 +57,55 @@ namespace DocumentGenerator.ViewModels
         private string _selectedOrderClausesError = "";
         private string _workAddressError = "";
         private string _departmentError = "";
+        private string _servicePointError = ""; // Ошибка для нового поля
 
         private ObservableCollection<string> _selectedOrderClauses = new ObservableCollection<string>();
         private string _orderClausesSearchText = ""; // Текст для поиска
         private ObservableCollection<string> _filteredOrderClauseOptions; // Отфильтрованный список
 
         private readonly DocumentService _documentService;
+        private readonly string _settingsPath; // Путь к файлу настроек
 
         public MainWindowViewModel()
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
             OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО", "ГУП", "ЗАО", "ОАО" };
             MedicalOrganizationOptions = new List<string> { "АО \"ГСМК\"", "АО \"МАКС-М\"", "ООО \"СМК РЕСО-Мед\"", "ООО \"Капитал МС\"", "АО \"СОГАЗ-Мед\"", "ООО \"СК \"Ингосстрах-М\"" };
+            ServicePointOptions = new List<string> { "ПО 67", "ПО 89", "ПО 66", "ПО «Шушары»", "ЖК «Шушары»", "ПО «Славянка»" }; // Список пунктов обслуживания
             OrderClauseOptions = Dictionaries.OrderClauseDataMap.Keys.ToList();
             _documentService = new DocumentService();
 
             // Инициализация отфильтрованного списка (изначально все пункты)
             _filteredOrderClauseOptions = new ObservableCollection<string>(OrderClauseOptions);
+
+            // Путь к файлу настроек в пользовательской директории
+            _settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DocumentGenerator", "settings.json");
+            LoadSettings(); // Загружаем настройки при инициализации
         }
 
         // Свойства
+
+        // Новое свойство для пункта обслуживания
+        public string ServicePoint
+        {
+            get => _servicePoint;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _servicePoint, value);
+                SaveSettings(); // Сохраняем при изменении
+            }
+        }
+
+        // Список пунктов обслуживания
+        public List<string> ServicePointOptions { get; }
+
+        // Свойство ошибки для пункта обслуживания
+        public string ServicePointError
+        {
+            get => _servicePointError;
+            set => this.RaiseAndSetIfChanged(ref _servicePointError, value);
+        }
+
         public string FullName
         {
             get => _fullName;
@@ -226,7 +258,8 @@ namespace DocumentGenerator.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _orderClausesSearchText, value);
-                FilterOrderClauses(); // Фильтруем список при изменении текста
+                // Больше не фильтруем список, а только вызываем прокрутку
+                ScrollToMatchingItem();
             }
         }
 
@@ -377,38 +410,85 @@ namespace DocumentGenerator.ViewModels
             return doctors.Distinct().ToList();
         }
 
-        // Фильтрация пунктов по тексту поиска
-        private void FilterOrderClauses()
+        // Методы для сохранения и загрузки настроек
+        private void LoadSettings()
+        {
+            try
+            {
+                if (File.Exists(_settingsPath))
+                {
+                    var json = File.ReadAllText(_settingsPath);
+                    var settings = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    if (settings != null && settings.TryGetValue("ServicePoint", out var savedServicePoint))
+                    {
+                        // Проверяем, что сохранённое значение есть в списке доступных опций
+                        if (ServicePointOptions.Contains(savedServicePoint))
+                        {
+                            _servicePoint = savedServicePoint;
+                            this.RaisePropertyChanged(nameof(ServicePoint));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при загрузке настроек: {ex.Message}");
+            }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                var settings = new Dictionary<string, string>
+                {
+                    { "ServicePoint", ServicePoint ?? "" }
+                };
+                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath));
+                File.WriteAllText(_settingsPath, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении настроек: {ex.Message}");
+            }
+        }
+
+        // Методы валидации (добавим валидацию для нового поля)
+        public void ValidateServicePoint()
+        {
+            ServicePointError = string.IsNullOrWhiteSpace(ServicePoint) ? "Пункт обслуживания должен быть выбран" : "";
+        }
+
+        // Метод для прокрутки к подходящему пункту
+        private void ScrollToMatchingItem()
         {
             if (string.IsNullOrWhiteSpace(OrderClausesSearchText))
             {
-                // Если текст поиска пустой, показываем все пункты
-                FilteredOrderClauseOptions = new ObservableCollection<string>(OrderClauseOptions);
+                return; // Если поиск пустой, не делаем ничего
             }
-            else
+
+            // Находим первый подходящий пункт
+            var matchingItem = OrderClauseOptions
+                .FirstOrDefault(item => item.StartsWith(OrderClausesSearchText, StringComparison.OrdinalIgnoreCase));
+
+            if (matchingItem != null)
             {
-                // Фильтруем пункты, которые начинаются с введённого текста (без учёта регистра)
-                var filtered = OrderClauseOptions
-                    .Where(item => item.StartsWith(OrderClausesSearchText, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-                FilteredOrderClauseOptions = new ObservableCollection<string>(filtered);
-
-                // Удаляем из выбранных пунктов те, которые больше не отображаются
-                var invalidSelections = _selectedOrderClauses
-                    .Where(selected => !FilteredOrderClauseOptions.Contains(selected))
-                    .ToList();
-                foreach (var invalid in invalidSelections)
+                // Прокручиваем к этому пункту
+                var index = FilteredOrderClauseOptions.IndexOf(matchingItem);
+                if (index >= 0)
                 {
-                    _selectedOrderClauses.Remove(invalid);
+                    // Мы вызовем прокрутку через событие в MainWindow.axaml.cs
+                    ScrollToItemRequested?.Invoke(this, index);
                 }
-
-                // Обновляем SelectedOrderClauses в UI
-                this.RaisePropertyChanged(nameof(SelectedOrderClauses));
             }
 
-            // Перезапускаем валидацию, так как список выбранных пунктов мог измениться
+            // Валидация, так как выбор мог измениться
             ValidateSelectedOrderClauses();
         }
+
+        // Событие для прокрутки (будет вызвано из MainWindow.axaml.cs)
+        public event EventHandler<int> ScrollToItemRequested;
 
         // Методы валидации
         public void ValidateFullName()
@@ -730,6 +810,7 @@ namespace DocumentGenerator.ViewModels
         public void OnSave()
         {
             // Выполняем валидацию
+            ValidateServicePoint();
             ValidateFullName();
             ValidatePosition();
             ValidateDateOfBirth();
@@ -755,7 +836,7 @@ namespace DocumentGenerator.ViewModels
             if (new[] { FullNameError, PositionError, DateOfBirthError, GenderError, SnilsError, PassportSeriesError,
                 PassportNumberError, PassportIssueDateError, PassportIssuedByError, MedicalPolicyError,
                 AddressError, PhoneError, MedicalOrganizationError, MedicalFacilityError, WorkplaceError,
-                OwnershipFormError, OkvedError, WorkExperienceYearsError, WorkExperienceMonthsError, SelectedOrderClausesError, WorkAddressError, DepartmentError}
+                OwnershipFormError, OkvedError, WorkExperienceYearsError, WorkExperienceMonthsError, SelectedOrderClausesError, WorkAddressError, DepartmentError, ServicePointError}
                 .Any(error => !string.IsNullOrEmpty(error)))
             {
                 return; // Если есть ошибки, прерываем выполнение
@@ -789,7 +870,8 @@ namespace DocumentGenerator.ViewModels
                 { "WorkExperience", $"{WorkExperienceYears} лет {WorkExperienceMonths} месяцев" },
                 { "OrderClause", string.Join(", ", SelectedOrderClauses) },
                 { "WorkAddress", WorkAddress },
-                { "Department", Department }
+                { "Department", Department },
+                { "ServicePoint", ServicePoint }
             };
 
             // Генерируем список врачей с учётом новых условий

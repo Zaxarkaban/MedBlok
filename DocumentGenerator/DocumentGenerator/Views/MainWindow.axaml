@@ -271,8 +271,16 @@
 		<vm:MainWindowViewModel />
 	</Design.DataContext>
 	<ScrollViewer>
-		<StackPanel Margin="10" Name="MainStackPanel">
+		<StackPanel Margin="10,10,20,10" Name="MainStackPanel">
 			<!-- Уменьшено с 20 -->
+			<TextBlock Text="Поликлиническое отделение" />
+			<ComboBox Name="ServicePointComboBox"
+					  SelectedItem="{Binding ServicePoint, Mode=TwoWay}"
+					  ItemsSource="{Binding ServicePointOptions}"
+					  SelectionChanged="ComboBox_SelectionChanged"
+					  GotFocus="ComboBox_GotFocus"
+					  KeyDown="InputField_KeyDown"
+					  TabIndex="0" />
 			<TextBlock Text="ФИО" />
 			<TextBox Name="FullNameTextBox"
                      Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"

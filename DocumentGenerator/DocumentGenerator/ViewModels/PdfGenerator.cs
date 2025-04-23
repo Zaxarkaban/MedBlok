@@ -15,6 +15,7 @@ using DocumentGenerator.Models;
 using iText.Layout.Renderer;
 using iText.Layout;
 using iText.Layout.Layout;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DocumentGenerator
 {
@@ -94,6 +95,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "OrderClause", string.Join(", ", _viewModel.SelectedOrderClauses), font);
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
                     SetFieldValue(fields, "Department", _viewModel.Department, font);
+                    SetFieldValue(fields, "ServicePoint", _viewModel.ServicePoint ?? "", font);
 
                     // Текущий год
                     int currentYear = DateTime.Now.Year;

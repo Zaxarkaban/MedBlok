@@ -114,8 +114,21 @@ namespace DocumentGenerator
 
         private void HandleSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            // Фильтрация уже выполняется в ViewModel через привязку OrderClausesSearchText
-            // Здесь можно добавить дополнительную логику, если нужно, но в данном случае это не требуется
+            if (ViewModel != null)
+            {
+                // Подписываемся на событие прокрутки
+                ViewModel.ScrollToItemRequested -= ScrollToItem;
+                ViewModel.ScrollToItemRequested += ScrollToItem;
+            }
+        }
+
+        private void ScrollToItem(object sender, int index)
+        {
+            var listBox = this.FindControl<ListBox>("OrderClausesListBox");
+            if (listBox != null && index >= 0 && index < listBox.ItemCount)
+            {
+                listBox.ScrollIntoView(index);
+            }
         }
 
         private bool ValidateWorkExperienceInput(string currentText, string input, string fieldType)
@@ -631,7 +644,8 @@ namespace DocumentGenerator
                 string.IsNullOrEmpty(ViewModel.OkvedError) &&
                 string.IsNullOrEmpty(ViewModel.WorkExperienceYearsError) &&
                 string.IsNullOrEmpty(ViewModel.WorkExperienceMonthsError) &&
-                string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError))
+                string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError) &&
+                string.IsNullOrEmpty(ViewModel.ServicePointError))
             {
                 var saveFileDialog = new SaveFileDialog
                 {

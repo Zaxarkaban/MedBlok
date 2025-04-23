@@ -16,6 +16,7 @@ using iText.Kernel.Geom;
 using iText.Layout;
 using iText.Layout.Element;
 using System.Linq;
+using System.Data;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -224,6 +225,7 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "WorkExperience", "", font);
                                 SetFieldValue(fields, "MedicalOrganization", "", font);
                                 SetFieldValue(fields, "Okved", "", font);
+                                SetFieldValue(fields, "ServicePoint", "", font);
                                 int currentYear = DateTime.Now.Year;
                                 if (fields.TryGetValue("CurrentYear", out var field))
                                 {
