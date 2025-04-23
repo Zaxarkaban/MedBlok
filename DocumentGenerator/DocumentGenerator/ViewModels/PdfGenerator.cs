@@ -12,8 +12,8 @@ using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Geom;
 using iText.Layout.Element;
 using DocumentGenerator.Models;
-using iText.Layout.Renderer;
 using iText.Layout;
+using iText.Layout.Renderer;
 using iText.Layout.Layout;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -26,6 +26,33 @@ namespace DocumentGenerator
         public PdfGenerator(MainWindowViewModel viewModel)
         {
             _viewModel = viewModel;
+        }
+
+        // Метод для получения списка исследований с прямым соответствием из таблицы
+        private List<string> GetTestsWithDirectMatch()
+        {
+            return new List<string>
+            {
+                "Исследование крови на сифилис",
+                "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
+                "Исследование уровня креатинина",
+                "Исследование уровня мочевины",
+                "Исследование уровня калия",
+                "Исследование уровня натрия",
+                "Исследование уровня железа",
+                "Исследование уровня щелочной фосфатазы",
+                "Исследование уровня билирубина",
+                "Исследование уровня общего белка",
+                "Исследование уровня триглицеридов",
+                "Исследование уровня холестерина",
+                "Исследование уровня фибриногена",
+                "Исследование уровня ретикулоцитов в крови",
+                "Исследование уровня метгемоглобина в крови",
+                "Исследование уровня карбоксигемоглобина в крови",
+                "Исследование уровня ретикулоцитов, метгемоглобина в крови",
+                "Исследование уровня ретикулоцитов, тромбоцитов в крови",
+                "Определение группы крови и резус-фактора"
+            };
         }
 
         public void GeneratePdf(string outputPath, string templatePath)
@@ -96,10 +123,11 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
                     SetFieldValue(fields, "Department", _viewModel.Department, font);
                     SetFieldValue(fields, "ServicePoint", _viewModel.ServicePoint ?? "", font);
+                    fields["обязательные_анализы"].SetValue("V"); // Устанавливаем галочку для обязательных анализов
+                    
 
                     // Текущий год
                     int currentYear = DateTime.Now.Year;
-                    int currentYear1 = DateTime.Now.Year;
                     SetFieldValue(fields, "CurrentYear", currentYear.ToString(), font);
                     SetFieldValue(fields, "CurrentYear1", currentYear.ToString(), font);
 
@@ -107,8 +135,8 @@ namespace DocumentGenerator
                     string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
                     SetFieldValue(fields, "CurrentDate", currentDate, font);
 
-                    // Разбиваем ФИО на части (предполагаем, что ФИО есть в userData)
-                    string fio = _viewModel.FullName ?? ""; // Проверяем на null
+                    // Разбиваем ФИО на части
+                    string fio = _viewModel.FullName ?? "";
                     string[] fioParts = fio.Split(' ');
                     string lastName = fioParts.Length > 0 ? fioParts[0] : "";
                     string firstName = fioParts.Length > 1 ? fioParts[1] : "";
@@ -118,7 +146,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "MiddleName", middleName, font);
 
                     // Поле с галочкой (чекбокс)
-                    SetFieldValue(fields, "CheckBoxField", "V", font); // "Yes" — стандартное значение для отмеченного чекбокса
+                    SetFieldValue(fields, "CheckBoxField", "V", font);
 
                     // Поле "Документ"
                     SetFieldValue(fields, "Document", "паспорт", font);
@@ -154,6 +182,22 @@ namespace DocumentGenerator
                     // Генерируем список исследований
                     var tests = GenerateTestsList(isOver40, isFemale);
 
+                    // Получаем список исследований с прямым соответствием
+                    var testsWithDirectMatch = GetTestsWithDirectMatch();
+
+                    // Сравниваем и устанавливаем галочки
+                    foreach (var test in tests)
+                    {
+                        if (testsWithDirectMatch.Contains(test))
+                        {
+                            string fieldName = $"test_{SanitizeFieldName(test)}";
+                            if (fields.ContainsKey(fieldName))
+                            {
+                                fields[fieldName].SetValue("V"); // Устанавливаем галочку
+                            }
+                        }
+                    }
+
                     // Добавляем новый лист с исследованиями на третью страницу
                     AddTestsPage(pdf, tests, font);
 
@@ -166,6 +210,19 @@ namespace DocumentGenerator
             {
                 throw new InvalidOperationException($"Ошибка при создании PDF: {ex.Message}", ex);
             }
+        }
+
+        private string SanitizeFieldName(string name)
+        {
+            // Удаляем недопустимые символы для имени поля в PDF
+            return name.Replace(" ", "_")
+                       .Replace("(", "")
+                       .Replace(")", "")
+                       .Replace(",", "")
+                       .Replace(".", "")
+                       .Replace(":", "")
+                       .Replace(";", "")
+                       .Replace("/", "_");
         }
 
         private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
@@ -218,17 +275,17 @@ namespace DocumentGenerator
         private List<string> GenerateTestsList(bool isOver40, bool isFemale)
         {
             var mandatoryTests = new List<string>
-        {
-            "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
-            "Электрокардиография в покое",
-            "Измерение артериального давления на периферических артериях",
-            "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
-            isOver40 ? "Определение абсолютного сердечно-сосудистого риска" : "Определение относительного сердечно-сосудистого риска",
-            "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
-            "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
-            "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
-            "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
-        };
+            {
+                "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
+                "Электрокардиография в покое",
+                "Измерение артериального давления на периферических артериях",
+                "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
+                isOver40 ? "Определение абсолютного сердечно-сосудистого риска" : "Определение относительного сердечно-сосудистого риска",
+                "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
+                "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
+                "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
+                "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
+            };
 
             if (isOver40)
             {
@@ -288,7 +345,6 @@ namespace DocumentGenerator
                 .SetFont(font)
                 .SetFontSize(7);
 
-            // Меняем заголовок на "Список исследований"
             paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
@@ -302,5 +358,4 @@ namespace DocumentGenerator
             columnText.Close();
         }
     }
-
 }

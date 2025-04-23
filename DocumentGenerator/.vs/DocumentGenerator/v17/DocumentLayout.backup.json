@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\models\\dictionaries.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\models\\dictionaries.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,26 +23,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "MainWindow.axaml",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml",
-              "RelativeDocumentMoniker": "DocumentGenerator\\Views\\MainWindow.axaml",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Views\\MainWindow.axaml*",
-              "RelativeToolTip": "DocumentGenerator\\Views\\MainWindow.axaml*",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-23T03:27:55.26Z",
+              "Title": "PdfGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAtwH0AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-23T05:16:18.598Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "MainWindowViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "RelativeToolTip": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAowEsAAAA1AAAAAAAAAA==",
+              "Title": "Dictionaries.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Dictionaries.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\Models\\Dictionaries.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Dictionaries.cs",
+              "RelativeToolTip": "DocumentGenerator\\Models\\Dictionaries.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAtwCwAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T03:17:51.031Z",
+              "WhenOpened": "2025-04-23T05:36:57.945Z",
               "EditorCaption": ""
             }
           ]
