@@ -12,6 +12,9 @@ using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Geom;
 using iText.Layout.Element;
 using DocumentGenerator.Models;
+using iText.Layout.Renderer;
+using iText.Layout;
+using iText.Layout.Layout;
 
 namespace DocumentGenerator
 {
@@ -72,6 +75,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "FullName", _viewModel.FullName, font);
                     SetFieldValue(fields, "Position", _viewModel.Position, font);
                     SetFieldValue(fields, "DateOfBirth", _viewModel.DateOfBirth, font);
+                    SetFieldValue(fields, "DateOfBirth1", _viewModel.DateOfBirth, font);
                     SetFieldValue(fields, "Gender", _viewModel.Gender, font);
                     SetFieldValue(fields, "Snils", _viewModel.Snils, font);
                     SetFieldValue(fields, "PassportSeries", _viewModel.PassportSeries, font);
@@ -88,16 +92,34 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "Okved", _viewModel.Okved, font);
                     SetFieldValue(fields, "WorkExperience", $"{_viewModel.WorkExperienceYears} лет {_viewModel.WorkExperienceMonths} месяцев", font);
                     SetFieldValue(fields, "OrderClause", string.Join(", ", _viewModel.SelectedOrderClauses), font);
-                    // Добавляем после других SetFieldValue
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
                     SetFieldValue(fields, "Department", _viewModel.Department, font);
+
+                    // Текущий год
                     int currentYear = DateTime.Now.Year;
-                    if (fields.TryGetValue("CurrentYear", out var field))
-                    {
-                        var pdfField = (PdfFormField)field;
-                        pdfField.SetValue(currentYear.ToString());
-                        pdfField.SetFontAndSize(font, 24); // Увеличиваем шрифт до 16
-                    }
+                    int currentYear1 = DateTime.Now.Year;
+                    SetFieldValue(fields, "CurrentYear", currentYear.ToString(), font);
+                    SetFieldValue(fields, "CurrentYear1", currentYear.ToString(), font);
+
+                    // Новая дата (полная)
+                    string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
+                    SetFieldValue(fields, "CurrentDate", currentDate, font);
+
+                    // Разбиваем ФИО на части (предполагаем, что ФИО есть в userData)
+                    string fio = _viewModel.FullName ?? ""; // Проверяем на null
+                    string[] fioParts = fio.Split(' ');
+                    string lastName = fioParts.Length > 0 ? fioParts[0] : "";
+                    string firstName = fioParts.Length > 1 ? fioParts[1] : "";
+                    string middleName = fioParts.Length > 2 ? fioParts[2] : "";
+                    SetFieldValue(fields, "LastName", lastName, font);
+                    SetFieldValue(fields, "FirstName", firstName, font);
+                    SetFieldValue(fields, "MiddleName", middleName, font);
+
+                    // Поле с галочкой (чекбокс)
+                    SetFieldValue(fields, "CheckBoxField", "V", font); // "Yes" — стандартное значение для отмеченного чекбокса
+
+                    // Поле "Документ"
+                    SetFieldValue(fields, "Document", "паспорт", font);
 
                     // Создаём список врачей с учётом условий
                     var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
@@ -146,28 +168,65 @@ namespace DocumentGenerator
 
         private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
         {
-            if (fields.ContainsKey(fieldName))
+            if (fields.TryGetValue(fieldName, out var pdfField))
             {
-                var field = fields[fieldName];
-                field.SetValue(value ?? "");
-                field.SetFontAndSize(font, 10);
+                // Устанавливаем значение поля
+                pdfField.SetValue(value);
+
+                // Пропускаем динамическое изменение шрифта для CurrentYear (шрифт фиксированно 24)
+                if (fieldName == "CurrentYear")
+                {
+                    pdfField.SetFontAndSize(font, 24f);
+                    return;
+                }
+
+                // Начальный размер шрифта
+                float fontSize = 10.5f;
+                pdfField.SetFontAndSize(font, fontSize);
+
+                // Получаем размеры поля
+                var widget = pdfField.GetWidgets().FirstOrDefault();
+                if (widget == null) return;
+                var rect = widget.GetRectangle();
+                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
+
+                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
+                float textWidth;
+                float minFontSize = 6f; // Минимальный размер шрифта
+                do
+                {
+                    // Измеряем ширину текста с текущим размером шрифта
+                    textWidth = font.GetWidth(value, fontSize);
+
+                    if (textWidth > fieldWidth && fontSize > minFontSize)
+                    {
+                        fontSize -= 0.5f; // Уменьшаем шрифт на 0.5
+                    }
+                    else
+                    {
+                        break; // Текст влезает или достигнут минимальный шрифт
+                    }
+                } while (true);
+
+                // Устанавливаем финальный размер шрифта
+                pdfField.SetFontAndSize(font, fontSize);
             }
         }
 
         private List<string> GenerateTestsList(bool isOver40, bool isFemale)
         {
             var mandatoryTests = new List<string>
-            {
-                "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
-                "Электрокардиография в покое",
-                "Измерение артериального давления на периферических артериях",
-                "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
-                isOver40 ? "Определение абсолютного сердечно-сосудистого риска" : "Определение относительного сердечно-сосудистого риска",
-                "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
-                "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
-                "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
-                "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
-            };
+        {
+            "Расчет на основании антропометрии (измерение роста, массы тела, окружности талии) индекса массы тела",
+            "Электрокардиография в покое",
+            "Измерение артериального давления на периферических артериях",
+            "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
+            isOver40 ? "Определение абсолютного сердечно-сосудистого риска" : "Определение относительного сердечно-сосудистого риска",
+            "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
+            "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
+            "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
+            "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
+        };
 
             if (isOver40)
             {
@@ -184,6 +243,7 @@ namespace DocumentGenerator
             {
                 mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
             }
+
             // Добавляем исследования из выбранных пунктов
             var testsFromClauses = new List<string>();
             foreach (var clause in _viewModel.SelectedOrderClauses)
@@ -240,4 +300,5 @@ namespace DocumentGenerator
             columnText.Close();
         }
     }
+
 }

@@ -231,6 +231,24 @@ namespace DocumentGenerator.ViewModels
                                     pdfField.SetValue(currentYear.ToString());
                                     pdfField.SetFontAndSize(font, 24); // Увеличиваем шрифт до 16
                                 }
+                                // Новая дата (полная)
+                                string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
+                                SetFieldValue(fields, "CurrentDate", currentDate, font);
+
+                                // Разбиваем ФИО на части (предполагаем, что ФИО в формате "Фамилия Имя Отчество")
+                                string[] fioParts = record.FullName.Split(' ');
+                                string lastName = fioParts.Length > 0 ? fioParts[0] : "";
+                                string firstName = fioParts.Length > 1 ? fioParts[1] : "";
+                                string middleName = fioParts.Length > 2 ? fioParts[2] : "";
+                                SetFieldValue(fields, "LastName", lastName, font);
+                                SetFieldValue(fields, "FirstName", firstName, font);
+                                SetFieldValue(fields, "MiddleName", middleName, font);
+
+                                // Поле с галочкой (чекбокс)
+                                SetFieldValue(fields, "CheckBoxField", "Yes", font); // "Yes" — стандартное значение для отмеченного чекбокса
+
+                                // Поле "Документ"
+                                SetFieldValue(fields, "Document", "паспорт", font);
 
                                 var selectedClauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(clause => clause.Trim())
@@ -416,18 +434,48 @@ namespace DocumentGenerator.ViewModels
 
         private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
         {
-            if (fields.ContainsKey(fieldName))
+            if (fields.TryGetValue(fieldName, out var pdfField))
             {
-                var field = fields[fieldName];
-                field.SetValue(value ?? "");
-                if (font != null)
+                // Устанавливаем значение поля
+                pdfField.SetValue(value);
+
+                // Пропускаем динамическое изменение шрифта для CurrentYear (шрифт фиксированно 24)
+                if (fieldName == "CurrentYear")
                 {
-                    field.SetFontAndSize(font, 10);
+                    pdfField.SetFontAndSize(font, 24f);
+                    return;
                 }
-            }
-            else
-            {
-                LogToFile($"Поле {fieldName} не найдено в форме.");
+
+                // Начальный размер шрифта
+                float fontSize = 10.5f;
+                pdfField.SetFontAndSize(font, fontSize);
+
+                // Получаем размеры поля
+                var widget = pdfField.GetWidgets().FirstOrDefault();
+                if (widget == null) return;
+                var rect = widget.GetRectangle();
+                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
+
+                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
+                float textWidth;
+                float minFontSize = 6f; // Минимальный размер шрифта
+                do
+                {
+                    // Измеряем ширину текста с текущим размером шрифта
+                    textWidth = font.GetWidth(value, fontSize);
+
+                    if (textWidth > fieldWidth && fontSize > minFontSize)
+                    {
+                        fontSize -= 0.5f; // Уменьшаем шрифт на 0.5
+                    }
+                    else
+                    {
+                        break; // Текст влезает или достигнут минимальный шрифт
+                    }
+                } while (true);
+
+                // Устанавливаем финальный размер шрифта
+                pdfField.SetFontAndSize(font, fontSize);
             }
         }
 
