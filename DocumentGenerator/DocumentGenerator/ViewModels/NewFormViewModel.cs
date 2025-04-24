@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using DocumentGenerator.Services;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace DocumentGenerator.ViewModels
 {
     public class NewFormViewModel : ReactiveObject
     {
-        private readonly NewFormPdfGenerator _pdfGenerator; private readonly IServiceProvider _serviceProvider;
+        private readonly NewFormPdfGenerator _pdfGenerator;
+        private readonly IServiceProvider _serviceProvider;
 
         // Поля формы
         private string? _medicalSeries;
@@ -129,6 +131,19 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _gynecologist, value);
         }
 
+        // Новое свойство для категорий вождения
+        public List<string> DrivingCategoryOptions { get; } = new List<string>
+        {
+            "A", "A1", "B", "B1", "BE", "C", "C1", "CE", "C1E", "D", "D1", "DE", "D1E", "M", "Tm", "Tb"
+        };
+
+        private ObservableCollection<string> _selectedDrivingCategories = new ObservableCollection<string>();
+        public ObservableCollection<string> SelectedDrivingCategories
+        {
+            get => _selectedDrivingCategories;
+            set => this.RaiseAndSetIfChanged(ref _selectedDrivingCategories, value);
+        }
+
         // Свойства ошибок
         private string _medicalSeriesError = "";
         public string MedicalSeriesError
@@ -242,6 +257,13 @@ namespace DocumentGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _gynecologistError, value);
         }
 
+        private string _drivingCategoriesError = "";
+        public string DrivingCategoriesError
+        {
+            get => _drivingCategoriesError;
+            set => this.RaiseAndSetIfChanged(ref _drivingCategoriesError, value);
+        }
+
         public NewFormViewModel(NewFormPdfGenerator pdfGenerator, IServiceProvider serviceProvider)
         {
             _pdfGenerator = pdfGenerator;
@@ -251,12 +273,22 @@ namespace DocumentGenerator.ViewModels
         // Методы валидации
         public void ValidateMedicalSeries()
         {
-            MedicalSeriesError = string.IsNullOrWhiteSpace(MedicalSeries) ? "Серия медицинского освидетельствования не может быть пустой" : "";
+            if (string.IsNullOrWhiteSpace(MedicalSeries))
+            {
+                MedicalSeriesError = "";
+                return;
+            }
+            MedicalSeriesError = MedicalSeries.Length <= 50 ? "" : "Серия медицинского освидетельствования не может превышать 50 символов";
         }
 
         public void ValidateMedicalNumber()
         {
-            MedicalNumberError = string.IsNullOrWhiteSpace(MedicalNumber) ? "Номер медицинского освидетельствования не может быть пустым" : "";
+            if (string.IsNullOrWhiteSpace(MedicalNumber))
+            {
+                MedicalNumberError = "";
+                return;
+            }
+            MedicalNumberError = MedicalNumber.Length <= 50 ? "" : "Номер медицинского освидетельствования не может превышать 50 символов";
         }
 
         public void ValidateFullName()
@@ -309,7 +341,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportSeries))
             {
-                PassportSeriesError = "Серия паспорта не может быть пустой";
+                PassportSeriesError = "";
                 return;
             }
 
@@ -322,7 +354,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(PassportNumber))
             {
-                PassportNumberError = "Номер паспорта не может быть пустым";
+                PassportNumberError = "";
                 return;
             }
 
@@ -333,17 +365,32 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidatePassportIssuedBy()
         {
-            PassportIssuedByError = string.IsNullOrWhiteSpace(PassportIssuedBy) ? "Кем выдан паспорт не может быть пустым" : "";
+            if (string.IsNullOrWhiteSpace(PassportIssuedBy))
+            {
+                PassportIssuedByError = "";
+                return;
+            }
+            PassportIssuedByError = PassportIssuedBy.Length <= 1000 ? "" : "Поле 'Кем выдан паспорт' не может превышать 1000 символов";
         }
 
         public void ValidateBloodGroup()
         {
-            BloodGroupError = string.IsNullOrWhiteSpace(BloodGroup) ? "Группа крови должна быть выбрана" : "";
+            if (string.IsNullOrWhiteSpace(BloodGroup))
+            {
+                BloodGroupError = "";
+                return;
+            }
+            BloodGroupError = BloodGroupOptions.Contains(BloodGroup) ? "" : "Группа крови должна быть выбрана из списка";
         }
 
         public void ValidateRhFactor()
         {
-            RhFactorError = string.IsNullOrWhiteSpace(RhFactor) ? "Резус-фактор должен быть выбран" : "";
+            if (string.IsNullOrWhiteSpace(RhFactor))
+            {
+                RhFactorError = "";
+                return;
+            }
+            RhFactorError = RhFactorOptions.Contains(RhFactor) ? "" : "Резус-фактор должен быть выбран из списка";
         }
 
         public void ValidatePhone()
@@ -368,7 +415,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Address))
             {
-                AddressError = "Адрес не может быть пустым";
+                AddressError = "";
                 return;
             }
 
@@ -386,7 +433,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(DrivingExperience))
             {
-                DrivingExperienceError = "Водительский стаж не может быть пустым";
+                DrivingExperienceError = "";
                 return;
             }
 
@@ -403,7 +450,7 @@ namespace DocumentGenerator.ViewModels
         {
             if (string.IsNullOrWhiteSpace(Snils))
             {
-                SnilsError = "СНИЛС не может быть пустым";
+                SnilsError = "";
                 return;
             }
 
@@ -428,34 +475,46 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidateFluorography()
         {
-            FluorographyError = string.IsNullOrWhiteSpace(Fluorography) ? "Флюорография не может быть пустой" : "";
+            if (string.IsNullOrWhiteSpace(Fluorography))
+            {
+                FluorographyError = "";
+                return;
+            }
+            FluorographyError = Fluorography.Length <= 1000 ? "" : "Поле 'Флюорография' не может превышать 1000 символов";
         }
 
         public void ValidateGynecologist()
         {
-            if (Gender == "Женский" && string.IsNullOrWhiteSpace(Gynecologist))
+            if (string.IsNullOrWhiteSpace(Gynecologist))
             {
-                GynecologistError = "Для женщин данные гинеколога обязательны";
+                GynecologistError = "";
                 return;
             }
+            GynecologistError = Gynecologist.Length <= 1000 ? "" : "Поле 'Гинеколог' не может превышать 1000 символов";
+        }
 
-            GynecologistError = "";
+        public void ValidateDrivingCategories()
+        {
+            DrivingCategoriesError = SelectedDrivingCategories.Any() ? "" : "Необходимо выбрать хотя бы одну категорию вождения";
         }
 
         public void OnSave()
         {
-            // Выполняем валидацию
-            ValidateMedicalSeries();
-            ValidateMedicalNumber();
+            // Выполняем валидацию обязательных полей
             ValidateFullName();
             ValidateDateOfBirth();
             ValidateGender();
+            ValidatePhone();
+            ValidateDrivingCategories();
+
+            // Выполняем валидацию необязательных полей (только если они заполнены)
+            ValidateMedicalSeries();
+            ValidateMedicalNumber();
             ValidatePassportSeries();
             ValidatePassportNumber();
             ValidatePassportIssuedBy();
             ValidateBloodGroup();
             ValidateRhFactor();
-            ValidatePhone();
             ValidateAddress();
             ValidateDrivingExperience();
             ValidateSnils();
@@ -463,9 +522,10 @@ namespace DocumentGenerator.ViewModels
             ValidateGynecologist();
 
             // Проверяем, есть ли ошибки валидации
-            if (new[] { MedicalSeriesError, MedicalNumberError, FullNameError, DateOfBirthError, GenderError,
-            PassportSeriesError, PassportNumberError, PassportIssuedByError, BloodGroupError, RhFactorError,
-            PhoneError, AddressError, DrivingExperienceError, SnilsError, FluorographyError, GynecologistError }
+            if (new[] { FullNameError, DateOfBirthError, GenderError, PhoneError, DrivingCategoriesError,
+                        MedicalSeriesError, MedicalNumberError, PassportSeriesError, PassportNumberError,
+                        PassportIssuedByError, BloodGroupError, RhFactorError, AddressError, DrivingExperienceError,
+                        SnilsError, FluorographyError, GynecologistError }
                 .Any(error => !string.IsNullOrEmpty(error)))
             {
                 return; // Если есть ошибки, прерываем выполнение
@@ -473,24 +533,25 @@ namespace DocumentGenerator.ViewModels
 
             // Собираем данные пользователя в словарь
             var userData = new Dictionary<string, string>
-        {
-            { "MedicalSeries", MedicalSeries ?? "" },
-            { "MedicalNumber", MedicalNumber ?? "" },
-            { "FullName", FullName ?? "" },
-            { "DateOfBirth", DateOfBirth ?? "" },
-            { "Gender", Gender ?? "" },
-            { "PassportSeries", PassportSeries ?? "" },
-            { "PassportNumber", PassportNumber ?? "" },
-            { "PassportIssuedBy", PassportIssuedBy ?? "" },
-            { "BloodGroup", BloodGroup ?? "" },
-            { "RhFactor", RhFactor ?? "" },
-            { "Phone", Phone ?? "" },
-            { "Address", Address ?? "" },
-            { "DrivingExperience", DrivingExperience ?? "" },
-            { "Snils", Snils ?? "" },
-            { "Fluorography", Fluorography ?? "" },
-            { "Gynecologist", Gynecologist ?? "" }
-        };
+            {
+                { "MedicalSeries", MedicalSeries ?? "" },
+                { "MedicalNumber", MedicalNumber ?? "" },
+                { "FullName", FullName ?? "" },
+                { "DateOfBirth", DateOfBirth ?? "" },
+                { "Gender", Gender ?? "" },
+                { "PassportSeries", PassportSeries ?? "" },
+                { "PassportNumber", PassportNumber ?? "" },
+                { "PassportIssuedBy", PassportIssuedBy ?? "" },
+                { "BloodGroup", BloodGroup ?? "" },
+                { "RhFactor", RhFactor ?? "" },
+                { "Phone", Phone ?? "" },
+                { "Address", Address ?? "" },
+                { "DrivingExperience", DrivingExperience ?? "" },
+                { "Snils", Snils ?? "" },
+                { "Fluorography", Fluorography ?? "" },
+                { "Gynecologist", Gynecologist ?? "" },
+                { "DrivingCategories", string.Join(",", SelectedDrivingCategories) }
+            };
 
             // Логика сохранения будет перенесена в NewForm.axaml.cs
         }
@@ -500,5 +561,4 @@ namespace DocumentGenerator.ViewModels
             // Здесь можно добавить логику очистки, если потребуется
         }
     }
-
 }

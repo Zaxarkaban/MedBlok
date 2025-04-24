@@ -119,6 +119,47 @@
 			</Setter>
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
+		<!-- Стиль для ListBox -->
+		<Style Selector="ListBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" BlurRadius="4" OffsetX="2" OffsetY="2" Opacity="0.4"/>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.3"/>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<!-- Стиль для ListBox при наведении -->
+		<Style Selector="ListBox:pointerover">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ab091" Offset="0"/>
+						<GradientStop Color="#116d5a" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
 		<!-- Стиль для кнопок -->
 		<Style Selector="Button">
 			<Setter Property="Background">
@@ -236,19 +277,11 @@
 			<TextBox Name="DrivingExperienceTextBox" Text="{Binding DrivingExperience, UpdateSourceTrigger=PropertyChanged}" TabIndex="13" />
 			<TextBlock Text="{Binding DrivingExperienceError}" Foreground="Red" />
 
-			<TextBlock Text="СНИЛС" />
-			<TextBox Name="SnilsTextBox" Text="{Binding Snils, UpdateSourceTrigger=PropertyChanged}" TabIndex="14" />
-			<TextBlock Text="{Binding SnilsError}" Foreground="Red" />
+			<TextBlock Text="Категории вождения" />
+			<ListBox Name="DrivingCategoriesListBox" ItemsSource="{Binding DrivingCategoryOptions}" SelectedItems="{Binding SelectedDrivingCategories}" SelectionMode="Multiple" TabIndex="14" Height="100" />
+			<TextBlock Text="{Binding DrivingCategoriesError}" Foreground="Red" />
 
-			<TextBlock Text="Флюорография" />
-			<TextBox Name="FluorographyTextBox" Text="{Binding Fluorography, UpdateSourceTrigger=PropertyChanged}" TabIndex="15" />
-			<TextBlock Text="{Binding FluorographyError}" Foreground="Red" />
-
-			<TextBlock Text="Гинеколог" />
-			<TextBox Name="GynecologistTextBox" Text="{Binding Gynecologist, UpdateSourceTrigger=PropertyChanged}" TabIndex="16" />
-			<TextBlock Text="{Binding GynecologistError}" Foreground="Red" />
-
-			<Button Name="SaveButton" Content="Сохранить" TabIndex="17" />
+			<Button Name="SaveButton" Content="Сохранить" TabIndex="15" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>

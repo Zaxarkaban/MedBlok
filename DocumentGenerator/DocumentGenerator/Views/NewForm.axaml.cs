@@ -18,11 +18,13 @@ namespace DocumentGenerator
 {
     public partial class NewForm : Window
     {
-        public NewFormViewModel ViewModel => DataContext as NewFormViewModel; private const int CurrentYear = 2025; private const int MinYear = CurrentYear - 120; // 1905 private readonly IServiceProvider _serviceProvider;
+        public NewFormViewModel ViewModel => DataContext as NewFormViewModel;
+        private const int CurrentYear = 2025;
+        private const int MinYear = CurrentYear - 120; // 1905
         private readonly IServiceProvider _serviceProvider;
+
         public NewForm(IServiceProvider serviceProvider)
         {
-
             InitializeComponent();
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             DataContext = new NewFormViewModel(
@@ -46,15 +48,16 @@ namespace DocumentGenerator
 
             // Привязываем события для TextBox
             BindTextBoxEvents();
-            // Привязываем события для ComboBox
+            // Привязываем события для ComboBox и ListBox
             BindComboBoxEvents();
+            BindListBoxEvents();
         }
 
         private void BindTextBoxEvents()
         {
             var textBoxes = new[] { "MedicalSeriesTextBox", "MedicalNumberTextBox", "FullNameTextBox", "DateOfBirthTextBox",
-            "PassportSeriesTextBox", "PassportNumberTextBox", "PassportIssuedByTextBox", "PhoneTextBox", "AddressTextBox",
-            "DrivingExperienceTextBox", "SnilsTextBox", "FluorographyTextBox", "GynecologistTextBox" };
+                "PassportSeriesTextBox", "PassportNumberTextBox", "PassportIssuedByTextBox", "PhoneTextBox", "AddressTextBox",
+                "DrivingExperienceTextBox", "SnilsTextBox", "FluorographyTextBox", "GynecologistTextBox" };
 
             foreach (var name in textBoxes)
             {
@@ -80,6 +83,16 @@ namespace DocumentGenerator
                     comboBox.SelectionChanged += ComboBox_SelectionChanged;
                     comboBox.KeyDown += InputField_KeyDown;
                 }
+            }
+        }
+
+        private void BindListBoxEvents()
+        {
+            var listBox = this.FindControl<ListBox>("DrivingCategoriesListBox");
+            if (listBox != null)
+            {
+                listBox.SelectionChanged += ListBox_SelectionChanged;
+                listBox.KeyDown += InputField_KeyDown;
             }
         }
 
@@ -524,17 +537,18 @@ namespace DocumentGenerator
         {
             ViewModel.OnSave();
 
-            if (string.IsNullOrEmpty(ViewModel.MedicalSeriesError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalNumberError) &&
-                string.IsNullOrEmpty(ViewModel.FullNameError) &&
+            if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
                 string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
                 string.IsNullOrEmpty(ViewModel.GenderError) &&
+                string.IsNullOrEmpty(ViewModel.PhoneError) &&
+                string.IsNullOrEmpty(ViewModel.DrivingCategoriesError) &&
+                string.IsNullOrEmpty(ViewModel.MedicalSeriesError) &&
+                string.IsNullOrEmpty(ViewModel.MedicalNumberError) &&
                 string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
                 string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
                 string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
                 string.IsNullOrEmpty(ViewModel.BloodGroupError) &&
                 string.IsNullOrEmpty(ViewModel.RhFactorError) &&
-                string.IsNullOrEmpty(ViewModel.PhoneError) &&
                 string.IsNullOrEmpty(ViewModel.AddressError) &&
                 string.IsNullOrEmpty(ViewModel.DrivingExperienceError) &&
                 string.IsNullOrEmpty(ViewModel.SnilsError) &&
@@ -545,9 +559,9 @@ namespace DocumentGenerator
                 {
                     Title = "Сохранить PDF-документ",
                     Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
-                },
+                    {
+                        new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
+                    },
                     DefaultExtension = "pdf",
                     InitialFileName = $"{SanitizeFileName(ViewModel.FullName ?? "NewForm")}.pdf"
                 };
@@ -558,24 +572,25 @@ namespace DocumentGenerator
                     var pdfGenerator = new NewFormPdfGenerator();
                     string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "карта водительская комиссия.pdf");
                     pdfGenerator.GeneratePdf(new Dictionary<string, string>
-                {
-                    { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
-                    { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
-                    { "FullName", ViewModel.FullName ?? "" },
-                    { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
-                    { "Gender", ViewModel.Gender ?? "" },
-                    { "PassportSeries", ViewModel.PassportSeries ?? "" },
-                    { "PassportNumber", ViewModel.PassportNumber ?? "" },
-                    { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
-                    { "BloodGroup", ViewModel.BloodGroup ?? "" },
-                    { "RhFactor", ViewModel.RhFactor ?? "" },
-                    { "Phone", ViewModel.Phone ?? "" },
-                    { "Address", ViewModel.Address ?? "" },
-                    { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
-                    { "Snils", ViewModel.Snils ?? "" },
-                    { "Fluorography", ViewModel.Fluorography ?? "" },
-                    { "Gynecologist", ViewModel.Gynecologist ?? "" }
-                }, result, templatePath);
+                    {
+                        { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
+                        { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
+                        { "FullName", ViewModel.FullName ?? "" },
+                        { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
+                        { "Gender", ViewModel.Gender ?? "" },
+                        { "PassportSeries", ViewModel.PassportSeries ?? "" },
+                        { "PassportNumber", ViewModel.PassportNumber ?? "" },
+                        { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
+                        { "BloodGroup", ViewModel.BloodGroup ?? "" },
+                        { "RhFactor", ViewModel.RhFactor ?? "" },
+                        { "Phone", ViewModel.Phone ?? "" },
+                        { "Address", ViewModel.Address ?? "" },
+                        { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
+                        { "Snils", ViewModel.Snils ?? "" },
+                        { "Fluorography", ViewModel.Fluorography ?? "" },
+                        { "Gynecologist", ViewModel.Gynecologist ?? "" },
+                        { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
+                    }, result, templatePath);
 
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                     {
@@ -634,6 +649,15 @@ namespace DocumentGenerator
                 MoveFocusByTabIndex(control, true);
         }
 
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox listBox)
+            {
+                ViewModel.ValidateDrivingCategories();
+                MoveFocusByTabIndex(listBox, true);
+            }
+        }
+
         private void InputField_KeyDown(object sender, KeyEventArgs e)
         {
             if (sender is not Control control) return;
@@ -652,7 +676,7 @@ namespace DocumentGenerator
 
             if (e.Key == Key.Enter)
             {
-                if (control.Name == "GynecologistTextBox")
+                if (control.Name == "DrivingCategoriesListBox")
                 {
                     var saveButton = this.FindControl<Button>("SaveButton");
                     if (saveButton != null)
@@ -720,7 +744,7 @@ namespace DocumentGenerator
         {
             foreach (var child in parent.GetVisualChildren().OfType<Control>())
             {
-                if (child is TextBox || child is ComboBox || child is Button)
+                if (child is TextBox || child is ComboBox || child is Button || child is ListBox)
                 {
                     int tabIndex = child.GetValue(Control.TabIndexProperty);
                     if (tabIndex >= 0)
@@ -735,5 +759,4 @@ namespace DocumentGenerator
             }
         }
     }
-
 }
