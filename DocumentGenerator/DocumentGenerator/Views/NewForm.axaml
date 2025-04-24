@@ -3,7 +3,7 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.NewForm"
         x:DataType="vm:NewFormViewModel"
-        Title="Новая форма" Width="450" Height="700">
+        Title="Водительская комиссия" Width="450" Height="700">
 	<!-- Многослойный фон -->
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

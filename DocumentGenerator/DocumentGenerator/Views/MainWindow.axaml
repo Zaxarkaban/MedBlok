@@ -3,7 +3,7 @@
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Document Generator" Width="450" Height="700">
+        Title="Профосмотры" Width="450" Height="700">
 	<!-- Многослойный фон (без анимации, затемнённые цвета) -->
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

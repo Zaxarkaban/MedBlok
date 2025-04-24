@@ -154,7 +154,7 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			<TextBlock x:Name="HeaderText" Text="Document Generator" Classes="header" Grid.Row="0"/>
-			<Button x:Name="NewDocumentButton" Content="Новый документ" Grid.Row="1">
+			<Button x:Name="NewDocumentButton" Content="Профосмотры" Grid.Row="1">
 				<Button.ContentTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
@@ -164,7 +164,7 @@
 					</DataTemplate>
 				</Button.ContentTemplate>
 			</Button>
-			<Button x:Name="NewFormButton" Content="Новая форма" Grid.Row="2" >
+			<Button x:Name="NewFormButton" Content="Водительская комиссия" Grid.Row="2" >
 				<Button.ContentTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
@@ -175,7 +175,7 @@
 				</Button.ContentTemplate>
 			</Button>
 			
-			<Button x:Name="AnalysisButton" Content="Рассчитать осмотры" Grid.Row="3">
+			<Button x:Name="AnalysisButton" Content="Расчет КП" Grid.Row="3">
 				<Button.ContentTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
