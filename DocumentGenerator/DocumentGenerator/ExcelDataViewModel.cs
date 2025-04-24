@@ -128,15 +128,11 @@ namespace DocumentGenerator.ViewModels
                         }
 
                         Records.Add(record);
-                        LogToFile($"Добавлена запись: {record.FullName}, возраст: {record.Age}, пол: {record.Gender}");
                     }
-
-                    LogToFile($"Всего добавлено записей: {Records.Count}");
                 }
             }
             catch (Exception ex)
             {
-                LogToFile($"Ошибка при чтении Excel-файла: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception($"Ошибка при чтении Excel-файла: {ex.Message}", ex);
             }
         }
@@ -145,13 +141,11 @@ namespace DocumentGenerator.ViewModels
         {
             if (_isProcessing)
             {
-                LogToFile("Метод SaveToPdf уже выполняется, повторный вызов проигнорирован.");
                 await ShowMessageBox(parentWindow, "Обработка уже выполняется. Пожалуйста, подождите.", "Предупреждение");
                 return;
             }
 
             _isProcessing = true;
-            LogToFile("Начало выполнения метода SaveToPdf.");
 
             try
             {
@@ -184,7 +178,6 @@ namespace DocumentGenerator.ViewModels
                     throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
                 }
 
-                LogToFile("Очистка словарей перед началом обработки.");
                 _doctorCounts.Clear();
                 _testCounts.Clear();
 
@@ -198,7 +191,6 @@ namespace DocumentGenerator.ViewModels
                     try
                     {
                         File.Copy(templatePath, tempTemplatePath, true);
-                        LogToFile($"Создана временная копия шаблона: {tempTemplatePath}");
 
                         lock (_pdfLock)
                         {
@@ -206,8 +198,6 @@ namespace DocumentGenerator.ViewModels
                             using (var reader = new PdfReader(tempTemplatePath))
                             using (var pdf = new PdfDocument(reader, writer))
                             {
-                                LogToFile($"Начало обработки PDF для {record.FullName} (№{recordNumber})");
-
                                 PdfFont font;
                                 try
                                 {
@@ -219,14 +209,12 @@ namespace DocumentGenerator.ViewModels
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogToFile($"Ошибка при загрузке шрифта: {ex.Message}\nStackTrace: {ex.StackTrace}");
                                     throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
                                 }
 
                                 var form = PdfAcroForm.GetAcroForm(pdf, true);
                                 var fields = form.GetAllFormFields();
 
-                                LogToFile($"Заполнение полей формы для {record.FullName}");
                                 SetFieldValue(fields, "FullName", record.FullName, font);
                                 SetFieldValue(fields, "Gender", record.Gender, font);
                                 SetFieldValue(fields, "DateOfBirth", record.DateOfBirth, font);
@@ -321,39 +309,24 @@ namespace DocumentGenerator.ViewModels
                                     .ToList() ?? new List<string>();
                                 var doctors = _documentService.GenerateDoctorsList(selectedClauses, record.Age > 40, record.Gender == "Женский" || record.Gender == "ж");
 
-                                LogToFile($"Список врачей для {record.FullName}: {string.Join(", ", doctors)}");
-                                LogToFile($"Количество врачей для {record.FullName}: {doctors.Count}");
-
                                 var uniqueDoctors = doctors.Distinct().ToList();
-                                if (uniqueDoctors.Count != doctors.Count)
-                                {
-                                    LogToFile($"Обнаружены дубликаты врачей для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueDoctors)}");
-                                }
 
                                 foreach (var doctor in uniqueDoctors)
                                 {
                                     if (_doctorCounts.ContainsKey(doctor))
                                     {
                                         _doctorCounts[doctor]++;
-                                        LogToFile($"Увеличено количество для врача {doctor}: {_doctorCounts[doctor]}");
                                     }
                                     else
                                     {
                                         _doctorCounts[doctor] = 1;
-                                        LogToFile($"Добавлен новый врач {doctor}: 1");
                                     }
                                 }
 
-                                LogToFile($"Заполнение списка врачей для {record.FullName}, количество врачей: {uniqueDoctors.Count}");
                                 for (int i = 0; i < uniqueDoctors.Count && i < 12; i++)
                                 {
                                     string fieldName = $"Doctor_{i + 1}";
                                     SetFieldValue(fields, fieldName, uniqueDoctors[i], font);
-                                }
-
-                                if (uniqueDoctors.Count > 12)
-                                {
-                                    LogToFile($"Внимание: В списке {uniqueDoctors.Count} врачей для записи {record.FullName}, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
                                 }
 
                                 // Генерация списка исследований
@@ -371,51 +344,37 @@ namespace DocumentGenerator.ViewModels
                                         if (fields.ContainsKey(fieldName))
                                         {
                                             fields[fieldName].SetValue("V");
-                                            LogToFile($"Установлена галочка для исследования: {test} (поле: {fieldName})");
                                         }
                                     }
                                 }
 
-                                LogToFile($"Список исследований для {record.FullName}: {string.Join(", ", tests)}");
-                                LogToFile($"Количество исследований для {record.FullName}: {tests.Count}");
-
                                 var uniqueTests = tests.Distinct().ToList();
-                                if (uniqueTests.Count != tests.Count)
-                                {
-                                    LogToFile($"Обнаружены дубликаты исследований для {record.FullName}. После удаления дубликатов: {string.Join(", ", uniqueTests)}");
-                                }
 
                                 foreach (var test in uniqueTests)
                                 {
                                     if (_testCounts.ContainsKey(test))
                                     {
                                         _testCounts[test]++;
-                                        LogToFile($"Увеличено количество для исследования {test}: {_testCounts[test]}");
                                     }
                                     else
                                     {
                                         _testCounts[test] = 1;
-                                        LogToFile($"Добавлен новое исследование {test}: 1");
                                     }
                                 }
 
                                 form.FlattenFields();
                                 AddTestsPage(pdf, uniqueTests, font);
 
-                                LogToFile($"Закрытие документа для {record.FullName}");
                                 pdf.Close();
-                                LogToFile($"PDF успешно создан: {outputPath}");
                             }
                         }
                     }
                     catch (iText.Kernel.Exceptions.PdfException pdfEx)
                     {
-                        LogToFile($"PdfException при создании PDF для {record.FullName} (№{recordNumber}): {pdfEx.Message}\nStackTrace: {pdfEx.StackTrace}");
                         throw;
                     }
                     catch (Exception ex)
                     {
-                        LogToFile($"Общая ошибка при создании PDF для {record.FullName} (№{recordNumber}): {ex.Message}\nStackTrace: {ex.StackTrace}");
                         throw;
                     }
                     finally
@@ -425,28 +384,15 @@ namespace DocumentGenerator.ViewModels
                             try
                             {
                                 File.Delete(tempTemplatePath);
-                                LogToFile($"Временный файл удалён: {tempTemplatePath}");
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
-                                LogToFile($"Ошибка при удалении временного файла {tempTemplatePath}: {ex.Message}");
+                                // Игнорируем ошибки при удалении временного файла
                             }
                         }
                     }
 
                     recordNumber++;
-                }
-
-                LogToFile("Итоговый подсчёт врачей:");
-                foreach (var kvp in _doctorCounts.OrderBy(k => k.Key))
-                {
-                    LogToFile($"{kvp.Key}: {kvp.Value}");
-                }
-
-                LogToFile("Итоговый подсчёт исследований:");
-                foreach (var kvp in _testCounts.OrderBy(k => k.Key))
-                {
-                    LogToFile($"{kvp.Key}: {kvp.Value}");
                 }
 
                 await SaveStatisticsToExcel(folderPath);
@@ -455,13 +401,11 @@ namespace DocumentGenerator.ViewModels
             }
             catch (Exception ex)
             {
-                LogToFile($"Ошибка при сохранении PDF: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 await ShowMessageBox(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка");
             }
             finally
             {
                 _isProcessing = false;
-                LogToFile("Метод SaveToPdf завершён.");
             }
         }
 
@@ -482,28 +426,28 @@ namespace DocumentGenerator.ViewModels
         private List<string> GetTestsWithDirectMatch()
         {
             return new List<string>
-    {
-        "Исследование крови на сифилис",
-        "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
-        "Исследование уровня креатинина",
-        "Исследование уровня мочевины",
-        "Исследование уровня калия",
-        "Исследование уровня натрия",
-        "Исследование уровня железа",
-        "Исследование уровня щелочной фосфатазы",
-        "Исследование уровня билирубина",
-        "Исследование уровня общего белка",
-        "Исследование уровня триглицеридов",
-        "Исследование уровня холестерина",
-        "Исследование уровня фибриногена",
-        "Исследование уровня ретикулоцитов в крови",
-        "Исследование уровня метгемоглобина в крови",
-        "Исследование уровня карбоксигемоглобина в крови",
-        "Исследование уровня ретикулоцитов, метгемоглобина в крови",
-        "Исследование уровня ретикулоцитов, тромбоцитов в крови",
-        "Определение группы крови и резус-фактора"
-        };
-    }
+            {
+                "Исследование крови на сифилис",
+                "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
+                "Исследование уровня креатинина",
+                "Исследование уровня мочевины",
+                "Исследование уровня калия",
+                "Исследование уровня натрия",
+                "Исследование уровня железа",
+                "Исследование уровня щелочной фосфатазы",
+                "Исследование уровня билирубина",
+                "Исследование уровня общего белка",
+                "Исследование уровня триглицеридов",
+                "Исследование уровня холестерина",
+                "Исследование уровня фибриногена",
+                "Исследование уровня ретикулоцитов в крови",
+                "Исследование уровня метгемоглобина в крови",
+                "Исследование уровня карбоксигемоглобина в крови",
+                "Исследование уровня ретикулоцитов, метгемоглобина в крови",
+                "Исследование уровня ретикулоцитов, тромбоцитов в крови",
+                "Определение группы крови и резус-фактора"
+            };
+        }
 
         private async Task SaveStatisticsToExcel(string folderPath)
         {
@@ -543,12 +487,10 @@ namespace DocumentGenerator.ViewModels
                     testsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
 
                     File.WriteAllBytes(outputPath, package.GetAsByteArray());
-                    LogToFile($"Статистика успешно сохранена в {outputPath}");
                 }
             }
             catch (Exception ex)
             {
-                LogToFile($"Ошибка при сохранении статистики в Excel: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception($"Ошибка при сохранении статистики в Excel: {ex.Message}", ex);
             }
         }
@@ -682,21 +624,6 @@ namespace DocumentGenerator.ViewModels
                 }
             }
             await dialog.ShowDialog(parent);
-        }
-
-        private void LogToFile(string message)
-        {
-            try
-            {
-                string logPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
-                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - ExcelDataViewModel - {message}\n";
-                File.AppendAllText(logPath, logEntry);
-                Console.WriteLine(logEntry);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при записи в лог: {ex.Message}");
-            }
         }
     }
 }

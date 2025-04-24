@@ -19,7 +19,6 @@ namespace DocumentGenerator.Services
         public List<string> GenerateDoctorsList(List<string> selectedClauses, bool isOver40, bool isFemale)
         {
             var mandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог" };
-            LogToFile($"Обязательные врачи: {string.Join(", ", mandatoryDoctors)}");
 
             var doctorsFromClauses = new List<string>();
             foreach (var clause in selectedClauses)
@@ -27,11 +26,6 @@ namespace DocumentGenerator.Services
                 if (Dictionaries.OrderClauseDataMap.TryGetValue(clause, out var clauseData))
                 {
                     doctorsFromClauses.AddRange(clauseData.Doctors);
-                    LogToFile($"Врачи для пункта {clause}: {string.Join(", ", clauseData.Doctors)}");
-                }
-                else
-                {
-                    LogToFile($"Пункт {clause} не найден в OrderClauseDataMap.");
                 }
             }
 
@@ -39,21 +33,17 @@ namespace DocumentGenerator.Services
                 .Concat(doctorsFromClauses)
                 .Distinct()
                 .ToList();
-            LogToFile($"Все врачи после объединения и удаления дубликатов: {string.Join(", ", allDoctors)}");
 
             if (isFemale)
             {
                 if (!allDoctors.Contains("Акушер-гинеколог"))
                 {
                     allDoctors.Add("Акушер-гинеколог");
-                    LogToFile("Добавлен Акушер-гинеколог (женский пол).");
                 }
             }
 
             allDoctors.Add("Профпатолог");
-            LogToFile("Добавлен Профпатолог.");
 
-            LogToFile($"Итоговый список врачей: {string.Join(", ", allDoctors)}");
             return allDoctors;
         }
 
@@ -71,25 +61,21 @@ namespace DocumentGenerator.Services
                 "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
                 "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
             };
-            LogToFile($"Обязательные анализы: {string.Join(", ", mandatoryTests)}");
 
             if (isOver40)
             {
                 mandatoryTests.Add("Измерение внутриглазного давления");
-                LogToFile("Добавлен анализ: Измерение внутриглазного давления (возраст > 40).");
             }
 
             if (isFemale)
             {
                 mandatoryTests.Add("Бактериологическое (на флору) и цитологическое (на атипичные клетки) исследования");
                 mandatoryTests.Add("Ультразвуковое исследование органов малого таза");
-                LogToFile("Добавлены анализы для женщин: Бактериологическое исследование, УЗИ органов малого таза.");
             }
 
             if (isFemale && isOver40)
             {
                 mandatoryTests.Add("Маммография обеих молочных желез в двух проекциях");
-                LogToFile("Добавлен анализ: Маммография (женский пол и возраст > 40).");
             }
 
             var testsFromClauses = new List<string>();
@@ -98,16 +84,10 @@ namespace DocumentGenerator.Services
                 if (Dictionaries.OrderClauseDataMap.TryGetValue(clause, out var clauseData))
                 {
                     testsFromClauses.AddRange(clauseData.Tests);
-                    LogToFile($"Анализы для пункта {clause}: {string.Join(", ", clauseData.Tests)}");
-                }
-                else
-                {
-                    LogToFile($"Пункт {clause} не найден в OrderClauseDataMap.");
                 }
             }
 
             mandatoryTests.AddRange(testsFromClauses.Distinct().Except(mandatoryTests));
-            LogToFile($"Итоговый список анализов: {string.Join(", ", mandatoryTests)}");
 
             return mandatoryTests;
         }
@@ -189,7 +169,6 @@ namespace DocumentGenerator.Services
                     pdfDocument.Close();
                 }
 
-                // Удалён вызов System.Diagnostics.Process.Start для автоматического открытия PDF
                 Console.WriteLine($"PDF generated at: {outputPath}");
             }
             catch (Exception ex)
@@ -229,21 +208,6 @@ namespace DocumentGenerator.Services
 
             columnText.Add(paragraph);
             columnText.Close();
-        }
-
-        private void LogToFile(string message)
-        {
-            try
-            {
-                string logPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
-                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - DocumentService - {message}\n";
-                File.AppendAllText(logPath, logEntry);
-                Console.WriteLine(logEntry);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при записи в лог: {ex.Message}");
-            }
         }
     }
 }
