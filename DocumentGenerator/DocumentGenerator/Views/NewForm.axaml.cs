@@ -559,9 +559,9 @@ namespace DocumentGenerator
                 {
                     Title = "Сохранить PDF-документ",
                     Filters = new List<FileDialogFilter>
-                    {
-                        new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
-                    },
+            {
+                new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
+            },
                     DefaultExtension = "pdf",
                     InitialFileName = $"{SanitizeFileName(ViewModel.FullName ?? "NewForm")}.pdf"
                 };
@@ -571,26 +571,43 @@ namespace DocumentGenerator
                 {
                     var pdfGenerator = new NewFormPdfGenerator();
                     string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "карта водительская комиссия.pdf");
-                    pdfGenerator.GeneratePdf(new Dictionary<string, string>
+
+                    // Создаем словарь данных
+                    var userData = new Dictionary<string, string>
+            {
+                { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
+                { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
+                { "FullName", ViewModel.FullName ?? "" },
+                { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
+                { "Gender", ViewModel.Gender ?? "" },
+                { "PassportSeries", ViewModel.PassportSeries ?? "" },
+                { "PassportNumber", ViewModel.PassportNumber ?? "" },
+                { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
+                { "BloodGroup", ViewModel.BloodGroup ?? "" },
+                { "RhFactor", ViewModel.RhFactor ?? "" },
+                { "Phone", ViewModel.Phone ?? "" },
+                { "Address", ViewModel.Address ?? "" },
+                { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
+                { "Snils", ViewModel.Snils ?? "" },
+                { "Fluorography", ViewModel.Fluorography ?? "" },
+                { "Gynecologist", ViewModel.Gynecologist ?? "" },
+                { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
+            };
+                    // Новая дата (полная)
+                    string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
+                    userData["CurrentDate"] = currentDate;
+
+                    string Document = "паспорт";
+                    userData["Document"] = Document;
+
+                    // Добавляем чекбоксы для категорий вождения
+                    foreach (var category in ViewModel.SelectedDrivingCategories)
                     {
-                        { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
-                        { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
-                        { "FullName", ViewModel.FullName ?? "" },
-                        { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
-                        { "Gender", ViewModel.Gender ?? "" },
-                        { "PassportSeries", ViewModel.PassportSeries ?? "" },
-                        { "PassportNumber", ViewModel.PassportNumber ?? "" },
-                        { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
-                        { "BloodGroup", ViewModel.BloodGroup ?? "" },
-                        { "RhFactor", ViewModel.RhFactor ?? "" },
-                        { "Phone", ViewModel.Phone ?? "" },
-                        { "Address", ViewModel.Address ?? "" },
-                        { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
-                        { "Snils", ViewModel.Snils ?? "" },
-                        { "Fluorography", ViewModel.Fluorography ?? "" },
-                        { "Gynecologist", ViewModel.Gynecologist ?? "" },
-                        { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
-                    }, result, templatePath);
+                        string fieldName = $"Category_{category.Replace(" ", "_")}";
+                        userData[fieldName] = "V"; // Устанавливаем значение для чекбокса
+                    }
+
+                    pdfGenerator.GeneratePdf(userData, result, templatePath);
 
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                     {

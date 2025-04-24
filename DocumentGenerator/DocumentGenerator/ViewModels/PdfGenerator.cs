@@ -145,8 +145,46 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "FirstName", firstName, font);
                     SetFieldValue(fields, "MiddleName", middleName, font);
 
-                    // Поле с галочкой (чекбокс)
-                    SetFieldValue(fields, "CheckBoxField", "V", font);
+                    // Устанавливаем галочку в зависимости от выбранного ServicePoint
+                    switch (_viewModel.ServicePoint)
+                    {
+                        case "ПО 67":
+                            if (fields.ContainsKey("ServicePoint1"))
+                            {
+                                fields["ServicePoint1"].SetValue("V");
+                            }
+                            break;
+                        case "ПО 89":
+                            if (fields.ContainsKey("ServicePoint2"))
+                            {
+                                fields["ServicePoint2"].SetValue("V");
+                            }
+                            break;
+                        case "ПО 66":
+                            if (fields.ContainsKey("ServicePoint3"))
+                            {
+                                fields["ServicePoint3"].SetValue("V");
+                            }
+                            break;
+                        case "ПО «Шушары»":
+                            if (fields.ContainsKey("ServicePoint4"))
+                            {
+                                fields["ServicePoint4"].SetValue("V");
+                            }
+                            break;
+                        case "ЖК «Шушары»":
+                            if (fields.ContainsKey("ServicePoint5"))
+                            {
+                                fields["ServicePoint5"].SetValue("V");
+                            }
+                            break;
+                        case "ПО «Славянка»":
+                            if (fields.ContainsKey("ServicePoint6"))
+                            {
+                                fields["ServicePoint6"].SetValue("V");
+                            }
+                            break;
+                    }
 
                     // Поле "Документ"
                     SetFieldValue(fields, "Document", "паспорт", font);

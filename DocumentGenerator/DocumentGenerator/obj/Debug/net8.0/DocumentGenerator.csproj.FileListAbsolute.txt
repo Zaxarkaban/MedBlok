@@ -136,8 +136,6 @@ C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\Document
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.AssemblyInfo.cs
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.CoreCompileInputs.cache
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.sourcelink.json
-C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.CopyLocal.cache
-C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.RuntimeCopyLocal.cache
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Avalonia\DocumentGenerator.dll
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Avalonia\DocumentGenerator.pdb
 C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\refint\Avalonia\DocumentGenerator.dll
@@ -439,3 +437,5 @@ C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\refint\Ava
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Document.A0662DA9.Up2Date
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.genruntimeconfig.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\ref\DocumentGenerator.dll
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.CopyLocal.cache
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.RuntimeCopyLocal.cache

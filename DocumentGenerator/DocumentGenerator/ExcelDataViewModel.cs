@@ -36,6 +36,16 @@ namespace DocumentGenerator.ViewModels
             public string? PassportNumber { get; set; } = "";
             public string? PassportIssueDate { get; set; } = "";
             public string? PassportIssuedBy { get; set; } = "";
+
+            public string? Workplace { get; set; } = "";
+            public string? MedicalFacility { get; set; } = "";
+            public string? WorkExperience { get; set; } = "";
+            public string? MedicalOrganization { get; set; } = "";
+            public string? Okved { get; set; } = "";
+            public string? ServicePoint { get; set; } = "";
+            public string? WorkAddress { get; set; } = "";
+            public string? Department { get; set; } = "";
+            public string? OwnershipForm { get; set; } = "";
         }
 
         public List<Record> Records { get; set; } = new List<Record>();
@@ -79,7 +89,17 @@ namespace DocumentGenerator.ViewModels
                             PassportSeries = worksheet.Cells[row, 11].Text?.Trim(),
                             PassportNumber = worksheet.Cells[row, 12].Text?.Trim(),
                             PassportIssueDate = worksheet.Cells[row, 13].Text?.Trim(),
-                            PassportIssuedBy = worksheet.Cells[row, 14].Text?.Trim()
+                            PassportIssuedBy = worksheet.Cells[row, 14].Text?.Trim(),
+                            // Новые поля
+                            Workplace = worksheet.Cells[row, 15].Text?.Trim() ?? "",
+                            MedicalFacility = worksheet.Cells[row, 16].Text?.Trim() ?? "",
+                            WorkExperience = worksheet.Cells[row, 17].Text?.Trim() ?? "",
+                            MedicalOrganization = worksheet.Cells[row, 18].Text?.Trim() ?? "",
+                            Okved = worksheet.Cells[row, 19].Text?.Trim() ?? "",
+                            ServicePoint = worksheet.Cells[row, 20].Text?.Trim() ?? "",
+                            WorkAddress = worksheet.Cells[row, 21].Text?.Trim() ?? "",
+                            Department = worksheet.Cells[row, 22].Text?.Trim() ?? "",
+                            OwnershipForm = worksheet.Cells[row, 23].Text?.Trim() ?? ""
                         };
 
                         if (string.IsNullOrWhiteSpace(record.FullName))
@@ -210,6 +230,7 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "FullName", record.FullName, font);
                                 SetFieldValue(fields, "Gender", record.Gender, font);
                                 SetFieldValue(fields, "DateOfBirth", record.DateOfBirth, font);
+                                SetFieldValue(fields, "DateOfBirth1", record.DateOfBirth, font);
                                 SetFieldValue(fields, "Address", "", font);
                                 SetFieldValue(fields, "Phone", "", font);
                                 SetFieldValue(fields, "PassportSeries", record.PassportSeries, font);
@@ -219,25 +240,30 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "Snils", record.Snils, font);
                                 SetFieldValue(fields, "MedicalPolicy", record.MedicalPolicy, font);
                                 SetFieldValue(fields, "OrderClause", record.OrderClause, font);
-                                SetFieldValue(fields, "Workplace", "", font);
-                                SetFieldValue(fields, "MedicalFacility", "", font);
+                                SetFieldValue(fields, "Workplace", record.Workplace, font);
+                                SetFieldValue(fields, "MedicalFacility", record.MedicalFacility, font);
                                 SetFieldValue(fields, "Position", record.Position, font);
-                                SetFieldValue(fields, "WorkExperience", "", font);
-                                SetFieldValue(fields, "MedicalOrganization", "", font);
-                                SetFieldValue(fields, "Okved", "", font);
-                                SetFieldValue(fields, "ServicePoint", "", font);
+                                SetFieldValue(fields, "WorkExperience", record.WorkExperience, font);
+                                SetFieldValue(fields, "MedicalOrganization", record.MedicalOrganization, font);
+                                SetFieldValue(fields, "Okved", record.Okved, font);
+                                SetFieldValue(fields, "ServicePoint", record.ServicePoint, font);
+                                SetFieldValue(fields, "WorkAddress", record.WorkAddress, font);
+                                SetFieldValue(fields, "Department", record.Department, font);
+                                SetFieldValue(fields, "OwnershipForm", record.OwnershipForm, font);
+                                fields["обязательные_анализы"].SetValue("V"); // Устанавливаем галочку для обязательных анализов
+
                                 int currentYear = DateTime.Now.Year;
                                 if (fields.TryGetValue("CurrentYear", out var field))
                                 {
                                     var pdfField = (PdfFormField)field;
                                     pdfField.SetValue(currentYear.ToString());
-                                    pdfField.SetFontAndSize(font, 24); // Увеличиваем шрифт до 16
+                                    pdfField.SetFontAndSize(font, 24);
                                 }
-                                // Новая дата (полная)
-                                string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
+                                SetFieldValue(fields, "CurrentYear1", currentYear.ToString(), font);
+
+                                string currentDate = DateTime.Now.ToString("dd.MM.yyyy");
                                 SetFieldValue(fields, "CurrentDate", currentDate, font);
 
-                                // Разбиваем ФИО на части (предполагаем, что ФИО в формате "Фамилия Имя Отчество")
                                 string[] fioParts = record.FullName.Split(' ');
                                 string lastName = fioParts.Length > 0 ? fioParts[0] : "";
                                 string firstName = fioParts.Length > 1 ? fioParts[1] : "";
@@ -246,11 +272,49 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "FirstName", firstName, font);
                                 SetFieldValue(fields, "MiddleName", middleName, font);
 
-                                // Поле с галочкой (чекбокс)
-                                SetFieldValue(fields, "CheckBoxField", "Yes", font); // "Yes" — стандартное значение для отмеченного чекбокса
-
-                                // Поле "Документ"
+                                SetFieldValue(fields, "CheckBoxField", "Yes", font);
                                 SetFieldValue(fields, "Document", "паспорт", font);
+
+                                // Устанавливаем галочку для ServicePoint
+                                switch (record.ServicePoint)
+                                {
+                                    case "ПО 67":
+                                        if (fields.ContainsKey("ServicePoint1"))
+                                        {
+                                            fields["ServicePoint1"].SetValue("V");
+                                        }
+                                        break;
+                                    case "ПО 89":
+                                        if (fields.ContainsKey("ServicePoint2"))
+                                        {
+                                            fields["ServicePoint2"].SetValue("V");
+                                        }
+                                        break;
+                                    case "ПО 66":
+                                        if (fields.ContainsKey("ServicePoint3"))
+                                        {
+                                            fields["ServicePoint3"].SetValue("V");
+                                        }
+                                        break;
+                                    case "ПО «Шушары»":
+                                        if (fields.ContainsKey("ServicePoint4"))
+                                        {
+                                            fields["ServicePoint4"].SetValue("V");
+                                        }
+                                        break;
+                                    case "ЖК «Шушары»":
+                                        if (fields.ContainsKey("ServicePoint5"))
+                                        {
+                                            fields["ServicePoint5"].SetValue("V");
+                                        }
+                                        break;
+                                    case "ПО «Славянка»":
+                                        if (fields.ContainsKey("ServicePoint6"))
+                                        {
+                                            fields["ServicePoint6"].SetValue("V");
+                                        }
+                                        break;
+                                }
 
                                 var selectedClauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(clause => clause.Trim())
@@ -292,11 +356,25 @@ namespace DocumentGenerator.ViewModels
                                     LogToFile($"Внимание: В списке {uniqueDoctors.Count} врачей для записи {record.FullName}, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
                                 }
 
-                                form.FlattenFields();
-
+                                // Генерация списка исследований
                                 bool isFemale = record.Gender == "Женский" || record.Gender == "ж";
                                 bool isOver40 = record.Age > 40;
                                 var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
+
+                                // Проставление галочек для исследований
+                                var testsWithDirectMatch = GetTestsWithDirectMatch();
+                                foreach (var test in tests)
+                                {
+                                    if (testsWithDirectMatch.Contains(test))
+                                    {
+                                        string fieldName = $"test_{SanitizeFieldName(test)}";
+                                        if (fields.ContainsKey(fieldName))
+                                        {
+                                            fields[fieldName].SetValue("V");
+                                            LogToFile($"Установлена галочка для исследования: {test} (поле: {fieldName})");
+                                        }
+                                    }
+                                }
 
                                 LogToFile($"Список исследований для {record.FullName}: {string.Join(", ", tests)}");
                                 LogToFile($"Количество исследований для {record.FullName}: {tests.Count}");
@@ -317,10 +395,11 @@ namespace DocumentGenerator.ViewModels
                                     else
                                     {
                                         _testCounts[test] = 1;
-                                        LogToFile($"Добавлен новый исследования {test}: 1");
+                                        LogToFile($"Добавлен новое исследование {test}: 1");
                                     }
                                 }
 
+                                form.FlattenFields();
                                 AddTestsPage(pdf, uniqueTests, font);
 
                                 LogToFile($"Закрытие документа для {record.FullName}");
@@ -385,6 +464,46 @@ namespace DocumentGenerator.ViewModels
                 LogToFile("Метод SaveToPdf завершён.");
             }
         }
+
+        // Новый метод для обработки имен полей
+        private string SanitizeFieldName(string name)
+        {
+            return name.Replace(" ", "_")
+                       .Replace("(", "")
+                       .Replace(")", "")
+                       .Replace(",", "")
+                       .Replace(".", "")
+                       .Replace(":", "")
+                       .Replace(";", "")
+                       .Replace("/", "_");
+        }
+
+        // Метод для получения списка исследований с прямым соответствием (перенесен из PdfGenerator.cs)
+        private List<string> GetTestsWithDirectMatch()
+        {
+            return new List<string>
+    {
+        "Исследование крови на сифилис",
+        "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
+        "Исследование уровня креатинина",
+        "Исследование уровня мочевины",
+        "Исследование уровня калия",
+        "Исследование уровня натрия",
+        "Исследование уровня железа",
+        "Исследование уровня щелочной фосфатазы",
+        "Исследование уровня билирубина",
+        "Исследование уровня общего белка",
+        "Исследование уровня триглицеридов",
+        "Исследование уровня холестерина",
+        "Исследование уровня фибриногена",
+        "Исследование уровня ретикулоцитов в крови",
+        "Исследование уровня метгемоглобина в крови",
+        "Исследование уровня карбоксигемоглобина в крови",
+        "Исследование уровня ретикулоцитов, метгемоглобина в крови",
+        "Исследование уровня ретикулоцитов, тромбоцитов в крови",
+        "Определение группы крови и резус-фактора"
+        };
+    }
 
         private async Task SaveStatisticsToExcel(string folderPath)
         {

@@ -113,18 +113,69 @@ namespace DocumentGenerator
 
                 // Лист для исследований
                 var testsSheet = package.Workbook.Worksheets.Add("Исследования");
-                testsSheet.Cells[1, 1].Value = "Исследование";
-                testsSheet.Cells[1, 2].Value = "Количество";
+                testsSheet.Cells[1, 1].Value = "Врач";
+                testsSheet.Cells[1, 2].Value = "Исследование";
+                testsSheet.Cells[1, 3].Value = "Количество";
                 row = 2;
-                foreach (var kvp in testCounts.OrderBy(x => x.Key))
+
+                // Получаем словарь DoctorTestsMap
+                var doctorTestsMap = Dictionaries.DoctorTestsMap;
+
+                // Группируем исследования по врачам
+                var testsByDoctor = new Dictionary<string, Dictionary<string, int>>();
+                var otherTests = new Dictionary<string, int>();
+
+                foreach (var test in testCounts)
                 {
-                    testsSheet.Cells[row, 1].Value = kvp.Key;
-                    testsSheet.Cells[row, 2].Value = kvp.Value;
-                    row++;
+                    bool assigned = false;
+                    foreach (var doctor in doctorTestsMap)
+                    {
+                        if (doctor.Value.Contains(test.Key))
+                        {
+                            if (!testsByDoctor.ContainsKey(doctor.Key))
+                            {
+                                testsByDoctor[doctor.Key] = new Dictionary<string, int>();
+                            }
+                            testsByDoctor[doctor.Key][test.Key] = test.Value;
+                            assigned = true;
+                            break;
+                        }
+                    }
+                    if (!assigned)
+                    {
+                        otherTests[test.Key] = test.Value;
+                    }
                 }
+
+                // Записываем исследования по врачам
+                foreach (var doctor in testsByDoctor.OrderBy(d => d.Key))
+                {
+                    testsSheet.Cells[row, 1].Value = doctor.Key;
+                    row++;
+                    foreach (var test in doctor.Value.OrderBy(t => t.Key))
+                    {
+                        testsSheet.Cells[row, 2].Value = test.Key;
+                        testsSheet.Cells[row, 3].Value = test.Value;
+                        row++;
+                    }
+                }
+
+                // Записываем исследования, не относящиеся к врачам
+                if (otherTests.Any())
+                {
+                    testsSheet.Cells[row, 1].Value = "Другие исследования";
+                    row++;
+                    foreach (var test in otherTests.OrderBy(t => t.Key))
+                    {
+                        testsSheet.Cells[row, 2].Value = test.Key;
+                        testsSheet.Cells[row, 3].Value = test.Value;
+                        row++;
+                    }
+                }
+
                 testsSheet.Cells.AutoFitColumns();
 
-                // Сохраняем файл через диалог (для Avalonia 0.10.x)
+                // Сохраняем файл через диалог
                 var saveFileDialog = new SaveFileDialog
                 {
                     DefaultExtension = "xlsx",
@@ -320,14 +371,14 @@ namespace DocumentGenerator
                 "Электрокардиография в покое",
                 "Измерение артериального давления на периферических артериях",
                 "Флюорография или рентгенография легких в двух проекциях (прямая и правая боковая)",
-                "Определение относительного сердечно-сосудистого риска",
+                "Определение абсолютного сердечно-сосудистого риска / Определение относительного сердечно-сосудистого риска",
                 "Общий анализ крови (гемоглобин, цветной показатель, эритроциты, тромбоциты, лейкоциты, лейкоцитарная формула, СОЭ)",
                 "Клинический анализ мочи (удельный вес, белок, сахар, микроскопия осадка)",
                 "Определение уровня общего холестерина в крови (допускается использование экспресс-метода)",
                 "Исследование уровня глюкозы в крови натощак (допускается использование экспресс-метода)"
             };
 
-            private static readonly List<string> MandatoryDoctors = new List<string>{ "Терапевт", "Невролог", "Психиатр", "Нарколог",  "Профпатолог" };
+            private static readonly List<string> MandatoryDoctors = new List<string> { "Терапевт", "Невролог", "Психиатр", "Нарколог", "Профпатолог" };
 
             public void UpdateOutput()
             {
@@ -446,7 +497,6 @@ namespace DocumentGenerator
 
                 // Добавляем обязательные исследования для каждого человека
                 doctors.AddRange(MandatoryDoctors);
-
 
                 // Дополнительные врачи
                 if (isWoman)
