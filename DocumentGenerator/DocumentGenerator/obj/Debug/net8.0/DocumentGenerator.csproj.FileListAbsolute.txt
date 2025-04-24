@@ -290,6 +290,8 @@ C:\Users\Zakhar\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj
 C:\Users\Zakhar\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Document.A0662DA9.Up2Date
 C:\Users\Zakhar\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.genruntimeconfig.cache
 C:\Users\Zakhar\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\ref\DocumentGenerator.dll
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.CopyLocal.cache
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.RuntimeCopyLocal.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.AssemblyReference.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Avalonia\Resources.Inputs.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Avalonia\resources
@@ -437,5 +439,3 @@ C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\refint\Ava
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\Document.A0662DA9.Up2Date
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.genruntimeconfig.cache
 C:\Games\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\ref\DocumentGenerator.dll
-C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.CopyLocal.cache
-C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\obj\Debug\net8.0\DocumentGenerator.csproj.Fody.RuntimeCopyLocal.cache

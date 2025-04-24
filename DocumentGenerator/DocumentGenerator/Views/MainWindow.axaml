@@ -272,15 +272,16 @@
 	</Design.DataContext>
 	<ScrollViewer>
 		<StackPanel Margin="10,10,20,10" Name="MainStackPanel">
-			<!-- Уменьшено с 20 -->
 			<TextBlock Text="Поликлиническое отделение" />
 			<ComboBox Name="ServicePointComboBox"
-					  SelectedItem="{Binding ServicePoint, Mode=TwoWay}"
-					  ItemsSource="{Binding ServicePointOptions}"
-					  SelectionChanged="ComboBox_SelectionChanged"
-					  GotFocus="ComboBox_GotFocus"
-					  KeyDown="InputField_KeyDown"
-					  TabIndex="0" />
+                      SelectedItem="{Binding ServicePoint, Mode=TwoWay}"
+                      ItemsSource="{Binding ServicePointOptions}"
+                      SelectionChanged="ComboBox_SelectionChanged"
+                      GotFocus="ComboBox_GotFocus"
+                      KeyDown="InputField_KeyDown"
+                      TabIndex="0" />
+			<TextBlock Text="{Binding ServicePointError}" Foreground="Red" />
+
 			<TextBlock Text="ФИО" />
 			<TextBox Name="FullNameTextBox"
                      Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
@@ -323,16 +324,17 @@
 
 			<TextBlock Text="Пункты вредности (Выбрать несколько crtl+ЛКМ)" />
 			<TextBox Name="OrderClausesSearchBox"
-					 Text="{Binding OrderClausesSearchText, UpdateSourceTrigger=PropertyChanged}"
-					 TextChanged="HandleSearchTextChanged"
-					 Watermark="Поиск пунктов..."
-					 KeyDown="InputField_KeyDown"
-					 TabIndex="5" />
+                     Text="{Binding OrderClausesSearchText, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="HandleSearchTextChanged"
+                     Watermark="Поиск пунктов..."
+                     KeyDown="InputField_KeyDown"
+                     TabIndex="5" />
 			<ListBox Name="OrderClausesListBox"
-					 ItemsSource="{Binding FilteredOrderClauseOptions}"
-					 SelectedItems="{Binding SelectedOrderClauses}"
-					 SelectionMode="Multiple"
-					 Height="200"/>
+                     ItemsSource="{Binding FilteredOrderClauseOptions}"
+                     SelectedItems="{Binding SelectedOrderClauses}"
+                     SelectionMode="Multiple"
+                     Height="200"
+                     TabIndex="6" />
 			<TextBlock Text="{Binding SelectedOrderClausesError}" Foreground="Red" />
 
 			<TextBlock Text="СНИЛС (XXX-XXX-XXX XX)" />
@@ -342,7 +344,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="XXX-XXX-XXX XX"
-                     TabIndex="6" />
+                     TabIndex="7" />
 			<TextBlock Text="{Binding SnilsError}" Foreground="Red" />
 
 			<TextBlock Text="Серия паспорта (XXXX)" />
@@ -352,7 +354,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="XXXX"
-                     TabIndex="7" />
+                     TabIndex="8" />
 			<TextBlock Text="{Binding PassportSeriesError}" Foreground="Red" />
 
 			<TextBlock Text="Номер паспорта (XXXXXX)" />
@@ -362,7 +364,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="XXXXXX"
-                     TabIndex="8" />
+                     TabIndex="9" />
 			<TextBlock Text="{Binding PassportNumberError}" Foreground="Red" />
 
 			<TextBlock Text="Дата выдачи паспорта (ДД.ММ.ГГГГ)" />
@@ -372,7 +374,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="ДД.ММ.ГГГГ"
-                     TabIndex="9" />
+                     TabIndex="10" />
 			<TextBlock Text="{Binding PassportIssueDateError}" Foreground="Red" />
 
 			<TextBlock Text="Кем выдан паспорт" />
@@ -382,7 +384,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите кем выдан"
-                     TabIndex="10" />
+                     TabIndex="11" />
 			<TextBlock Text="{Binding PassportIssuedByError}" Foreground="Red" />
 
 			<TextBlock Text="Адрес" />
@@ -392,7 +394,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите адрес (город, улица, дом)"
-                     TabIndex="11" />
+                     TabIndex="12" />
 			<TextBlock Text="{Binding AddressError}" Foreground="Red" />
 
 			<TextBlock Text="Телефон (+X (XXX) XXX-XX-XX)" />
@@ -402,7 +404,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="+X (XXX) XXX-XX-XX"
-                     TabIndex="12" />
+                     TabIndex="13" />
 			<TextBlock Text="{Binding PhoneError}" Foreground="Red" />
 
 			<TextBlock Text="Наименование страховой медицинской организации" />
@@ -412,7 +414,8 @@
                       SelectionChanged="ComboBox_SelectionChanged"
                       GotFocus="ComboBox_GotFocus"
                       KeyDown="InputField_KeyDown"
-                      TabIndex="13" />
+                      TabIndex="14" />
+			<TextBlock Text="{Binding MedicalOrganizationError}" Foreground="Red" />
 
 			<TextBlock Text="Полис ОМС (опционально, 16 цифр)" />
 			<TextBox Name="MedicalPolicyTextBox"
@@ -421,7 +424,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="16 цифр"
-                     TabIndex="14" />
+                     TabIndex="15" />
 			<TextBlock Text="{Binding MedicalPolicyError}" Foreground="Red" />
 
 			<TextBlock Text="Наблюдается ЛПУ" />
@@ -431,7 +434,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите название ЛПУ"
-                     TabIndex="15" />
+                     TabIndex="16" />
 			<TextBlock Text="{Binding MedicalFacilityError}" Foreground="Red" />
 
 			<TextBlock Text="Место работы" />
@@ -441,7 +444,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите место работы"
-                     TabIndex="16" />
+                     TabIndex="17" />
 			<TextBlock Text="{Binding WorkplaceError}" Foreground="Red" />
 
 			<TextBlock Text="Адрес работы" />
@@ -451,7 +454,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите адрес работы"
-                     TabIndex="17" />
+                     TabIndex="18" />
 			<TextBlock Text="{Binding WorkAddressError}" Foreground="Red" />
 
 			<TextBlock Text="Структурное подразделение" />
@@ -461,7 +464,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="Введите подразделение"
-                     TabIndex="18" />
+                     TabIndex="19" />
 			<TextBlock Text="{Binding DepartmentError}" Foreground="Red" />
 
 			<TextBlock Text="Форма собственности" />
@@ -471,7 +474,7 @@
                       SelectionChanged="ComboBox_SelectionChanged"
                       GotFocus="ComboBox_GotFocus"
                       KeyDown="InputField_KeyDown"
-                      TabIndex="19" />
+                      TabIndex="20" />
 			<TextBlock Text="{Binding OwnershipFormError}" Foreground="Red" />
 
 			<TextBlock Text="ОКВЭД (XX.XX.XX)" />
@@ -481,7 +484,7 @@
                      TextInput="RestrictInput"
                      KeyDown="RestrictKeyDown"
                      Watermark="XX.XX.XX"
-                     TabIndex="20" />
+                     TabIndex="21" />
 			<TextBlock Text="{Binding OkvedError}" Foreground="Red" />
 
 			<TextBlock Text="Стаж работы" />
@@ -493,7 +496,7 @@
                          KeyDown="RestrictKeyDown"
                          Watermark="Годы"
                          Width="100"
-                         TabIndex="21" />
+                         TabIndex="22" />
 				<TextBlock Text=" лет " />
 				<TextBox Name="WorkExperienceMonthsTextBox"
                          Text="{Binding WorkExperienceMonths, UpdateSourceTrigger=PropertyChanged}"
@@ -502,31 +505,38 @@
                          KeyDown="RestrictKeyDown"
                          Watermark="Месяцы"
                          Width="100"
-                         TabIndex="22" />
+                         TabIndex="23" />
 				<TextBlock Text=" месяцев" />
 			</StackPanel>
 			<TextBlock Text="{Binding WorkExperienceYearsError}" Foreground="Red" />
 			<TextBlock Text="{Binding WorkExperienceMonthsError}" Foreground="Red" />
 
+			<!-- Кнопки -->
+			<Button Name="PreviewButton"
+                    Content="Предпросмотр"
+                    Click="Preview_Click"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    TabIndex="24" />
 			<Button Name="SaveButton"
                     Content="Сохранить"
                     Click="Save_Click"
                     HorizontalAlignment="Center"
                     Margin="10"
                     KeyDown="SaveButton_KeyDown"
-                    TabIndex="23" />
+                    TabIndex="25" />
 			<Button Name="LoadExcelButton"
                     Content="Загрузить Excel"
                     Click="LoadExcel_Click"
                     HorizontalAlignment="Center"
                     Margin="10"
-                    TabIndex="24" />
+                    TabIndex="26" />
 			<Button Name="BackToMenuButton"
                     Content="Назад в главное меню"
                     Click="BackToMenu_Click"
                     HorizontalAlignment="Center"
                     Margin="10"
-                    TabIndex="25" />
+                    TabIndex="27" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>

@@ -328,6 +328,7 @@ namespace DocumentGenerator
         {
             var newForm = _serviceProvider.GetRequiredService<NewForm>();
             newForm.Show();
+            this.Close();
         }
 
         private void AnalysisButton_Click(object? sender, RoutedEventArgs e)

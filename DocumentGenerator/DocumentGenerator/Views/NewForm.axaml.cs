@@ -13,6 +13,8 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using DynamicData;
 using System.Threading.Tasks;
+using Avalonia.Media;
+using Avalonia;
 
 namespace DocumentGenerator
 {
@@ -22,6 +24,7 @@ namespace DocumentGenerator
         private const int CurrentYear = 2025;
         private const int MinYear = CurrentYear - 120; // 1905
         private readonly IServiceProvider _serviceProvider;
+        private bool _isPreviewing; // Флаг для предотвращения двойного открытия
 
         public NewForm(IServiceProvider serviceProvider)
         {
@@ -31,6 +34,7 @@ namespace DocumentGenerator
                 new NewFormPdfGenerator(),
                 _serviceProvider
             );
+            _isPreviewing = false; // Инициализация флага
 
             // Привязываем событие Click для кнопки SaveButton
             var saveButton = this.FindControl<Button>("SaveButton");
@@ -44,6 +48,13 @@ namespace DocumentGenerator
             if (backButton != null)
             {
                 backButton.Click += Back_Click;
+            }
+
+            // Привязываем событие Click для кнопки PreviewButton
+            var previewButton = this.FindControl<Button>("PreviewButton");
+            if (previewButton != null)
+            {
+                previewButton.Click += Preview_Click;
             }
 
             // Привязываем события для TextBox
@@ -533,6 +544,131 @@ namespace DocumentGenerator
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 
+        private async void Preview_Click(object sender, RoutedEventArgs e)
+        {
+            // Отладочный вывод для проверки количества вызовов
+            Console.WriteLine($"Preview_Click called at {DateTime.Now:HH:mm:ss.fff}");
+
+            // Предотвращаем множественные вызовы
+            if (_isPreviewing)
+            {
+                Console.WriteLine("Preview_Click already in progress, skipping...");
+                return;
+            }
+            _isPreviewing = true;
+
+            try
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
+
+                if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
+                    string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
+                    string.IsNullOrEmpty(ViewModel.GenderError) &&
+                    string.IsNullOrEmpty(ViewModel.PhoneError) &&
+                    string.IsNullOrEmpty(ViewModel.DrivingCategoriesError) &&
+                    string.IsNullOrEmpty(ViewModel.MedicalSeriesError) &&
+                    string.IsNullOrEmpty(ViewModel.MedicalNumberError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
+                    string.IsNullOrEmpty(ViewModel.BloodGroupError) &&
+                    string.IsNullOrEmpty(ViewModel.RhFactorError) &&
+                    string.IsNullOrEmpty(ViewModel.AddressError) &&
+                    string.IsNullOrEmpty(ViewModel.DrivingExperienceError) &&
+                    string.IsNullOrEmpty(ViewModel.SnilsError) &&
+                    string.IsNullOrEmpty(ViewModel.FluorographyError) &&
+                    string.IsNullOrEmpty(ViewModel.GynecologistError))
+                {
+                    string tempPath = Path.Combine(Path.GetTempPath(), $"Preview_{Guid.NewGuid()}.pdf");
+                    try
+                    {
+                        var pdfGenerator = new NewFormPdfGenerator();
+                        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "карта водительская комиссия.pdf");
+
+                        // Создаем словарь данных
+                        var userData = new Dictionary<string, string>
+                        {
+                            { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
+                            { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
+                            { "FullName", ViewModel.FullName ?? "" },
+                            { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
+                            { "Gender", ViewModel.Gender ?? "" },
+                            { "PassportSeries", ViewModel.PassportSeries ?? "" },
+                            { "PassportNumber", ViewModel.PassportNumber ?? "" },
+                            { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
+                            { "BloodGroup", ViewModel.BloodGroup ?? "" },
+                            { "RhFactor", ViewModel.RhFactor ?? "" },
+                            { "Phone", ViewModel.Phone ?? "" },
+                            { "Address", ViewModel.Address ?? "" },
+                            { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
+                            { "Snils", ViewModel.Snils ?? "" },
+                            { "Fluorography", ViewModel.Fluorography ?? "" },
+                            { "Gynecologist", ViewModel.Gynecologist ?? "" },
+                            { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
+                        };
+                        // Новая дата (полная)
+                        string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
+                        userData["CurrentDate"] = currentDate;
+
+                        string Document = "паспорт";
+                        userData["Document"] = Document;
+
+                        // Добавляем чекбоксы для категорий вождения
+                        foreach (var category in ViewModel.SelectedDrivingCategories)
+                        {
+                            string fieldName = $"Category_{category.Replace(" ", "_")}";
+                            userData[fieldName] = "V"; // Устанавливаем значение для чекбокса
+                        }
+
+                        pdfGenerator.GeneratePdf(userData, tempPath, templatePath);
+
+                        if (File.Exists(tempPath))
+                        {
+                            Console.WriteLine($"Opening PDF: {tempPath}");
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = tempPath,
+                                UseShellExecute = true
+                            });
+                        }
+                        else
+                        {
+                            await MessageBox.Show(this, "Не удалось создать файл для предпросмотра.", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await MessageBox.Show(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if (File.Exists(tempPath))
+                            {
+                                await Task.Delay(3000); // Задержка 3 секунды
+                                File.Delete(tempPath);
+                                Console.WriteLine($"Temporary file deleted: {tempPath}");
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine($"Failed to delete temporary file: {tempPath}");
+                        }
+                    }
+                }
+                else
+                {
+                    await MessageBox.Show(this, "Пожалуйста, исправьте ошибки в данных перед предпросмотром.", "Предупреждение", MessageBox.MessageBoxButtons.Ok);
+                }
+            }
+            finally
+            {
+                _isPreviewing = false;
+                Console.WriteLine("Preview_Click finished.");
+            }
+        }
+
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.OnSave();
@@ -559,9 +695,9 @@ namespace DocumentGenerator
                 {
                     Title = "Сохранить PDF-документ",
                     Filters = new List<FileDialogFilter>
-            {
-                new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
-            },
+                    {
+                        new FileDialogFilter { Name = "PDF Files", Extensions = { "pdf" } }
+                    },
                     DefaultExtension = "pdf",
                     InitialFileName = $"{SanitizeFileName(ViewModel.FullName ?? "NewForm")}.pdf"
                 };
@@ -574,25 +710,25 @@ namespace DocumentGenerator
 
                     // Создаем словарь данных
                     var userData = new Dictionary<string, string>
-            {
-                { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
-                { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
-                { "FullName", ViewModel.FullName ?? "" },
-                { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
-                { "Gender", ViewModel.Gender ?? "" },
-                { "PassportSeries", ViewModel.PassportSeries ?? "" },
-                { "PassportNumber", ViewModel.PassportNumber ?? "" },
-                { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
-                { "BloodGroup", ViewModel.BloodGroup ?? "" },
-                { "RhFactor", ViewModel.RhFactor ?? "" },
-                { "Phone", ViewModel.Phone ?? "" },
-                { "Address", ViewModel.Address ?? "" },
-                { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
-                { "Snils", ViewModel.Snils ?? "" },
-                { "Fluorography", ViewModel.Fluorography ?? "" },
-                { "Gynecologist", ViewModel.Gynecologist ?? "" },
-                { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
-            };
+                    {
+                        { "MedicalSeries", ViewModel.MedicalSeries ?? "" },
+                        { "MedicalNumber", ViewModel.MedicalNumber ?? "" },
+                        { "FullName", ViewModel.FullName ?? "" },
+                        { "DateOfBirth", ViewModel.DateOfBirth ?? "" },
+                        { "Gender", ViewModel.Gender ?? "" },
+                        { "PassportSeries", ViewModel.PassportSeries ?? "" },
+                        { "PassportNumber", ViewModel.PassportNumber ?? "" },
+                        { "PassportIssuedBy", ViewModel.PassportIssuedBy ?? "" },
+                        { "BloodGroup", ViewModel.BloodGroup ?? "" },
+                        { "RhFactor", ViewModel.RhFactor ?? "" },
+                        { "Phone", ViewModel.Phone ?? "" },
+                        { "Address", ViewModel.Address ?? "" },
+                        { "DrivingExperience", ViewModel.DrivingExperience ?? "" },
+                        { "Snils", ViewModel.Snils ?? "" },
+                        { "Fluorography", ViewModel.Fluorography ?? "" },
+                        { "Gynecologist", ViewModel.Gynecologist ?? "" },
+                        { "DrivingCategories", string.Join(",", ViewModel.SelectedDrivingCategories) }
+                    };
                     // Новая дата (полная)
                     string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
                     userData["CurrentDate"] = currentDate;
@@ -609,11 +745,12 @@ namespace DocumentGenerator
 
                     pdfGenerator.GeneratePdf(userData, result, templatePath);
 
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = result,
-                        UseShellExecute = true
-                    });
+                    // Убрано автоматическое открытие PDF после сохранения
+                    // System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    // {
+                    //     FileName = result,
+                    //     UseShellExecute = true
+                    // });
 
                     // Находим MenuWindow и показываем его
                     if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -621,7 +758,8 @@ namespace DocumentGenerator
                         var menuWindow = desktop.MainWindow as MenuWindow;
                         if (menuWindow != null)
                         {
-                            menuWindow.Show();
+                            var MenuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+                            MenuWindow.Show();
                         }
                     }
 
@@ -773,6 +911,51 @@ namespace DocumentGenerator
                 {
                     CollectFocusableControls(panel, focusableControls);
                 }
+            }
+        }
+
+        public static class MessageBox
+        {
+            public enum MessageBoxButtons
+            {
+                Ok
+            }
+
+            public static async Task Show(Window parent, string text, string title, MessageBoxButtons buttons)
+            {
+                var messageBox = new Window
+                {
+                    Title = title,
+                    Width = 300,
+                    Height = 150,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    CanResize = false
+                };
+
+                var stackPanel = new StackPanel
+                {
+                    Margin = new Thickness(10)
+                };
+
+                stackPanel.Children.Add(new TextBlock
+                {
+                    Text = text,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 10)
+                });
+
+                var button = new Button
+                {
+                    Content = "OK",
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                    Width = 100
+                };
+
+                button.Click += (s, e) => messageBox.Close();
+                stackPanel.Children.Add(button);
+
+                messageBox.Content = stackPanel;
+                await messageBox.ShowDialog(parent);
             }
         }
     }

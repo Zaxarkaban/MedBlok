@@ -189,13 +189,8 @@ namespace DocumentGenerator.Services
                     pdfDocument.Close();
                 }
 
-                System.Threading.Thread.Sleep(500);
-
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = outputPath,
-                    UseShellExecute = true
-                });
+                // Удалён вызов System.Diagnostics.Process.Start для автоматического открытия PDF
+                Console.WriteLine($"PDF generated at: {outputPath}");
             }
             catch (Exception ex)
             {
@@ -205,7 +200,6 @@ namespace DocumentGenerator.Services
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 2 страницы
             int currentPageCount = pdfDocument.GetNumberOfPages();
             while (currentPageCount < 2)
             {
@@ -213,23 +207,18 @@ namespace DocumentGenerator.Services
                 currentPageCount++;
             }
 
-            // Получаем вторую страницу
             var page = pdfDocument.GetPage(2);
             var pageSize = page.GetPageSize();
 
-            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
-            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
+            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72);
 
-            // Создаём ColumnText для управления позицией текста
             var column = new PdfCanvas(page);
             var columnText = new iText.Layout.Canvas(column, leftHalf);
 
-            // Создаём параграф с текстом
             var paragraph = new Paragraph()
                 .SetFont(font)
                 .SetFontSize(7);
 
-            // Меняем заголовок на "Список исследований"
             paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
@@ -238,7 +227,6 @@ namespace DocumentGenerator.Services
                 testNumber++;
             }
 
-            // Добавляем параграф на вторую страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

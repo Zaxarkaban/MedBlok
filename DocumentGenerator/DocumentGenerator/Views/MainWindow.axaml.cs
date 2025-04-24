@@ -12,6 +12,9 @@ using OfficeOpenXml;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia.VisualTree;
 using DynamicData;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia;
 
 namespace DocumentGenerator
 {
@@ -21,12 +24,14 @@ namespace DocumentGenerator
         private const int CurrentYear = 2025;
         private const int MinYear = CurrentYear - 120; // 1905
         private readonly IServiceProvider _serviceProvider;
+        private bool _isPreviewing; // Флаг для предотвращения двойного открытия
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainWindowViewModel();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Для EPPlus
+            _isPreviewing = false; // Инициализация флага
         }
 
         public MainWindow(IServiceProvider serviceProvider) : this()
@@ -64,9 +69,9 @@ namespace DocumentGenerator
                     FormatAndValidatePhone(text, textBox),
                 "OkvedTextBox" =>
                     FormatAndValidateOkved(text, textBox),
-                "WorkExperienceYearsTextBox" => // Новое поле для лет
+                "WorkExperienceYearsTextBox" =>
                     FilterNumericInput(text, 2, textBox),
-                "WorkExperienceMonthsTextBox" => // Новое поле для месяцев
+                "WorkExperienceMonthsTextBox" =>
                     FilterNumericInput(text, 2, textBox),
                 _ => (text, text.Length)
             };
@@ -93,8 +98,7 @@ namespace DocumentGenerator
                 }
             }
 
-            // Управление фокусом
-            if (name == "WorkExperienceYearsTextBox" && filteredText.Length == 2) // Если заполнено поле "Годы" (2 цифры)
+            if (name == "WorkExperienceYearsTextBox" && filteredText.Length == 2)
             {
                 var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
                 if (monthsTextBox != null)
@@ -102,7 +106,7 @@ namespace DocumentGenerator
                     monthsTextBox.Focus();
                 }
             }
-            else if (name == "WorkExperienceMonthsTextBox" && filteredText.Length == 2) // Если заполнено поле "Месяцы" (2 цифры)
+            else if (name == "WorkExperienceMonthsTextBox" && filteredText.Length == 2)
             {
                 var saveButton = this.FindControl<Button>("SaveButton");
                 if (saveButton != null)
@@ -116,7 +120,6 @@ namespace DocumentGenerator
         {
             if (ViewModel != null)
             {
-                // Подписываемся на событие прокрутки
                 ViewModel.ScrollToItemRequested -= ScrollToItem;
                 ViewModel.ScrollToItemRequested += ScrollToItem;
             }
@@ -136,7 +139,7 @@ namespace DocumentGenerator
             if (!input.All(char.IsDigit)) return false;
 
             string digits = currentText + input;
-            int maxLength = fieldType == "Years" ? 2 : 2; // 2 цифры для лет и месяцев
+            int maxLength = fieldType == "Years" ? 2 : 2;
             if (digits.Length > maxLength) return false;
 
             if (fieldType == "Months")
@@ -180,7 +183,7 @@ namespace DocumentGenerator
                     ValidateWorkExperienceInput(currentText, e.Text, "Years"),
                 "WorkExperienceMonthsTextBox" =>
                     ValidateWorkExperienceInput(currentText, e.Text, "Months"),
-                "OrderClausesSearchBox" => true, // Разрешаем любой ввод в поле поиска
+                "OrderClausesSearchBox" => true,
                 _ => true
             };
 
@@ -265,7 +268,7 @@ namespace DocumentGenerator
                             new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
                         "WorkExperienceMonthsTextBox" =>
                             new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
-                        "OrderClausesSearchBox" => clipboardText, // Разрешаем вставку в поле поиска
+                        "OrderClausesSearchBox" => clipboardText,
                         _ => clipboardText
                     };
 
@@ -545,7 +548,7 @@ namespace DocumentGenerator
             string digits = currentText.Replace(".", "") + input;
             int pos = digits.Length;
 
-            if (pos > 6) return false; // Оставляем до 6 цифр (XX.XX.XX или XX.XX.X)
+            if (pos > 6) return false;
 
             return true;
         }
@@ -614,16 +617,110 @@ namespace DocumentGenerator
             "PhoneTextBox" => 18,
             "WorkplaceTextBox" => 1000,
             "OkvedTextBox" => 8,
-            "WorkExperienceYearsTextBox" => 2, // Для лет
-            "WorkExperienceMonthsTextBox" => 2, // Для месяцев
+            "WorkExperienceYearsTextBox" => 2,
+            "WorkExperienceMonthsTextBox" => 2,
             "WorkAddressTextBox" => 1000,
             "DepartmentTextBox" => 1000,
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
         };
 
+        private async void Preview_Click(object sender, RoutedEventArgs e)
+        {
+            // Отладочный вывод для проверки количества вызовов
+            Console.WriteLine($"Preview_Click called at {DateTime.Now:HH:mm:ss.fff}");
+
+            // Предотвращаем множественные вызовы
+            if (_isPreviewing)
+            {
+                Console.WriteLine("Preview_Click already in progress, skipping...");
+                return;
+            }
+            _isPreviewing = true;
+
+            try
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
+
+                if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
+                    string.IsNullOrEmpty(ViewModel.PositionError) &&
+                    string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
+                    string.IsNullOrEmpty(ViewModel.GenderError) &&
+                    string.IsNullOrEmpty(ViewModel.SnilsError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportIssueDateError) &&
+                    string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
+                    string.IsNullOrEmpty(ViewModel.AddressError) &&
+                    string.IsNullOrEmpty(ViewModel.PhoneError) &&
+                    string.IsNullOrEmpty(ViewModel.MedicalOrganizationError) &&
+                    string.IsNullOrEmpty(ViewModel.MedicalPolicyError) &&
+                    string.IsNullOrEmpty(ViewModel.MedicalFacilityError) &&
+                    string.IsNullOrEmpty(ViewModel.WorkplaceError) &&
+                    string.IsNullOrEmpty(ViewModel.OwnershipFormError) &&
+                    string.IsNullOrEmpty(ViewModel.OkvedError) &&
+                    string.IsNullOrEmpty(ViewModel.WorkExperienceYearsError) &&
+                    string.IsNullOrEmpty(ViewModel.WorkExperienceMonthsError) &&
+                    string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError) &&
+                    string.IsNullOrEmpty(ViewModel.ServicePointError))
+                {
+                    string tempPath = Path.Combine(Path.GetTempPath(), $"Preview_{Guid.NewGuid()}.pdf");
+                    try
+                    {
+                        var pdfGenerator = new PdfGenerator(ViewModel);
+                        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
+
+                        pdfGenerator.GeneratePdf(tempPath, templatePath);
+
+                        if (File.Exists(tempPath))
+                        {
+                            Console.WriteLine($"Opening PDF: {tempPath}");
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = tempPath,
+                                UseShellExecute = true
+                            });
+                        }
+                        else
+                        {
+                            await MessageBox.Show(this, "Не удалось создать файл для предпросмотра.", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await MessageBox.Show(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if (File.Exists(tempPath))
+                            {
+                                await Task.Delay(3000); // Увеличиваем задержку до 3 секунд
+                                File.Delete(tempPath);
+                                Console.WriteLine($"Temporary file deleted: {tempPath}");
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine($"Failed to delete temporary file: {tempPath}");
+                        }
+                    }
+                }
+                else
+                {
+                    await MessageBox.Show(this, "Пожалуйста, исправьте ошибки в данных перед предпросмотром.", "Предупреждение", MessageBox.MessageBoxButtons.Ok);
+                }
+            }
+            finally
+            {
+                _isPreviewing = false;
+                Console.WriteLine("Preview_Click finished.");
+            }
+        }
+
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.OnSave();
+            await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
 
             if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
                 string.IsNullOrEmpty(ViewModel.PositionError) &&
@@ -661,9 +758,17 @@ namespace DocumentGenerator
                 var result = await saveFileDialog.ShowAsync(this);
                 if (!string.IsNullOrEmpty(result))
                 {
-                    var pdfGenerator = new PdfGenerator(ViewModel);
-                    string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
-                    pdfGenerator.GeneratePdf(result, templatePath);
+                    try
+                    {
+                        var pdfGenerator = new PdfGenerator(ViewModel);
+                        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
+                        pdfGenerator.GeneratePdf(result, templatePath);
+                        await MessageBox.Show(this, "Файл успешно сохранён!", "Успех", MessageBox.MessageBoxButtons.Ok);
+                    }
+                    catch (Exception ex)
+                    {
+                        await MessageBox.Show(this, $"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                    }
                 }
             }
         }
@@ -728,7 +833,6 @@ namespace DocumentGenerator
         {
             if (sender is not Control control) return;
 
-            // Закрываем выпадающий список ComboBox перед перемещением фокуса
             if (control is ComboBox comboBox && comboBox.IsDropDownOpen)
             {
                 if (e.Key == Key.Enter || e.Key == Key.Up || e.Key == Key.Down)
@@ -737,13 +841,12 @@ namespace DocumentGenerator
                 }
                 else
                 {
-                    return; // Если выпадающий список открыт, и это не Enter/стрелки, не перемещаем фокус
+                    return;
                 }
             }
 
             if (e.Key == Key.Enter)
             {
-                // Специальная логика для полей "Годы" и "Месяцы"
                 if (control.Name == "WorkExperienceYearsTextBox")
                 {
                     var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
@@ -784,14 +887,11 @@ namespace DocumentGenerator
             var stackPanel = this.FindControl<StackPanel>("MainStackPanel");
             if (stackPanel == null) return;
 
-            // Собираем все элементы управления с TabIndex
             var focusableControls = new List<(Control Control, int TabIndex)>();
             CollectFocusableControls(stackPanel, focusableControls);
 
-            // Сортируем по TabIndex
             focusableControls.Sort((a, b) => a.TabIndex.CompareTo(b.TabIndex));
 
-            // Находим текущий элемент
             var current = focusableControls.FirstOrDefault(x => x.Control == currentControl);
             if (current.Control == null) return;
 
@@ -800,13 +900,11 @@ namespace DocumentGenerator
 
             if (moveNext)
             {
-                // Ищем следующий элемент с большим TabIndex
                 var next = focusableControls.FirstOrDefault(x => x.TabIndex > currentTabIndex);
                 nextControl = next.Control;
             }
             else
             {
-                // Ищем предыдущий элемент с меньшим TabIndex
                 var previous = focusableControls.LastOrDefault(x => x.TabIndex < currentTabIndex);
                 nextControl = previous.Control;
             }
@@ -829,7 +927,7 @@ namespace DocumentGenerator
                 if (child is TextBox || child is ComboBox || child is ListBox || child is Button)
                 {
                     int tabIndex = child.GetValue(Control.TabIndexProperty);
-                    if (tabIndex >= 0) // Убедимся, что TabIndex задан
+                    if (tabIndex >= 0)
                     {
                         focusableControls.Add((child, tabIndex));
                     }
@@ -838,6 +936,51 @@ namespace DocumentGenerator
                 {
                     CollectFocusableControls(panel, focusableControls);
                 }
+            }
+        }
+
+        public static class MessageBox
+        {
+            public enum MessageBoxButtons
+            {
+                Ok
+            }
+
+            public static async Task Show(Window parent, string text, string title, MessageBoxButtons buttons)
+            {
+                var messageBox = new Window
+                {
+                    Title = title,
+                    Width = 300,
+                    Height = 150,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    CanResize = false
+                };
+
+                var stackPanel = new StackPanel
+                {
+                    Margin = new Thickness(10)
+                };
+
+                stackPanel.Children.Add(new TextBlock
+                {
+                    Text = text,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(0, 0, 0, 10)
+                });
+
+                var button = new Button
+                {
+                    Content = "OK",
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                    Width = 100
+                };
+
+                button.Click += (s, e) => messageBox.Close();
+                stackPanel.Children.Add(button);
+
+                messageBox.Content = stackPanel;
+                await messageBox.ShowDialog(parent);
             }
         }
     }

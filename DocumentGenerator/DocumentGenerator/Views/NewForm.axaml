@@ -281,7 +281,9 @@
 			<ListBox Name="DrivingCategoriesListBox" ItemsSource="{Binding DrivingCategoryOptions}" SelectedItems="{Binding SelectedDrivingCategories}" SelectionMode="Multiple" TabIndex="14" Height="100" />
 			<TextBlock Text="{Binding DrivingCategoriesError}" Foreground="Red" />
 
-			<Button Name="SaveButton" Content="Сохранить" TabIndex="15" />
+			<Button Name="PreviewButton" Content="Предпросмотр" TabIndex="15" />
+			<Button Name="BackButton" Content="Вернуться в меню" TabIndex="16" />
+			<Button Name="SaveButton" Content="Сохранить" TabIndex="17" />
 		</StackPanel>
 	</ScrollViewer>
 </Window>
