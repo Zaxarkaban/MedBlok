@@ -776,7 +776,9 @@ namespace DocumentGenerator
                 var menuWindow = desktop.MainWindow as MenuWindow;
                 if (menuWindow != null)
                 {
-                    menuWindow.Show();
+                    var MenuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+                    MenuWindow.Show();
+                    Close();
                 }
             }
 
