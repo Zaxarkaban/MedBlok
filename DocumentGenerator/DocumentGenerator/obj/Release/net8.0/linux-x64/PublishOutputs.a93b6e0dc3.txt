@@ -1,0 +1,5 @@
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\linux-x64\DocumentGenerator.pdb
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\linux-x64\Fonts\TIMES.TTF
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\linux-x64\Template.pdf
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\linux-x64\карта водительская комиссия.pdf
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\linux-x64\DocumentGenerator

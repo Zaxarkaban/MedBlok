@@ -212,6 +212,17 @@ namespace DocumentGenerator.ViewModels
                                     throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
                                 }
 
+                                // Вычисляем возраст и пол
+                                int age = 0;
+                                bool isFemale = record.Gender == "Женский";
+                                if (!string.IsNullOrEmpty(record.DateOfBirth) && DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var dob))
+                                {
+                                    var today = DateTime.Today;
+                                    age = today.Year - dob.Year;
+                                    if (dob.Date > today.AddYears(-age)) age--;
+                                }
+                                bool isOver40 = age > 40;
+
                                 var form = PdfAcroForm.GetAcroForm(pdf, true);
                                 var fields = form.GetAllFormFields();
 
@@ -251,6 +262,8 @@ namespace DocumentGenerator.ViewModels
 
                                 string currentDate = DateTime.Now.ToString("dd.MM.yyyy");
                                 SetFieldValue(fields, "CurrentDate", currentDate, font);
+                                //Вот тут бахнуть вычисление возраста
+                                SetFieldValue(fields, "normasDate", age.ToString(), font); // Заполняем поле возраста в годах
 
                                 string[] fioParts = record.FullName.Split(' ');
                                 string lastName = fioParts.Length > 0 ? fioParts[0] : "";
@@ -330,8 +343,8 @@ namespace DocumentGenerator.ViewModels
                                 }
 
                                 // Генерация списка исследований
-                                bool isFemale = record.Gender == "Женский" || record.Gender == "ж";
-                                bool isOver40 = record.Age > 40;
+                                isFemale = record.Gender == "Женский" || record.Gender == "ж";
+                                isOver40 = record.Age > 40;
                                 var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
 
                                 // Проставление галочек для исследований

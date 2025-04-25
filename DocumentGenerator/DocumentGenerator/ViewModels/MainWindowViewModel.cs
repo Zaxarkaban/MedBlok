@@ -70,7 +70,7 @@ namespace DocumentGenerator.ViewModels
         {
             GenderOptions = new List<string> { "Мужской", "Женский" };
             OwnershipFormOptions = new List<string> { "ООО", "ИП", "АО", "ПАО", "ГУП", "ЗАО", "ОАО" };
-            MedicalOrganizationOptions = new List<string> { "АО \"ГСМК\"", "АО \"МАКС-М\"", "ООО \"СМК РЕСО-Мед\"", "ООО \"Капитал МС\"", "АО \"СОГАЗ-Мед\"", "ООО \"СК \"Ингосстрах-М\"" };
+            MedicalOrganizationOptions = new List<string> { "АО \"ГСМК\"", "АО \"МАКС-М\"", "ООО \"СМК РЕСО-Мед\"", "ООО \"Капитал МС\"", "АО \"СОГАЗ-Мед\"", "ООО \"СК \"Ингосстрах-М\"","Государственная" };
             ServicePointOptions = new List<string> { "ПО 67", "ПО 89", "ПО 66", "ПО «Шушары»", "ЖК «Шушары»", "ПО «Славянка»" }; // Список пунктов обслуживания
             OrderClauseOptions = Dictionaries.OrderClauseDataMap.Keys.ToList();
             _documentService = new DocumentService();

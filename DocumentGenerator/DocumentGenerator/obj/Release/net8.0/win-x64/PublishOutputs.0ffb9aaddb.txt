@@ -1,0 +1,3 @@
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\win-x64\DocumentGenerator.pdb
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\win-x64\карта водительская комиссия.pdf
+C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\publish\win-x64\DocumentGenerator.exe
