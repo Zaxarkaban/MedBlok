@@ -164,7 +164,7 @@ namespace DocumentGenerator.ViewModels
                             Okved = worksheet.Cells[1, 16].Text?.Trim() ?? "", // 22.15.00
                             OwnershipForm = worksheet.Cells[1, 14].Text?.Trim() ?? "", // Государственная
                             WorkExperience = workExperience, // Лет {лет}, Месяцев {месяцев}
-                            ServicePoint = worksheet.Cells[row, 20].Text?.Trim() ?? "89" // Пункт обслуживания
+                            ServicePoint = worksheet.Cells[2, 20].Text?.Trim() ?? "89" // Пункт обслуживания
                         };
 
                         // Пробуем преобразовать дату рождения
