@@ -1,10 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
+  "WorkspaceRootPath": "C:\\Users\\Zahar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\zahar\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Zahar\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.15\\build\\Microsoft.NET.ILLink.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +17,31 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Microsoft.NET.ILLink.targets",
+              "DocumentMoniker": "C:\\Users\\Zahar\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.15\\build\\Microsoft.NET.ILLink.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.15\\build\\Microsoft.NET.ILLink.targets",
+              "ToolTip": "C:\\Users\\Zahar\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.15\\build\\Microsoft.NET.ILLink.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.15\\build\\Microsoft.NET.ILLink.targets",
+              "ViewState": "AgIAALcAAAAAAAAAAAAIwMQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-04-25T07:24:22.197Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "PdfGenerator.cs",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ViewState": "AgIAAG4AAAAAAAAAAAAswI4AAABNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T06:35:32.192Z",
+              "Title": "DocumentGenerator.csproj",
+              "DocumentMoniker": "C:\\Users\\Zahar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+              "RelativeDocumentMoniker": "DocumentGenerator\\DocumentGenerator.csproj",
+              "ToolTip": "C:\\Users\\Zahar\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+              "RelativeToolTip": "DocumentGenerator\\DocumentGenerator.csproj",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAACMAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-25T07:20:59.228Z",
               "EditorCaption": ""
             }
           ]

@@ -19,26 +19,26 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = DocumentGenerator
-build_property.ProjectDir = C:\Users\Артём\OneDrive\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\
+build_property.ProjectDir = C:\Users\Zahar\Documents\GitHub\MedBlok\DocumentGenerator\DocumentGenerator\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = false
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/App.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/ExcelDataWindow.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/ExcelDataWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/AnalysisView.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/AnalysisView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/MainWindow.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/MenuWindow.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/MenuWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/Артём/OneDrive/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/NewForm.axaml]
+[C:/Users/Zahar/Documents/GitHub/MedBlok/DocumentGenerator/DocumentGenerator/Views/NewForm.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
