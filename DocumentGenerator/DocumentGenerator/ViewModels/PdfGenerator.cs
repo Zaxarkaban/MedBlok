@@ -135,6 +135,8 @@ namespace DocumentGenerator
                     string currentDate = DateTime.Now.ToString("dd.MM.yyyy"); // Формат: 22.04.2025
                     SetFieldValue(fields, "CurrentDate", currentDate, font);
 
+                    //Вот тут бахнуть вычисление возраста
+                    SetFieldValue(fields, "normasDate", age.ToString(), font); // Заполняем поле возраста в годах
                     // Разбиваем ФИО на части
                     string fio = _viewModel.FullName ?? "";
                     string[] fioParts = fio.Split(' ');

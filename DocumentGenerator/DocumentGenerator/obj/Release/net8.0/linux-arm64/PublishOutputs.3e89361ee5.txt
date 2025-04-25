@@ -1,0 +1,8 @@
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\DocumentGenerator.pdb
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\Fonts\TIMES.TTF
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\Template.pdf
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\карта водительская комиссия.pdf
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\libHarfBuzzSharp.so
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\libSkiaSharp.so
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\libe_sqlite3.so
+C:\Users\Артём\OneDrive\Desktop\DocumentGenerator на linux-x64\DocumentGenerator
