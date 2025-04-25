@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj": {}
+    "C:\\Users\\Артём\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj": {}
   },
   "projects": {
-    "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj": {
+    "C:\\Users\\Артём\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+        "projectUniqueName": "C:\\Users\\Артём\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
         "projectName": "DocumentGenerator",
-        "projectPath": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
-        "packagesPath": "C:\\Users\\Home\\.nuget\\packages\\",
-        "outputPath": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\obj\\",
+        "projectPath": "C:\\Users\\Артём\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+        "packagesPath": "C:\\Users\\Артём\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Артём\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Home\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Артём\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -63,6 +63,8 @@
               "version": "[11.2.1, )"
             },
             "Avalonia.Diagnostics": {
+              "include": "None",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[11.2.1, )"
             },
@@ -86,6 +88,12 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )",
+              "autoReferenced": true
+            },
             "ReactiveUI": {
               "target": "Package",
               "version": "[20.2.45, )"
@@ -93,6 +101,10 @@
             "ReactiveUI.Fody": {
               "target": "Package",
               "version": "[19.5.41, )"
+            },
+            "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+              "target": "Package",
+              "version": "[2.88.8, )"
             },
             "itext7": {
               "target": "Package",
@@ -114,12 +126,31 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
         }
       }
     }

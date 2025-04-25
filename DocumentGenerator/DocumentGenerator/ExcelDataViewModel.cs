@@ -164,7 +164,7 @@ namespace DocumentGenerator.ViewModels
                             Okved = worksheet.Cells[1, 16].Text?.Trim() ?? "", // 22.15.00
                             OwnershipForm = worksheet.Cells[1, 14].Text?.Trim() ?? "", // Государственная
                             WorkExperience = workExperience, // Лет {лет}, Месяцев {месяцев}
-                            ServicePoint = worksheet.Cells[row, 20].Text?.Trim() ?? "89" // Пункт обслуживания
+                            ServicePoint = worksheet.Cells[2, 20].Text?.Trim() ?? "89" // Пункт обслуживания
                         };
 
                         // Пробуем преобразовать дату рождения
@@ -619,21 +619,26 @@ namespace DocumentGenerator.ViewModels
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
+            // Убедимся, что в документе есть как минимум 11 страниц
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 2)
+            while (currentPageCount < 11)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            var page = pdfDocument.GetPage(2);
+            // Получаем 11-ю страницу
+            var page = pdfDocument.GetPage(11);
             var pageSize = page.GetPageSize();
 
-            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72);
+            // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
+            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72); // Отступы 36 пунктов со всех сторон
 
+            // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
             var column = new PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, leftHalf);
+            var columnText = new iText.Layout.Canvas(column, fullPage);
 
+            // Создаём параграф с текстом
             var paragraph = new Paragraph()
                 .SetFont(font)
                 .SetFontSize(7);
@@ -646,6 +651,7 @@ namespace DocumentGenerator.ViewModels
                 testNumber++;
             }
 
+            // Добавляем параграф на 11-ю страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

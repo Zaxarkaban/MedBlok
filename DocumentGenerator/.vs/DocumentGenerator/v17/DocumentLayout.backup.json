@@ -1,34 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Games\\MedBlok\\DocumentGenerator\\",
+  "WorkspaceRootPath": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\services\\documentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\services\\documentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\models\\dictionaries.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\models\\dictionaries.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\games\\medblok\\documentgenerator\\documentgenerator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,96 +14,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DocumentService.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\DocumentService.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\Services\\DocumentService.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Services\\DocumentService.cs",
-              "RelativeToolTip": "DocumentGenerator\\Services\\DocumentService.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:24:18.672Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Dictionaries.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Dictionaries.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\Models\\Dictionaries.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Models\\Dictionaries.cs",
-              "RelativeToolTip": "DocumentGenerator\\Models\\Dictionaries.cs",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:24:14.34Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ExcelDataViewModel.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ExcelDataViewModel.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs*",
-              "RelativeToolTip": "DocumentGenerator\\ExcelDataViewModel.cs*",
-              "ViewState": "AgIAAIwCAAAAAAAAAAAqwLcCAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:18:37.286Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindowViewModel.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "RelativeToolTip": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
-              "ViewState": "AgIAAHICAAAAAAAAAAAAAA4AAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T10:09:33.46Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "PdfGenerator.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
-              "ViewState": "AgIAAGIBAAAAAAAAAAAmwHMAAABbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:18:30.928Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DocumentGenerator.csproj",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+              "Title": "DocumentGenerator",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
               "RelativeDocumentMoniker": "DocumentGenerator\\DocumentGenerator.csproj",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
               "RelativeToolTip": "DocumentGenerator\\DocumentGenerator.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABCAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-25T07:41:14.649Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Program.cs",
-              "RelativeDocumentMoniker": "DocumentGenerator\\Program.cs",
-              "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\Program.cs",
-              "RelativeToolTip": "DocumentGenerator\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T07:41:04.417Z"
+              "WhenOpened": "2025-04-25T14:10:25.431Z",
+              "EditorCaption": ""
             }
           ]
         }

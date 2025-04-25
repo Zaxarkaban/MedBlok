@@ -361,24 +361,24 @@ namespace DocumentGenerator
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 2 страницы
+            // Убедимся, что в документе есть как минимум 11 страниц
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 2)
+            while (currentPageCount < 11)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            // Получаем вторую страницу
-            var page = pdfDocument.GetPage(2);
+            // Получаем 11-ю страницу
+            var page = pdfDocument.GetPage(11);
             var pageSize = page.GetPageSize();
 
-            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
-            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
+            // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
+            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72); // Отступы 36 пунктов со всех сторон
 
-            // Создаём ColumnText для управления позицией текста
+            // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
             var column = new PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, leftHalf);
+            var columnText = new iText.Layout.Canvas(column, fullPage);
 
             // Создаём параграф с текстом
             var paragraph = new Paragraph()
@@ -393,7 +393,7 @@ namespace DocumentGenerator
                 testNumber++;
             }
 
-            // Добавляем параграф на вторую страницу
+            // Добавляем параграф на 11-ю страницу
             columnText.Add(paragraph);
             columnText.Close();
         }
