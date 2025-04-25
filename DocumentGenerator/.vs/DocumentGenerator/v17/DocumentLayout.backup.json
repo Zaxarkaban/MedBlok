@@ -50,7 +50,8 @@
               "RelativeToolTip": "DocumentGenerator\\Services\\DocumentService.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:24:18.672Z"
+              "WhenOpened": "2025-04-25T09:24:18.672Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -62,7 +63,8 @@
               "RelativeToolTip": "DocumentGenerator\\Models\\Dictionaries.cs",
               "ViewState": "AgIAAF4AAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:24:14.34Z"
+              "WhenOpened": "2025-04-25T09:24:14.34Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -72,7 +74,7 @@
               "RelativeDocumentMoniker": "DocumentGenerator\\ExcelDataViewModel.cs",
               "ToolTip": "C:\\Games\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs*",
               "RelativeToolTip": "DocumentGenerator\\ExcelDataViewModel.cs*",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAYwKoAAABTAAAAAAAAAA==",
+              "ViewState": "AgIAAIwCAAAAAAAAAAAqwLcCAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-25T09:18:37.286Z",
               "EditorCaption": ""
@@ -87,7 +89,8 @@
               "RelativeToolTip": "DocumentGenerator\\ViewModels\\MainWindowViewModel.cs",
               "ViewState": "AgIAAHICAAAAAAAAAAAAAA4AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T10:09:33.46Z"
+              "WhenOpened": "2025-04-25T10:09:33.46Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -99,7 +102,8 @@
               "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
               "ViewState": "AgIAAGIBAAAAAAAAAAAmwHMAAABbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T09:18:30.928Z"
+              "WhenOpened": "2025-04-25T09:18:30.928Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
