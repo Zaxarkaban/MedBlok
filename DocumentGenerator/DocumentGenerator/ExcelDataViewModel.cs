@@ -17,6 +17,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using System.Linq;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace DocumentGenerator.ViewModels
 {
@@ -36,7 +37,9 @@ namespace DocumentGenerator.ViewModels
             public string? PassportNumber { get; set; } = "";
             public string? PassportIssueDate { get; set; } = "";
             public string? PassportIssuedBy { get; set; } = "";
-
+            public string? Phone { get; set; } = "";
+            public string? Address { get; set; } = "";
+            public string? Department { get; set; } = "";
             public string? Workplace { get; set; } = "";
             public string? MedicalFacility { get; set; } = "";
             public string? WorkExperience { get; set; } = "";
@@ -44,7 +47,6 @@ namespace DocumentGenerator.ViewModels
             public string? Okved { get; set; } = "";
             public string? ServicePoint { get; set; } = "";
             public string? WorkAddress { get; set; } = "";
-            public string? Department { get; set; } = "";
             public string? OwnershipForm { get; set; } = "";
         }
 
@@ -69,6 +71,7 @@ namespace DocumentGenerator.ViewModels
                     throw new FileNotFoundException("Excel file not found.", filePath);
                 }
 
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     var worksheet = package.Workbook.Worksheets[0];
@@ -77,11 +80,73 @@ namespace DocumentGenerator.ViewModels
                     Records.Clear();
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        // Пропускаем пустые строки
+                        if (string.IsNullOrWhiteSpace(worksheet.Cells[row, 2].Text))
+                        {
+                            Console.WriteLine($"Пропущена строка {row}: пустое значение в столбце 2.");
+                            continue;
+                        }
+
+                        // Получаем значение в столбце 2 (ФИО) и столбце 5 (Дата рождения)
+                        string fullName = worksheet.Cells[row, 2].Text?.Trim();
+                        string dateOfBirth = worksheet.Cells[row, 5].Text?.Trim();
+
+                        // Пропускаем строку с заголовками (где в столбце 2 указано "ФИО" или похожее)
+                        if (row == 2 && (fullName?.ToLower() == "фио" || fullName?.ToLower() == "сотрудник"))
+                        {
+                            Console.WriteLine($"Пропущена строка {row}: заголовок (ФИО = {fullName}).");
+                            continue;
+                        }
+
+                        // Пропускаем строку, если данные выглядят как заголовки
+                        if (fullName?.ToLower().Contains("сотрудник") == true ||
+                            dateOfBirth?.ToLower().Contains("дата рождения") == true)
+                        {
+                            Console.WriteLine($"Пропущена строка {row}: данные похожи на заголовки (ФИО = {fullName}, Дата рождения = {dateOfBirth}).");
+                            continue;
+                        }
+
+                        // Проверяем, что дата рождения — это корректная дата
+                        bool isValidDate = false;
+                        if (!string.IsNullOrEmpty(dateOfBirth))
+                        {
+                            // Пробуем числовой формат Excel (число дней с 1900 года)
+                            if (double.TryParse(dateOfBirth, out double dateOfBirthDays))
+                            {
+                                try
+                                {
+                                    DateTime.FromOADate(dateOfBirthDays);
+                                    isValidDate = true;
+                                }
+                                catch
+                                {
+                                    isValidDate = false;
+                                }
+                            }
+                            // Пробуем текстовый формат "dd.MM.yyyy"
+                            else if (DateTime.TryParseExact(dateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out _))
+                            {
+                                isValidDate = true;
+                            }
+                        }
+
+                        if (!isValidDate)
+                        {
+                            Console.WriteLine($"Пропущена строка {row}: некорректная дата рождения ({dateOfBirth}).");
+                            continue;
+                        }
+
+                        var years = worksheet.Cells[row, 17].Text?.Trim() ?? "0";
+                        var months = worksheet.Cells[row, 18].Text?.Trim() ?? "0";
+                        var workExperience = $"Лет {years}, Месяцев {months}";
+
                         var record = new Record
                         {
-                            FullName = worksheet.Cells[row, 2].Text?.Trim(),
+                            FullName = fullName,
                             Position = worksheet.Cells[row, 3].Text?.Trim(),
-                            DateOfBirth = worksheet.Cells[row, 5].Text?.Trim(),
+                            Department = worksheet.Cells[row, 4].Text?.Trim(),
+                            DateOfBirth = dateOfBirth,
+                            Age = 0, // Изначально устанавливаем 0, будем вычислять ниже
                             Gender = worksheet.Cells[row, 7].Text?.Trim(),
                             OrderClause = worksheet.Cells[row, 8].Text?.Trim(),
                             Snils = worksheet.Cells[row, 9].Text?.Trim(),
@@ -90,44 +155,70 @@ namespace DocumentGenerator.ViewModels
                             PassportNumber = worksheet.Cells[row, 12].Text?.Trim(),
                             PassportIssueDate = worksheet.Cells[row, 13].Text?.Trim(),
                             PassportIssuedBy = worksheet.Cells[row, 14].Text?.Trim(),
-                            // Новые поля
-                            Workplace = worksheet.Cells[row, 15].Text?.Trim() ?? "",
-                            MedicalFacility = worksheet.Cells[row, 16].Text?.Trim() ?? "",
-                            WorkExperience = worksheet.Cells[row, 17].Text?.Trim() ?? "",
-                            MedicalOrganization = worksheet.Cells[row, 18].Text?.Trim() ?? "",
-                            Okved = worksheet.Cells[row, 19].Text?.Trim() ?? "",
-                            ServicePoint = worksheet.Cells[row, 20].Text?.Trim() ?? "",
-                            WorkAddress = worksheet.Cells[row, 21].Text?.Trim() ?? "",
-                            Department = worksheet.Cells[row, 22].Text?.Trim() ?? "",
-                            OwnershipForm = worksheet.Cells[row, 23].Text?.Trim() ?? ""
+                            Phone = worksheet.Cells[row, 15].Text?.Trim(),
+                            Address = worksheet.Cells[row, 16].Text?.Trim(),
+                            MedicalFacility = worksheet.Cells[row, 19].Text?.Trim() ?? "",
+                            MedicalOrganization = "", // Не заполняем
+                            Workplace = worksheet.Cells[1, 3].Text?.Trim() ?? "", // ООО "Рога и копыта"
+                            WorkAddress = worksheet.Cells[1, 7].Text?.Trim() ?? "", // СПб, Пушкин
+                            Okved = worksheet.Cells[1, 16].Text?.Trim() ?? "", // 22.15.00
+                            OwnershipForm = worksheet.Cells[1, 14].Text?.Trim() ?? "", // Государственная
+                            WorkExperience = workExperience, // Лет {лет}, Месяцев {месяцев}
+                            ServicePoint = worksheet.Cells[row, 20].Text?.Trim() ?? "89" // Пункт обслуживания
                         };
 
-                        if (string.IsNullOrWhiteSpace(record.FullName))
+                        // Пробуем преобразовать дату рождения
+                        DateTime birthDate = DateTime.MinValue; // Инициализация по умолчанию
+                        if (!string.IsNullOrEmpty(record.DateOfBirth))
                         {
-                            continue;
+                            // Пробуем числовой формат Excel (число дней с 1900 года)
+                            if (double.TryParse(record.DateOfBirth, out double dateOfBirthDays))
+                            {
+                                try
+                                {
+                                    birthDate = DateTime.FromOADate(dateOfBirthDays);
+                                    record.DateOfBirth = birthDate.ToString("dd.MM.yyyy");
+                                }
+                                catch
+                                {
+                                    birthDate = DateTime.MinValue; // Если не удалось преобразовать
+                                }
+                            }
+                            // Пробуем текстовый формат "dd.MM.yyyy"
+                            else if (DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out birthDate))
+                            {
+                                // Дата уже в правильном формате
+                            }
+                            else
+                            {
+                                birthDate = DateTime.MinValue; // Если формат не распознан
+                            }
+
+                            // Вычисляем возраст, если дата рождения успешно распознана
+                            if (birthDate != DateTime.MinValue)
+                            {
+                                var today = DateTime.Today;
+                                int calculatedAge = today.Year - birthDate.Year;
+                                if (birthDate.Date > today.AddYears(-calculatedAge)) calculatedAge--;
+                                record.Age = calculatedAge;
+                            }
                         }
 
-                        if (double.TryParse(record.DateOfBirth, out double dateOfBirthDays))
-                        {
-                            DateTime dateOfBirth = DateTime.FromOADate(dateOfBirthDays);
-                            record.DateOfBirth = dateOfBirth.ToString("dd.MM.yyyy");
-                        }
-
-                        if (DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var birthDate))
-                        {
-                            var today = DateTime.Today;
-                            int age = today.Year - birthDate.Year;
-                            if (birthDate.Date > today.AddYears(-age)) age--;
-                            record.Age = age;
-                        }
-
+                        // Преобразуем дату выдачи паспорта
                         if (double.TryParse(record.PassportIssueDate, out double passportIssueDays))
                         {
                             DateTime passportIssueDate = DateTime.FromOADate(passportIssueDays);
                             record.PassportIssueDate = passportIssueDate.ToString("dd.MM.yyyy");
                         }
 
+                        // Нормализация пола
+                        if (!string.IsNullOrEmpty(record.Gender))
+                        {
+                            record.Gender = record.Gender.ToLower() == "ж" ? "Женский" : "Мужской";
+                        }
+
                         Records.Add(record);
+                        Console.WriteLine($"Добавлена запись для строки {row}: ФИО = {record.FullName}, Дата рождения = {record.DateOfBirth}");
                     }
                 }
             }
@@ -212,17 +303,6 @@ namespace DocumentGenerator.ViewModels
                                     throw new InvalidOperationException($"Ошибка при загрузке шрифта: {ex.Message}", ex);
                                 }
 
-                                // Вычисляем возраст и пол
-                                int age = 0;
-                                bool isFemale = record.Gender == "Женский";
-                                if (!string.IsNullOrEmpty(record.DateOfBirth) && DateTime.TryParseExact(record.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var dob))
-                                {
-                                    var today = DateTime.Today;
-                                    age = today.Year - dob.Year;
-                                    if (dob.Date > today.AddYears(-age)) age--;
-                                }
-                                bool isOver40 = age > 40;
-
                                 var form = PdfAcroForm.GetAcroForm(pdf, true);
                                 var fields = form.GetAllFormFields();
 
@@ -230,8 +310,8 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "Gender", record.Gender, font);
                                 SetFieldValue(fields, "DateOfBirth", record.DateOfBirth, font);
                                 SetFieldValue(fields, "DateOfBirth1", record.DateOfBirth, font);
-                                SetFieldValue(fields, "Address", "", font);
-                                SetFieldValue(fields, "Phone", "", font);
+                                SetFieldValue(fields, "Address", record.Address, font);
+                                SetFieldValue(fields, "Phone", record.Phone, font);
                                 SetFieldValue(fields, "PassportSeries", record.PassportSeries, font);
                                 SetFieldValue(fields, "PassportNumber", record.PassportNumber, font);
                                 SetFieldValue(fields, "PassportIssueDate", record.PassportIssueDate, font);
@@ -249,7 +329,8 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "WorkAddress", record.WorkAddress, font);
                                 SetFieldValue(fields, "Department", record.Department, font);
                                 SetFieldValue(fields, "OwnershipForm", record.OwnershipForm, font);
-                                fields["обязательные_анализы"].SetValue("V"); // Устанавливаем галочку для обязательных анализов
+                                SetFieldValue(fields, "normasDate", record.Age.ToString(), font); // Возраст в поле "полных лет"
+                                fields["обязательные_анализы"].SetValue("V");
 
                                 int currentYear = DateTime.Now.Year;
                                 if (fields.TryGetValue("CurrentYear", out var field))
@@ -262,10 +343,8 @@ namespace DocumentGenerator.ViewModels
 
                                 string currentDate = DateTime.Now.ToString("dd.MM.yyyy");
                                 SetFieldValue(fields, "CurrentDate", currentDate, font);
-                                //Вот тут бахнуть вычисление возраста
-                                SetFieldValue(fields, "normasDate", age.ToString(), font); // Заполняем поле возраста в годах
 
-                                string[] fioParts = record.FullName.Split(' ');
+                                string[] fioParts = record.FullName?.Split(' ') ?? new string[] { "", "", "" };
                                 string lastName = fioParts.Length > 0 ? fioParts[0] : "";
                                 string firstName = fioParts.Length > 1 ? fioParts[1] : "";
                                 string middleName = fioParts.Length > 2 ? fioParts[2] : "";
@@ -276,7 +355,6 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "CheckBoxField", "Yes", font);
                                 SetFieldValue(fields, "Document", "паспорт", font);
 
-                                // Устанавливаем галочку для ServicePoint
                                 switch (record.ServicePoint)
                                 {
                                     case "ПО 67":
@@ -285,7 +363,7 @@ namespace DocumentGenerator.ViewModels
                                             fields["ServicePoint1"].SetValue("V");
                                         }
                                         break;
-                                    case "ПО 89":
+                                    case "89":
                                         if (fields.ContainsKey("ServicePoint2"))
                                         {
                                             fields["ServicePoint2"].SetValue("V");
@@ -342,12 +420,8 @@ namespace DocumentGenerator.ViewModels
                                     SetFieldValue(fields, fieldName, uniqueDoctors[i], font);
                                 }
 
-                                // Генерация списка исследований
-                                isFemale = record.Gender == "Женский" || record.Gender == "ж";
-                                isOver40 = record.Age > 40;
-                                var tests = _documentService.GenerateTestsList(isOver40, isFemale, selectedClauses);
+                                var tests = _documentService.GenerateTestsList(record.Age > 40, record.Gender == "Женский" || record.Gender == "ж", selectedClauses);
 
-                                // Проставление галочек для исследований
                                 var testsWithDirectMatch = GetTestsWithDirectMatch();
                                 foreach (var test in tests)
                                 {
@@ -422,7 +496,6 @@ namespace DocumentGenerator.ViewModels
             }
         }
 
-        // Новый метод для обработки имен полей
         private string SanitizeFieldName(string name)
         {
             return name.Replace(" ", "_")
@@ -435,7 +508,6 @@ namespace DocumentGenerator.ViewModels
                        .Replace("/", "_");
         }
 
-        // Метод для получения списка исследований с прямым соответствием (перенесен из PdfGenerator.cs)
         private List<string> GetTestsWithDirectMatch()
         {
             return new List<string>
@@ -481,7 +553,6 @@ namespace DocumentGenerator.ViewModels
                         row++;
                     }
 
-                    // Автоматическая подстройка ширины столбцов на листе Doctors
                     doctorsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
 
                     var testsSheet = package.Workbook.Worksheets.Add("Tests");
@@ -496,7 +567,6 @@ namespace DocumentGenerator.ViewModels
                         row++;
                     }
 
-                    // Автоматическая подстройка ширины столбцов на листе Tests
                     testsSheet.Cells[1, 1, row - 1, 2].AutoFitColumns();
 
                     File.WriteAllBytes(outputPath, package.GetAsByteArray());
@@ -512,52 +582,43 @@ namespace DocumentGenerator.ViewModels
         {
             if (fields.TryGetValue(fieldName, out var pdfField))
             {
-                // Устанавливаем значение поля
-                pdfField.SetValue(value);
+                pdfField.SetValue(value ?? "");
 
-                // Пропускаем динамическое изменение шрифта для CurrentYear (шрифт фиксированно 24)
                 if (fieldName == "CurrentYear")
                 {
                     pdfField.SetFontAndSize(font, 24f);
                     return;
                 }
 
-                // Начальный размер шрифта
                 float fontSize = 10.5f;
                 pdfField.SetFontAndSize(font, fontSize);
 
-                // Получаем размеры поля
                 var widget = pdfField.GetWidgets().FirstOrDefault();
                 if (widget == null) return;
                 var rect = widget.GetRectangle();
-                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
+                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue();
 
-                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
                 float textWidth;
-                float minFontSize = 6f; // Минимальный размер шрифта
+                float minFontSize = 6f;
                 do
                 {
-                    // Измеряем ширину текста с текущим размером шрифта
-                    textWidth = font.GetWidth(value, fontSize);
-
+                    textWidth = font.GetWidth(value ?? "", fontSize);
                     if (textWidth > fieldWidth && fontSize > minFontSize)
                     {
-                        fontSize -= 0.5f; // Уменьшаем шрифт на 0.5
+                        fontSize -= 0.5f;
                     }
                     else
                     {
-                        break; // Текст влезает или достигнут минимальный шрифт
+                        break;
                     }
                 } while (true);
 
-                // Устанавливаем финальный размер шрифта
                 pdfField.SetFontAndSize(font, fontSize);
             }
         }
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 2 страницы
             int currentPageCount = pdfDocument.GetNumberOfPages();
             while (currentPageCount < 2)
             {
@@ -565,23 +626,18 @@ namespace DocumentGenerator.ViewModels
                 currentPageCount++;
             }
 
-            // Получаем вторую страницу
             var page = pdfDocument.GetPage(2);
             var pageSize = page.GetPageSize();
 
-            // Определяем область для левой половины страницы (A4: ширина 595, половина = 297.5)
-            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72); // 36 пунктов отступ слева и снизу, ширина 261.5, высота с учётом отступов
+            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72);
 
-            // Создаём ColumnText для управления позицией текста
             var column = new PdfCanvas(page);
             var columnText = new iText.Layout.Canvas(column, leftHalf);
 
-            // Создаём параграф с текстом
             var paragraph = new Paragraph()
                 .SetFont(font)
                 .SetFontSize(7);
 
-            // Меняем заголовок на "Список исследований"
             paragraph.Add(new Text("Список исследований:\n\n"));
             int testNumber = 1;
             foreach (var test in tests)
@@ -590,7 +646,6 @@ namespace DocumentGenerator.ViewModels
                 testNumber++;
             }
 
-            // Добавляем параграф на вторую страницу
             columnText.Add(paragraph);
             columnText.Close();
         }
@@ -598,7 +653,7 @@ namespace DocumentGenerator.ViewModels
         private string SanitizeFileName(string fileName)
         {
             var invalidChars = new string(System.IO.Path.GetInvalidFileNameChars());
-            var regex = new System.Text.RegularExpressions.Regex($"[{System.Text.RegularExpressions.Regex.Escape(invalidChars)}]");
+            var regex = new Regex($"[{Regex.Escape(invalidChars)}]");
             return regex.Replace(fileName, "_").Trim();
         }
 
