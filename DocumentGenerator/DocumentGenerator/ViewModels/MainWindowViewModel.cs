@@ -845,7 +845,7 @@ namespace DocumentGenerator.ViewModels
             // Вычисляем возраст и проверяем пол
             int age = CalculateAge();
             bool isFemale = Gender == "Женский";
-            bool isOver40 = age > 40;
+            bool isOver40 = age >= 40;
 
             // Собираем данные пользователя в словарь
             var userData = new Dictionary<string, string>

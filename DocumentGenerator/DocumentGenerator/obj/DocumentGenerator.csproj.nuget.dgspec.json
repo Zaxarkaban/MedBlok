@@ -63,8 +63,6 @@
               "version": "[11.2.1, )"
             },
             "Avalonia.Diagnostics": {
-              "include": "None",
-              "suppressParent": "All",
               "target": "Package",
               "version": "[11.2.1, )"
             },
@@ -88,12 +86,6 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.11, )",
-              "autoReferenced": true
-            },
             "ReactiveUI": {
               "target": "Package",
               "version": "[20.2.45, )"
@@ -101,10 +93,6 @@
             "ReactiveUI.Fody": {
               "target": "Package",
               "version": "[19.5.41, )"
-            },
-            "SkiaSharp.NativeAssets.Linux.NoDependencies": {
-              "target": "Package",
-              "version": "[2.88.8, )"
             },
             "itext7": {
               "target": "Package",
@@ -126,31 +114,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
-              "version": "[8.0.11, 8.0.11]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.linux-x64",
-              "version": "[8.0.11, 8.0.11]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.linux-x64",
-              "version": "[8.0.11, 8.0.11]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "linux-x64": {
-          "#import": []
         }
       }
     }

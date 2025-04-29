@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\documentgenerator.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\viewmodels\\pdfgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|c:\\users\\\u0430\u0440\u0442\u0451\u043C\\onedrive\\documents\\github\\medblok\\documentgenerator\\documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71B52626-AA7E-42DE-BC8C-24FA777F1039}|DocumentGenerator\\DocumentGenerator.csproj|solutionrelative:documentgenerator\\exceldataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ExcelDataViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ExcelDataViewModel.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ExcelDataViewModel.cs",
+              "RelativeToolTip": "DocumentGenerator\\ExcelDataViewModel.cs",
+              "ViewState": "AgIAAC0BAAAAAAAAAAAcwEQBAABlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-29T20:12:13.85Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DocumentGenerator",
-              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
-              "RelativeDocumentMoniker": "DocumentGenerator\\DocumentGenerator.csproj",
-              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\DocumentGenerator.csproj",
-              "RelativeToolTip": "DocumentGenerator\\DocumentGenerator.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-25T14:10:25.431Z",
+              "Title": "PdfGenerator.cs",
+              "DocumentMoniker": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "RelativeDocumentMoniker": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "ToolTip": "C:\\Users\\\u0410\u0440\u0442\u0451\u043C\\OneDrive\\Documents\\GitHub\\MedBlok\\DocumentGenerator\\DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "RelativeToolTip": "DocumentGenerator\\ViewModels\\PdfGenerator.cs",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAkwHgAAACTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-29T19:50:01.133Z",
               "EditorCaption": ""
             }
           ]

@@ -138,7 +138,7 @@ namespace DocumentGenerator.ViewModels
 
                         var years = worksheet.Cells[row, 17].Text?.Trim() ?? "0";
                         var months = worksheet.Cells[row, 18].Text?.Trim() ?? "0";
-                        var workExperience = $"Лет {years}, Месяцев {months}";
+                        var workExperience = $"{years} лет, {months} месяцев";
 
                         var record = new Record
                         {
