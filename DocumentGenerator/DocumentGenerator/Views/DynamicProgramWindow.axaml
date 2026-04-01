@@ -1,0 +1,107 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DocumentGenerator.DynamicProgramWindow"
+        Title="Пользовательская программа"
+        Width="900" Height="720"
+        WindowStartupLocation="CenterScreen">
+	<Window.Background>
+		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Color="#04261f" Offset="0"/>
+			<GradientStop Color="#0d3b31" Offset="0.5"/>
+			<GradientStop Color="#04261f" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>
+
+	<Window.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground" Value="#d9e1e8"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,5,0,3"/>
+		</Style>
+		<Style Selector="TextBlock[Foreground=Red]">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Margin" Value="0,2,0,0"/>
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+		<Style Selector="ComboBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+		<Style Selector="ListBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#1f8f7a" Offset="0"/>
+						<GradientStop Color="#073f36" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Width" Value="200"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,10"/>
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Opacity" Value="0.9"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid>
+		<ScrollViewer>
+			<StackPanel Margin="10,10,20,10" Name="FormStackPanel">
+				<TextBlock Name="ProgramTitleTextBlock" Text="Пользовательская программа" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Window>
+

@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Animation;
@@ -49,6 +49,12 @@ namespace DocumentGenerator
 
             var analisisButton = this.FindControl<Button>("AnalysisButton");
             analisisButton?.AddHandler(Button.ClickEvent, AnalysisButton_Click);
+
+            var editorButton = this.FindControl<Button>("EditorButton");
+            editorButton?.AddHandler(Button.ClickEvent, EditorButton_Click);
+
+            var userProgramsButton = this.FindControl<Button>("UserProgramsButton");
+            userProgramsButton?.AddHandler(Button.ClickEvent, UserProgramsButton_Click);
 
 
             // Добавляем обработчик для эффекта волны
@@ -124,8 +130,8 @@ namespace DocumentGenerator
                 ripple.Opacity = 0.5;
 
                 // Анимация волны
-                ripple.Width = 300;
-                ripple.Height = 300;
+                ripple.Width = 400;
+                ripple.Height = 400;
                 ripple.Opacity = 0;
             }
         }
@@ -337,6 +343,20 @@ namespace DocumentGenerator
             analysisView.Show();
 
         } 
+
+        private void EditorButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var editorWindow = _serviceProvider.GetRequiredService<EditorWindow>();
+            editorWindow.Show();
+            this.Close();
+        }
+
+        private void UserProgramsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            var userProgramsWindow = _serviceProvider.GetRequiredService<UserProgramsWindow>();
+            userProgramsWindow.Show();
+            this.Close();
+        }
 
         private void ExitButton_Click(object? sender, RoutedEventArgs e)
         {

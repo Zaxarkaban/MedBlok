@@ -311,6 +311,7 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "DateOfBirth", record.DateOfBirth, font);
                                 SetFieldValue(fields, "DateOfBirth1", record.DateOfBirth, font);
                                 SetFieldValue(fields, "Address", record.Address, font);
+                                SetFieldValue(fields, "Address1", record.Address, font);
                                 SetFieldValue(fields, "Phone", record.Phone, font);
                                 SetFieldValue(fields, "PassportSeries", record.PassportSeries, font);
                                 SetFieldValue(fields, "PassportNumber", record.PassportNumber, font);
@@ -318,7 +319,13 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "PassportIssuedBy", record.PassportIssuedBy, font);
                                 SetFieldValue(fields, "Snils", record.Snils, font);
                                 SetFieldValue(fields, "MedicalPolicy", record.MedicalPolicy, font);
-                                SetFieldValue(fields, "OrderClause", record.OrderClause, font);
+                                // Форматируем пункты вредности с префиксом "п."
+                                var clauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                    .Select(clause => clause.Trim())
+                                    .Where(clause => !string.IsNullOrEmpty(clause))
+                                    .Select(clause => $"п.{clause}")
+                                    .ToList() ?? new List<string>();
+                                SetFieldValue(fields, "OrderClause", string.Join(", ", clauses), font);
                                 SetFieldValue(fields, "Workplace", record.Workplace, font);
                                 SetFieldValue(fields, "MedicalFacility", record.MedicalFacility, font);
                                 SetFieldValue(fields, "Position", record.Position, font);
@@ -330,7 +337,7 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "Department", record.Department, font);
                                 SetFieldValue(fields, "OwnershipForm", record.OwnershipForm, font);
                                 SetFieldValue(fields, "normasDate", record.Age.ToString(), font); // Возраст в поле "полных лет"
-                                fields["обязательные_анализы"].SetValue("V");
+                                //fields["обязательные_анализы"].SetValue("V");
 
                                 int currentYear = DateTime.Now.Year;
                                 if (fields.TryGetValue("CurrentYear", out var field))
@@ -355,15 +362,15 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "CheckBoxField", "Yes", font);
                                 SetFieldValue(fields, "Document", "паспорт", font);
 
-                                switch (record.ServicePoint)
-                                {
+                                 switch (record.ServicePoint)
+                                 {
                                     case "ПО 67":
                                         if (fields.ContainsKey("ServicePoint1"))
                                         {
                                             fields["ServicePoint1"].SetValue("V");
                                         }
                                         break;
-                                    case "89":
+                                    case "ПО 89":
                                         if (fields.ContainsKey("ServicePoint2"))
                                         {
                                             fields["ServicePoint2"].SetValue("V");
@@ -393,7 +400,7 @@ namespace DocumentGenerator.ViewModels
                                             fields["ServicePoint6"].SetValue("V");
                                         }
                                         break;
-                                }
+                                 }
 
                                 var selectedClauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(clause => clause.Trim())
@@ -422,18 +429,18 @@ namespace DocumentGenerator.ViewModels
 
                                 var tests = _documentService.GenerateTestsList(record.Age > 40, record.Gender == "Женский" || record.Gender == "ж", selectedClauses);
 
-                                var testsWithDirectMatch = GetTestsWithDirectMatch();
-                                foreach (var test in tests)
-                                {
-                                    if (testsWithDirectMatch.Contains(test))
-                                    {
-                                        string fieldName = $"test_{SanitizeFieldName(test)}";
-                                        if (fields.ContainsKey(fieldName))
-                                        {
-                                            fields[fieldName].SetValue("V");
-                                        }
-                                    }
-                                }
+                                //var testsWithDirectMatch = GetTestsWithDirectMatch();
+                                //foreach (var test in tests)
+                                //{
+                                //    if (testsWithDirectMatch.Contains(test))
+                                //    {
+                                //        string fieldName = $"test_{SanitizeFieldName(test)}";
+                                //        if (fields.ContainsKey(fieldName))
+                                //        {
+                                //            fields[fieldName].SetValue("V");
+                                //        }
+                                //    }
+                                //}
 
                                 var uniqueTests = tests.Distinct().ToList();
 
@@ -508,31 +515,31 @@ namespace DocumentGenerator.ViewModels
                        .Replace("/", "_");
         }
 
-        private List<string> GetTestsWithDirectMatch()
-        {
-            return new List<string>
-            {
-                "Исследование крови на сифилис",
-                "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
-                "Исследование уровня креатинина",
-                "Исследование уровня мочевины",
-                "Исследование уровня калия",
-                "Исследование уровня натрия",
-                "Исследование уровня железа",
-                "Исследование уровня щелочной фосфатазы",
-                "Исследование уровня билирубина",
-                "Исследование уровня общего белка",
-                "Исследование уровня триглицеридов",
-                "Исследование уровня холестерина",
-                "Исследование уровня фибриногена",
-                "Исследование уровня ретикулоцитов в крови",
-                "Исследование уровня метгемоглобина в крови",
-                "Исследование уровня карбоксигемоглобина в крови",
-                "Исследование уровня ретикулоцитов, метгемоглобина в крови",
-                "Исследование уровня ретикулоцитов, тромбоцитов в крови",
-                "Определение группы крови и резус-фактора"
-            };
-        }
+        //private List<string> GetTestsWithDirectMatch()
+        //{
+        //    return new List<string>
+        //    {
+        //        "Исследование крови на сифилис",
+        //        "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
+        //        "Исследование уровня креатинина",
+        //        "Исследование уровня мочевины",
+        //        "Исследование уровня калия",
+        //        "Исследование уровня натрия",
+        //        "Исследование уровня железа",
+        //        "Исследование уровня щелочной фосфатазы",
+        //        "Исследование уровня билирубина",
+        //        "Исследование уровня общего белка",
+        //        "Исследование уровня триглицеридов",
+        //        "Исследование уровня холестерина",
+        //        "Исследование уровня фибриногена",
+        //        "Исследование уровня ретикулоцитов в крови",
+        //        "Исследование уровня метгемоглобина в крови",
+        //        "Исследование уровня карбоксигемоглобина в крови",
+        //        "Исследование уровня ретикулоцитов, метгемоглобина в крови",
+        //        "Исследование уровня ретикулоцитов, тромбоцитов в крови",
+        //        "Определение группы крови и резус-фактора"
+        //    };
+        //}
 
         private async Task SaveStatisticsToExcel(string folderPath)
         {
@@ -590,49 +597,55 @@ namespace DocumentGenerator.ViewModels
                     return;
                 }
 
-                float fontSize = 10.5f;
+                // Начальный размер шрифта
+                float fontSize = 9f;
                 pdfField.SetFontAndSize(font, fontSize);
 
+                // Получаем размеры поля
                 var widget = pdfField.GetWidgets().FirstOrDefault();
                 if (widget == null) return;
                 var rect = widget.GetRectangle();
-                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue();
+                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
 
+                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
                 float textWidth;
-                float minFontSize = 6f;
+                float minFontSize = 4f; // Минимальный размер шрифта
                 do
                 {
-                    textWidth = font.GetWidth(value ?? "", fontSize);
+                    // Измеряем ширину текста с текущим размером шрифта
+                    textWidth = font.GetWidth(value, fontSize);
+
                     if (textWidth > fieldWidth && fontSize > minFontSize)
                     {
-                        fontSize -= 0.5f;
+                        fontSize -= 0.25f; // Уменьшаем шрифт на 0.5
                     }
                     else
                     {
-                        break;
+                        break; // Текст влезает или достигнут минимальный шрифт
                     }
                 } while (true);
 
+                // Устанавливаем финальный размер шрифта
                 pdfField.SetFontAndSize(font, fontSize);
             }
         }
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 11 страниц
+            // Убедимся, что в документе есть как минимум 8 страниц
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 11)
+            while (currentPageCount < 7)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            // Получаем 11-ю страницу
-            var page = pdfDocument.GetPage(11);
+            // Получаем 8-ю страницу
+            var page = pdfDocument.GetPage(7);
             var pageSize = page.GetPageSize();
 
             // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
-            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72); // Отступы 36 пунктов со всех сторон
+            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 450); // Отступы 36 пунктов со всех сторон
 
             // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
             var column = new PdfCanvas(page);
@@ -651,7 +664,7 @@ namespace DocumentGenerator.ViewModels
                 testNumber++;
             }
 
-            // Добавляем параграф на 11-ю страницу
+            // Добавляем параграф на 8-ю страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

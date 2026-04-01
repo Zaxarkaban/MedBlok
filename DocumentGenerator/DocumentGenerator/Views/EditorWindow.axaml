@@ -1,0 +1,195 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DocumentGenerator.EditorWindow"
+        Title="Конструктор"
+        Width="1100" Height="720"
+		MinWidth="1100" MinHeight="720"
+        WindowStartupLocation="CenterScreen">
+	<Window.Background>
+		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+			<GradientStop Color="#04261f" Offset="0"/>
+			<GradientStop Color="#0d3b31" Offset="0.5"/>
+			<GradientStop Color="#04261f" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>
+
+	<Window.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground" Value="#d9e1e8"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,4,0,4"/>
+		</Style>
+
+		<Style Selector="Button">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#2ed1b5" Offset="0"/>
+						<GradientStop Color="#0a5c4e" Offset="1"/>
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="CornerRadius" Value="18"/>
+			<Setter Property="Padding" Value="12,8"/>
+			<Setter Property="Margin" Value="6"/>
+			<Setter Property="Opacity" Value="0.92"/>
+			<Setter Property="Effect">
+				<DropShadowEffect Color="Black" BlurRadius="8" OffsetX="3" OffsetY="3" Opacity="0.5"/>
+			</Setter>
+		</Style>
+		<Style Selector="Button:pointerover">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+
+		<Style Selector="TextBox">
+			<Setter Property="Background" Value="#073f36"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<Style Selector="ComboBox">
+			<Setter Property="Background" Value="#073f36"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<Style Selector="ListBox">
+			<Setter Property="Background" Value="#073f36"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="CornerRadius" Value="12"/>
+			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid Margin="16">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0"
+				   Text="Конструктор"
+				   FontSize="28"
+				   FontWeight="Bold"
+				   HorizontalAlignment="Center"
+				   Margin="0,0,0,12"/>
+
+		<Border Grid.Row="1" CornerRadius="12" Padding="12" Background="#1AFFFFFF">
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+				<Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+					<Border CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,0,12">
+						<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+							<!-- Row 0: program name -->
+							<TextBlock Text="Название" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
+							<TextBox Name="ProgramNameTextBox"
+									 Grid.Row="0" Grid.Column="1"
+									 Watermark="Например: Моя форма"
+									 MinWidth="320"/>
+
+							<!-- Row 1: template picker -->
+							<TextBlock Text="Шаблон PDF" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
+							<TextBox Name="TemplatePathTextBox"
+									 Grid.Row="1" Grid.Column="1"
+									 IsReadOnly="True"
+									 Watermark="Выберите template.pdf"
+									 MinWidth="320"/>
+							<Button Name="PickTemplateButton" Grid.Row="1" Grid.Column="2" Content="Выбрать" MinWidth="120"/>
+
+							<!-- Row 2: status -->
+							<TextBlock Name="ConstructorStatusTextBlock"
+									   Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+									   Text="" Opacity="0.9"/>
+						</Grid>
+					</Border>
+
+					<Grid Grid.Row="1" RowDefinitions="*" ColumnDefinitions="1*,2*,2*">
+					<!-- Палитра -->
+					<Border CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,12,0">
+						<StackPanel>
+							<TextBlock Text="Блоки" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+							<ListBox Name="PaletteListBox" Height="420"/>
+							<TextBlock Text="Перетащи блок в форму →" Opacity="0.85" Margin="0,10,0,0"/>
+						</StackPanel>
+					</Border>
+
+					<!-- Полотно формы -->
+					<Border Grid.Column="1" CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,12,0">
+						<Grid RowDefinitions="Auto,*,Auto">
+							<TextBlock Text="Форма" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+							<ListBox Name="FieldsListBox" Grid.Row="1" Height="420" DragDrop.AllowDrop="True"/>
+							<TextBlock Grid.Row="2" Text="ПКМ по элементу формы → Дублировать / Удалить" Opacity="0.85" Margin="0,10,0,0"/>
+						</Grid>
+					</Border>
+
+					<!-- Свойства -->
+					<Border Grid.Column="2" CornerRadius="10" Background="#12000000" Padding="12">
+						<ScrollViewer>
+							<StackPanel>
+								<TextBlock Text="Свойства поля" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+
+								<TextBlock Text="Название блока"/>
+								<TextBox Name="FieldBlockNameTextBox" Watermark="Например: Поле ФИО"/>
+
+								<TextBlock Text="Тип"/>
+								<ComboBox Name="FieldTypeComboBox"/>
+
+								<TextBlock Text="Содержание"/>
+								<TextBox Name="FieldLabelTextBox" Watermark="Например: Введите ФИО"/>
+
+								<TextBlock Text="Имя поля в PDF"/>
+								<TextBox Name="PdfFieldNameTextBox" Watermark="Например: FullName"/>
+
+								<CheckBox Name="RequiredCheckBox" Content="Обязательное" Margin="0,8,0,8"/>
+
+								<StackPanel Name="OptionsPanel">
+									<TextBlock Text="Опции (для списков). По одной строке."/>
+									<TextBox Name="OptionsTextBox" AcceptsReturn="True" Height="120" Watermark="Опция 1&#10;Опция 2"/>
+								</StackPanel>
+
+								<StackPanel Name="ValidationPanel">
+									<TextBlock Text="Валидации"/>
+
+									<StackPanel Name="MaxLengthPanel">
+										<CheckBox Name="MaxLengthCheckBox" Content="Ограничение длины" Margin="0,6,0,0"/>
+										<TextBox Name="MaxLengthTextBox" Watermark="MaxLength (число)" />
+									</StackPanel>
+
+									<StackPanel Name="RegexPanel">
+										<CheckBox Name="RegexCheckBox" Content="Regex" Margin="0,10,0,0"/>
+										<TextBox Name="RegexTextBox" Watermark="Например: ^\\d{4}$" />
+									</StackPanel>
+
+									<StackPanel Name="RangePanel">
+										<CheckBox Name="RangeCheckBox" Content="Диапазон (числа)" Margin="0,10,0,0"/>
+										<Grid ColumnDefinitions="*,*" Margin="0,0,0,6">
+											<TextBox Name="MinTextBox" Grid.Column="0" Watermark="Min"/>
+											<TextBox Name="MaxTextBox" Grid.Column="1" Watermark="Max" Margin="10,0,0,0"/>
+										</Grid>
+									</StackPanel>
+								</StackPanel>
+							</StackPanel>
+						</ScrollViewer>
+					</Border>
+				</Grid>
+				</Grid>
+			</ScrollViewer>
+		</Border>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+			<Button Name="PublishButton" Content="Запечь (сохранить)" />
+			<Button Name="BackToMenuButton" Content="Назад в главное меню" Width="240"/>
+		</StackPanel>
+	</Grid>
+</Window>

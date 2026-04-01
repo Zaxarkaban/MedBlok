@@ -22,27 +22,31 @@ namespace DocumentGenerator
             {
                 var services = new ServiceCollection();
 
-                // Регистрация ViewModels
+                //  ViewModels
                 services.AddTransient<MainWindowViewModel>();
                 services.AddTransient<NewFormViewModel>();
                 services.AddTransient<ExcelDataViewModel>();
 
-                // Регистрация сервисов
+                //  
                 services.AddTransient<DocumentService>();
                 services.AddTransient<NewFormPdfGenerator>();
+                services.AddSingleton<IUserProgramStorage, UserProgramStorage>();
+                services.AddTransient<IPdfFormFiller, PdfFormFiller>();
 
-                // Регистрация окон
+                //  
                 services.AddTransient<MainWindow>(provider => new MainWindow(provider));
                 services.AddTransient<NewForm>(provider => new NewForm(provider));
                 services.AddTransient<MenuWindow>(provider => new MenuWindow(provider));
                 services.AddTransient<AnalysisView>(provider => new AnalysisView(provider));
+                services.AddTransient<EditorWindow>(provider => new EditorWindow(provider));
+                services.AddTransient<UserProgramsWindow>(provider => new UserProgramsWindow(provider));
 
-                // Регистрация IServiceProvider
+                //  IServiceProvider
                 services.AddSingleton<IServiceProvider>(sp => sp);
 
                 var serviceProvider = services.BuildServiceProvider();
 
-                // Открываем MenuWindow вместо MainWindow
+                //  MenuWindow  MainWindow
                 desktop.MainWindow = serviceProvider.GetRequiredService<MenuWindow>();
             }
 

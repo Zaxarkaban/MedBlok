@@ -29,31 +29,31 @@ namespace DocumentGenerator
         }
 
         // Метод для получения списка исследований с прямым соответствием из таблицы
-        private List<string> GetTestsWithDirectMatch()
-        {
-            return new List<string>
-            {
-                "Исследование крови на сифилис",
-                "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
-                "Исследование уровня креатинина",
-                "Исследование уровня мочевины",
-                "Исследование уровня калия",
-                "Исследование уровня натрия",
-                "Исследование уровня железа",
-                "Исследование уровня щелочной фосфатазы",
-                "Исследование уровня билирубина",
-                "Исследование уровня общего белка",
-                "Исследование уровня триглицеридов",
-                "Исследование уровня холестерина",
-                "Исследование уровня фибриногена",
-                "Исследование уровня ретикулоцитов в крови",
-                "Исследование уровня метгемоглобина в крови",
-                "Исследование уровня карбоксигемоглобина в крови",
-                "Исследование уровня ретикулоцитов, метгемоглобина в крови",
-                "Исследование уровня ретикулоцитов, тромбоцитов в крови",
-                "Определение группы крови и резус-фактора"
-            };
-        }
+        //private List<string> GetTestsWithDirectMatch()
+        //{
+        //    return new List<string>
+        //    {
+        //        "Исследование крови на сифилис",
+        //        "Исследование уровня аспартат-трансаминазы и аланин-трансаминазы",
+        //        "Исследование уровня креатинина",
+        //        "Исследование уровня мочевины",
+        //        "Исследование уровня калия",
+        //        "Исследование уровня натрия",
+        //        "Исследование уровня железа",
+        //        "Исследование уровня щелочной фосфатазы",
+        //        "Исследование уровня билирубина",
+        //        "Исследование уровня общего белка",
+        //        "Исследование уровня триглицеридов",
+        //        "Исследование уровня холестерина",
+        //        "Исследование уровня фибриногена",
+        //        "Исследование уровня ретикулоцитов в крови",
+        //        "Исследование уровня метгемоглобина в крови",
+        //        "Исследование уровня карбоксигемоглобина в крови",
+        //        "Исследование уровня ретикулоцитов, метгемоглобина в крови",
+        //        "Исследование уровня ретикулоцитов, тромбоцитов в крови",
+        //        "Определение группы крови и резус-фактора"
+        //    };
+        //}
 
         public void GeneratePdf(string outputPath, string templatePath)
         {
@@ -111,6 +111,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "PassportIssueDate", _viewModel.PassportIssueDate, font);
                     SetFieldValue(fields, "PassportIssuedBy", _viewModel.PassportIssuedBy, font);
                     SetFieldValue(fields, "Address", _viewModel.Address, font);
+                    SetFieldValue(fields, "Address1", _viewModel.Address, font);
                     SetFieldValue(fields, "Phone", _viewModel.Phone, font);
                     SetFieldValue(fields, "MedicalOrganization", _viewModel.MedicalOrganization, font);
                     SetFieldValue(fields, "MedicalPolicy", _viewModel.MedicalPolicy, font);
@@ -118,12 +119,13 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "Workplace", _viewModel.Workplace, font);
                     SetFieldValue(fields, "OwnershipForm", _viewModel.OwnershipForm, font);
                     SetFieldValue(fields, "Okved", _viewModel.Okved, font);
-                    SetFieldValue(fields, "WorkExperience", $"{_viewModel.WorkExperienceYears} лет {_viewModel.WorkExperienceMonths} месяцев", font);
-                    SetFieldValue(fields, "OrderClause", string.Join(", ", _viewModel.SelectedOrderClauses), font);
+                    SetFieldValue(fields, "WorkExperience", $"{_viewModel.WorkExperienceYears} лет", font); //{_viewModel.WorkExperienceMonths} месяцев                                                                              // Форматируем пункты вредности с префиксом "п."
+                    var formattedClauses = _viewModel.SelectedOrderClauses.Select(clause => $"п.{clause}");
+                    SetFieldValue(fields, "OrderClause", string.Join(", ", formattedClauses), font);
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
                     SetFieldValue(fields, "Department", _viewModel.Department, font);
                     SetFieldValue(fields, "ServicePoint", _viewModel.ServicePoint ?? "", font);
-                    fields["обязательные_анализы"].SetValue("V"); // Устанавливаем галочку для обязательных анализов
+                    //fields["обязательные_анализы"].SetValue("V"); // Устанавливаем галочку для обязательных анализов
                     
 
                     // Текущий год
@@ -223,20 +225,20 @@ namespace DocumentGenerator
                     var tests = GenerateTestsList(isOver40, isFemale);
 
                     // Получаем список исследований с прямым соответствием
-                    var testsWithDirectMatch = GetTestsWithDirectMatch();
+                    //var testsWithDirectMatch = GetTestsWithDirectMatch();
 
                     // Сравниваем и устанавливаем галочки
-                    foreach (var test in tests)
-                    {
-                        if (testsWithDirectMatch.Contains(test))
-                        {
-                            string fieldName = $"test_{SanitizeFieldName(test)}";
-                            if (fields.ContainsKey(fieldName))
-                            {
-                                fields[fieldName].SetValue("V"); // Устанавливаем галочку
-                            }
-                        }
-                    }
+                    //foreach (var test in tests)
+                    //{
+                    //    if (testsWithDirectMatch.Contains(test))
+                    //    {
+                    //        string fieldName = $"test_{SanitizeFieldName(test)}";
+                    //        if (fields.ContainsKey(fieldName))
+                    //        {
+                    //            fields[fieldName].SetValue("V"); // Устанавливаем галочку
+                    //        }
+                    //    }
+                    //}
 
                     // Добавляем новый лист с исследованиями на третью страницу
                     AddTestsPage(pdf, tests, font);
@@ -280,7 +282,7 @@ namespace DocumentGenerator
                 }
 
                 // Начальный размер шрифта
-                float fontSize = 10.5f;
+                float fontSize = 9f;
                 pdfField.SetFontAndSize(font, fontSize);
 
                 // Получаем размеры поля
@@ -291,7 +293,7 @@ namespace DocumentGenerator
 
                 // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
                 float textWidth;
-                float minFontSize = 6f; // Минимальный размер шрифта
+                float minFontSize = 4f; // Минимальный размер шрифта
                 do
                 {
                     // Измеряем ширину текста с текущим размером шрифта
@@ -299,7 +301,7 @@ namespace DocumentGenerator
 
                     if (textWidth > fieldWidth && fontSize > minFontSize)
                     {
-                        fontSize -= 0.5f; // Уменьшаем шрифт на 0.5
+                        fontSize -= 0.25f; // Уменьшаем шрифт на 0.5
                     }
                     else
                     {
@@ -361,20 +363,20 @@ namespace DocumentGenerator
 
         private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 11 страниц
+            // Убедимся, что в документе есть как минимум 8 страниц
             int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 11)
+            while (currentPageCount < 7)
             {
                 pdfDocument.AddNewPage();
                 currentPageCount++;
             }
 
-            // Получаем 11-ю страницу
-            var page = pdfDocument.GetPage(11);
+            // Получаем 8-ю страницу
+            var page = pdfDocument.GetPage(7);
             var pageSize = page.GetPageSize();
 
             // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
-            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 72); // Отступы 36 пунктов со всех сторон
+            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 450); // Отступы 36 пунктов со всех сторон
 
             // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
             var column = new PdfCanvas(page);
@@ -393,7 +395,7 @@ namespace DocumentGenerator
                 testNumber++;
             }
 
-            // Добавляем параграф на 11-ю страницу
+            // Добавляем параграф на 8-ю страницу
             columnText.Add(paragraph);
             columnText.Close();
         }

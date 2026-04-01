@@ -1,9 +1,10 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MenuWindow"
         Title="Главное меню"
-        Width="600" Height="500"
+        Width="520" Height="720"
+        MinWidth="520" MinHeight="720"
         WindowStartupLocation="CenterScreen">
 	<!-- Многослойный фон -->
 	<Window.Background>
@@ -30,8 +31,8 @@
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="FontSize" Value="18"/>
 			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Width" Value="300"/>
-			<Setter Property="Height" Value="60"/>
+			<Setter Property="Width" Value="400"/>
+			<Setter Property="MinHeight" Value="60"/>
 			<Setter Property="Margin" Value="0,15"/>
 			<Setter Property="CornerRadius" Value="30"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
@@ -119,6 +120,8 @@
 			<Setter Property="FontWeight" Value="Bold"/>
 			<Setter Property="Foreground" Value="#f0f4f8"/>
 			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="MaxWidth" Value="480"/>
 			<Setter Property="Margin" Value="0,0,0,50"/>
 			<Setter Property="Opacity" Value="0"/>
 			<Setter Property="Transitions">
@@ -145,8 +148,10 @@
 		<!-- Фон для частиц -->
 		<Canvas x:Name="ParticleCanvas" IsHitTestVisible="False"/>
 		<!-- Основной контент -->
-		<Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+		<Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20,0">
 			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
@@ -159,7 +164,7 @@
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
 							<TextBlock Text="📝" FontSize="20" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
 						</StackPanel>
 					</DataTemplate>
 				</Button.ContentTemplate>
@@ -169,7 +174,7 @@
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
 							<TextBlock Text="📋" FontSize="20" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
 						</StackPanel>
 					</DataTemplate>
 				</Button.ContentTemplate>
@@ -180,18 +185,40 @@
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
 							<TextBlock Text="📊" FontSize="20" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</Button.ContentTemplate>
+			</Button>
+
+			<Button x:Name="EditorButton" Content="Конструктор" Grid.Row="4">
+				<Button.ContentTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<TextBlock Text="✏️" FontSize="20" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</Button.ContentTemplate>
+			</Button>
+
+			<Button x:Name="UserProgramsButton" Content="Пользовательские приложения" Grid.Row="5">
+				<Button.ContentTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Spacing="10">
+							<TextBlock Text="🧩" FontSize="20" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
 						</StackPanel>
 					</DataTemplate>
 				</Button.ContentTemplate>
 			</Button>
 			
-			<Button x:Name="ExitButton" Content="Выход" Grid.Row="4">
+			<Button x:Name="ExitButton" Content="Выход" Grid.Row="6">
 				<Button.ContentTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal" Spacing="10">
 							<TextBlock Text="🚪" FontSize="20" VerticalAlignment="Center"/>
-							<TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" TextAlignment="Center"/>
 						</StackPanel>
 					</DataTemplate>
 				</Button.ContentTemplate>
