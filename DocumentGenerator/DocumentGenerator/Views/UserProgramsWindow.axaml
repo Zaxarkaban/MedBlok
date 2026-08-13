@@ -1,6 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:services="using:DocumentGenerator.Services"
         x:Class="DocumentGenerator.UserProgramsWindow"
+        x:Name="UserProgramsRoot"
         Title="Пользовательские приложения"
         Width="800" Height="600"
         WindowStartupLocation="CenterScreen">
@@ -13,14 +15,14 @@
 	</Window.Background>
 
 	<Window.Styles>
-		<Style Selector="TextBlock">
+		<Style Selector="#UserProgramsRoot:not(.space-holo-ui):not(.light-ui) TextBlock">
 			<Setter Property="Foreground" Value="#d9e1e8"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
 			<Setter Property="Margin" Value="0,4,0,4"/>
 		</Style>
 
-		<Style Selector="Button">
+		<Style Selector="#UserProgramsRoot:not(.space-holo-ui):not(.light-ui) Button">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -40,11 +42,11 @@
 				<DropShadowEffect Color="Black" BlurRadius="8" OffsetX="3" OffsetY="3" Opacity="0.5"/>
 			</Setter>
 		</Style>
-		<Style Selector="Button:pointerover">
+		<Style Selector="#UserProgramsRoot:not(.space-holo-ui):not(.light-ui) Button:pointerover">
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 
-		<Style Selector="ListBox">
+		<Style Selector="#UserProgramsRoot:not(.space-holo-ui):not(.light-ui) ListBox">
 			<Setter Property="Background" Value="#073f36"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="CornerRadius" Value="12"/>
@@ -52,7 +54,7 @@
 			<Setter Property="BorderThickness" Value="1"/>
 		</Style>
 
-		<Style Selector="TextBox">
+		<Style Selector="#UserProgramsRoot:not(.space-holo-ui):not(.light-ui) TextBox">
 			<Setter Property="Background" Value="#073f36"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="CornerRadius" Value="10"/>
@@ -62,30 +64,33 @@
 		</Style>
 	</Window.Styles>
 
-	<Grid Margin="16">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="BackToMenuButton" Classes="nav-back" Content="←  Меню"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Text="Пользовательские приложения" Classes="nav-title"/>
+					<TextBlock Text="Список, запуск и управление программами" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-		<TextBlock Grid.Row="0"
-				   Text="Пользовательские приложения"
-				   FontSize="28"
-				   FontWeight="Bold"
-				   HorizontalAlignment="Center"
-				   Margin="0,0,0,12"/>
-
-		<Grid Grid.Row="1" ColumnDefinitions="2*,1*">
-			<Border CornerRadius="12" Background="#1AFFFFFF" Padding="12" Margin="0,0,12,0">
+		<Grid Grid.Row="1" Margin="16" ColumnDefinitions="2*,1*">
+			<Border Classes="light-panel holo-panel" CornerRadius="12" Padding="12" Margin="0,0,12,0">
 				<StackPanel>
 					<TextBlock Text="Список программ" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
-					<ListBox Name="ProgramsListBox" Height="380"/>
+					<ListBox Name="ProgramsListBox" Height="380">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="services:UserProgramInfo">
+								<TextBlock Text="{Binding Name}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 					<TextBlock Name="StatusTextBlock" Text="" Margin="0,8,0,0" Opacity="0.9"/>
 				</StackPanel>
 			</Border>
 
-			<Border Grid.Column="1" CornerRadius="12" Background="#1AFFFFFF" Padding="12">
+			<Border Grid.Column="1" Classes="light-panel holo-panel" CornerRadius="12" Padding="12">
 				<StackPanel>
 					<TextBlock Text="Действия" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
 					<Button Name="CreateButton" Content="Создать"/>
@@ -97,12 +102,5 @@
 				</StackPanel>
 			</Border>
 		</Grid>
-
-		<Button Grid.Row="2"
-				Name="BackToMenuButton"
-				Content="Назад в главное меню"
-				HorizontalAlignment="Center"
-				Width="260"
-				Margin="0,12,0,0"/>
 	</Grid>
 </Window>

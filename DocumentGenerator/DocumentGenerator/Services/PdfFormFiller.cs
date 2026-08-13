@@ -1,6 +1,5 @@
 using iText.Forms;
 using iText.Forms.Fields;
-using iText.IO.Font;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using System;
@@ -29,12 +28,7 @@ namespace DocumentGenerator.Services
             var form = PdfAcroForm.GetAcroForm(pdfDocument, true);
             var fields = form.GetAllFormFields();
 
-            string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-            if (!File.Exists(fontPath))
-                throw new FileNotFoundException("Times New Roman font file not found.", fontPath);
-
-            PdfFontFactory.Register(fontPath);
-            var font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+            var font = PdfFontHelper.CreateTimesFont();
 
             foreach (var kv in values)
             {

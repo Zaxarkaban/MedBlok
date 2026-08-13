@@ -1,32 +1,33 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="DocumentGenerator.EditorWindow"
+        x:Name="EditorRoot"
         Title="Конструктор"
         Width="1100" Height="720"
 		MinWidth="1100" MinHeight="720"
         WindowStartupLocation="CenterScreen">
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-			<GradientStop Color="#04261f" Offset="0"/>
-			<GradientStop Color="#0d3b31" Offset="0.5"/>
-			<GradientStop Color="#04261f" Offset="1"/>
+			<GradientStop Color="#0a1628" Offset="0"/>
+			<GradientStop Color="#142038" Offset="0.5"/>
+			<GradientStop Color="#0a1628" Offset="1"/>
 		</LinearGradientBrush>
 	</Window.Background>
 
 	<Window.Styles>
-		<Style Selector="TextBlock">
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) TextBlock">
 			<Setter Property="Foreground" Value="#d9e1e8"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
 			<Setter Property="Margin" Value="0,4,0,4"/>
 		</Style>
 
-		<Style Selector="Button">
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) Button">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-						<GradientStop Color="#2ed1b5" Offset="0"/>
-						<GradientStop Color="#0a5c4e" Offset="1"/>
+						<GradientStop Color="#6EC8F8" Offset="0"/>
+						<GradientStop Color="#284878A8" Offset="1"/>
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -41,55 +42,120 @@
 				<DropShadowEffect Color="Black" BlurRadius="8" OffsetX="3" OffsetY="3" Opacity="0.5"/>
 			</Setter>
 		</Style>
-		<Style Selector="Button:pointerover">
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) Button:pointerover">
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 
-		<Style Selector="TextBox">
-			<Setter Property="Background" Value="#073f36"/>
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) TextBox">
+			<Setter Property="Background" Value="#40283850"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="CornerRadius" Value="10"/>
 			<Setter Property="Padding" Value="10,8"/>
-			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderBrush" Value="#8899CCE0"/>
 			<Setter Property="BorderThickness" Value="1"/>
 		</Style>
 
-		<Style Selector="ComboBox">
-			<Setter Property="Background" Value="#073f36"/>
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) ComboBox">
+			<Setter Property="Background" Value="#40283850"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="CornerRadius" Value="10"/>
 			<Setter Property="Padding" Value="10,8"/>
-			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderBrush" Value="#8899CCE0"/>
 			<Setter Property="BorderThickness" Value="1"/>
 		</Style>
 
-		<Style Selector="ListBox">
-			<Setter Property="Background" Value="#073f36"/>
+		<Style Selector="#EditorRoot:not(.space-holo-ui):not(.light-ui) ListBox">
+			<Setter Property="Background" Value="#30283848"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="CornerRadius" Value="12"/>
-			<Setter Property="BorderBrush" Value="#1f8f7a"/>
+			<Setter Property="BorderBrush" Value="#7799C8E8"/>
 			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<!-- Светлая тема -->
+		<Style Selector="#EditorRoot.light-ui TextBlock">
+			<Setter Property="Foreground" Value="#334155"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,4,0,4"/>
+		</Style>
+		<Style Selector="#EditorRoot.light-ui TextBox">
+			<Setter Property="Background" Value="#FFFFFF"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#A5F3FC"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.light-ui ComboBox">
+			<Setter Property="Background" Value="#FFFFFF"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#A5F3FC"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.light-ui ListBox">
+			<Setter Property="Background" Value="#F0FDFA"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="CornerRadius" Value="12"/>
+			<Setter Property="BorderBrush" Value="#99F6E4"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.light-ui CheckBox">
+			<Setter Property="Foreground" Value="#334155"/>
+		</Style>
+
+		<!-- Космическая тема -->
+		<Style Selector="#EditorRoot.space-holo-ui TextBlock">
+			<Setter Property="Foreground" Value="#DCE8FF"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,4,0,4"/>
+		</Style>
+		<Style Selector="#EditorRoot.space-holo-ui TextBox">
+			<Setter Property="Background" Value="#28183050"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#6699CCE0"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.space-holo-ui ComboBox">
+			<Setter Property="Background" Value="#28183050"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="10,8"/>
+			<Setter Property="BorderBrush" Value="#6699CCE0"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.space-holo-ui ListBox">
+			<Setter Property="Background" Value="#20182848"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="CornerRadius" Value="12"/>
+			<Setter Property="BorderBrush" Value="#5599C8E8"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#EditorRoot.space-holo-ui CheckBox">
+			<Setter Property="Foreground" Value="#DCE8FF"/>
 		</Style>
 	</Window.Styles>
 
-	<Grid Margin="16">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+	<Grid RowDefinitions="Auto,*,Auto">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="BackToMenuButton" Classes="nav-back" Content="←  Меню"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Text="Конструктор" Classes="nav-title"/>
+					<TextBlock Text="Создание пользовательских форм и шаблонов" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
 
-		<TextBlock Grid.Row="0"
-				   Text="Конструктор"
-				   FontSize="28"
-				   FontWeight="Bold"
-				   HorizontalAlignment="Center"
-				   Margin="0,0,0,12"/>
-
-		<Border Grid.Row="1" CornerRadius="12" Padding="12" Background="#1AFFFFFF">
-			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+		<Border Grid.Row="1" Classes="holo-panel" CornerRadius="12" Padding="12" Margin="16,12,16,0">
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
 				<Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
-					<Border CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,0,12">
+					<Border Classes="holo-panel" CornerRadius="10" Padding="12" Margin="0,0,0,12">
 						<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 							<!-- Row 0: program name -->
 							<TextBlock Text="Название" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -116,7 +182,7 @@
 
 					<Grid Grid.Row="1" RowDefinitions="*" ColumnDefinitions="1*,2*,2*">
 					<!-- Палитра -->
-					<Border CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,12,0">
+					<Border Classes="holo-panel" CornerRadius="10" Padding="12" Margin="0,0,12,0">
 						<StackPanel>
 							<TextBlock Text="Блоки" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
 							<ListBox Name="PaletteListBox" Height="420"/>
@@ -125,7 +191,7 @@
 					</Border>
 
 					<!-- Полотно формы -->
-					<Border Grid.Column="1" CornerRadius="10" Background="#12000000" Padding="12" Margin="0,0,12,0">
+					<Border Grid.Column="1" Classes="holo-panel" CornerRadius="10" Padding="12" Margin="0,0,12,0">
 						<Grid RowDefinitions="Auto,*,Auto">
 							<TextBlock Text="Форма" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
 							<ListBox Name="FieldsListBox" Grid.Row="1" Height="420" DragDrop.AllowDrop="True"/>
@@ -134,7 +200,7 @@
 					</Border>
 
 					<!-- Свойства -->
-					<Border Grid.Column="2" CornerRadius="10" Background="#12000000" Padding="12">
+					<Border Grid.Column="2" Classes="holo-panel" CornerRadius="10" Padding="12">
 						<ScrollViewer>
 							<StackPanel>
 								<TextBlock Text="Свойства поля" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
@@ -187,9 +253,8 @@
 			</ScrollViewer>
 		</Border>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-			<Button Name="PublishButton" Content="Запечь (сохранить)" />
-			<Button Name="BackToMenuButton" Content="Назад в главное меню" Width="240"/>
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="16,12,16,16">
+			<Button Name="PublishButton" Content="Сохранить" />
 		</StackPanel>
 	</Grid>
 </Window>

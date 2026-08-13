@@ -1,0 +1,73 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="Window.space-holo-ui TextBlock">
+    <Setter Property="Foreground" Value="#DCE8FF"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Border.holo-panel">
+    <Setter Property="Background" Value="#28305078"/>
+    <Setter Property="BorderBrush" Value="#5599C8F0"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#4080C8" BlurRadius="14" OffsetX="0" OffsetY="0" Opacity="0.35"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Button">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#4DFFFFFF" Offset="0"/>
+        <GradientStop Color="#5088B8F0" Offset="0.38"/>
+        <GradientStop Color="#664060A0" Offset="0.72"/>
+        <GradientStop Color="#48305088" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="BorderBrush" Value="#88C8F8"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Foreground" Value="#F0F8FF"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#5090D8" BlurRadius="10" OffsetX="0" OffsetY="2" Opacity="0.45"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Button:pointerover">
+    <Setter Property="Opacity" Value="1"/>
+    <Setter Property="BorderBrush" Value="#B0E0FF"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui TextBox">
+    <Setter Property="Background" Value="#28183050"/>
+    <Setter Property="Foreground" Value="#F0F8FF"/>
+    <Setter Property="BorderBrush" Value="#6699CCE0"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CaretBrush" Value="#A8E8FF"/>
+    <Setter Property="SelectionBrush" Value="#4080C0E8"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui ComboBox">
+    <Setter Property="Background" Value="#28183050"/>
+    <Setter Property="Foreground" Value="#F0F8FF"/>
+    <Setter Property="BorderBrush" Value="#6699CCE0"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui ListBox">
+    <Setter Property="Background" Value="#20182848"/>
+    <Setter Property="Foreground" Value="#E8F0FF"/>
+    <Setter Property="BorderBrush" Value="#5599C8E8"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui ListBoxItem:selected">
+    <Setter Property="Background" Value="#4580B8E8"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui CheckBox">
+    <Setter Property="Foreground" Value="#DCE8FF"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui ScrollViewer">
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+</Styles>

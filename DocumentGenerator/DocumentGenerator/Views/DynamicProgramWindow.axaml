@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="DocumentGenerator.DynamicProgramWindow"
+        x:Name="DynamicProgramRoot"
         Title="Пользовательская программа"
         Width="900" Height="720"
         WindowStartupLocation="CenterScreen">
@@ -13,18 +14,18 @@
 	</Window.Background>
 
 	<Window.Styles>
-		<Style Selector="TextBlock">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) TextBlock">
 			<Setter Property="Foreground" Value="#d9e1e8"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontWeight" Value="Medium"/>
 			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
 			<Setter Property="Margin" Value="0,5,0,3"/>
 		</Style>
-		<Style Selector="TextBlock[Foreground=Red]">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) TextBlock[Foreground=Red]">
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="Margin" Value="0,2,0,0"/>
 		</Style>
-		<Style Selector="TextBox">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) TextBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -41,7 +42,7 @@
 			<Setter Property="Margin" Value="0,3,0,3"/>
 			<Setter Property="Opacity" Value="0.9"/>
 		</Style>
-		<Style Selector="ComboBox">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) ComboBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -58,7 +59,7 @@
 			<Setter Property="Margin" Value="0,3,0,3"/>
 			<Setter Property="Opacity" Value="0.9"/>
 		</Style>
-		<Style Selector="ListBox">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) ListBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -75,7 +76,7 @@
 			<Setter Property="Margin" Value="0,3,0,3"/>
 			<Setter Property="Opacity" Value="0.9"/>
 		</Style>
-		<Style Selector="Button">
+		<Style Selector="#DynamicProgramRoot:not(.space-holo-ui):not(.light-ui) Button">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -94,13 +95,128 @@
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="Opacity" Value="0.9"/>
 		</Style>
+
+		<!-- Светлая тема -->
+		<Style Selector="#DynamicProgramRoot.light-ui TextBlock">
+			<Setter Property="Foreground" Value="#334155"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,5,0,3"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.light-ui TextBox">
+			<Setter Property="Background" Value="#FFFFFF"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#A5F3FC"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.light-ui ComboBox">
+			<Setter Property="Background" Value="#FFFFFF"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#A5F3FC"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.light-ui ListBox">
+			<Setter Property="Background" Value="#F0FDFA"/>
+			<Setter Property="Foreground" Value="#1E293B"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#99F6E4"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.light-ui CheckBox">
+			<Setter Property="Foreground" Value="#334155"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.light-ui Button">
+			<Setter Property="Background" Value="#0D9488"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Width" Value="200"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,10"/>
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+		</Style>
+
+		<!-- Космическая тема -->
+		<Style Selector="#DynamicProgramRoot.space-holo-ui TextBlock">
+			<Setter Property="Foreground" Value="#DCE8FF"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Roboto, Arial"/>
+			<Setter Property="Margin" Value="0,5,0,3"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.space-holo-ui TextBox">
+			<Setter Property="Background" Value="#28183050"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#6699CCE0"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.space-holo-ui ComboBox">
+			<Setter Property="Background" Value="#28183050"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#6699CCE0"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.space-holo-ui ListBox">
+			<Setter Property="Background" Value="#20182848"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="CornerRadius" Value="8"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,3,0,3"/>
+			<Setter Property="BorderBrush" Value="#5599C8E8"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.space-holo-ui CheckBox">
+			<Setter Property="Foreground" Value="#DCE8FF"/>
+		</Style>
+		<Style Selector="#DynamicProgramRoot.space-holo-ui Button">
+			<Setter Property="Background" Value="#38487888"/>
+			<Setter Property="Foreground" Value="#F0F8FF"/>
+			<Setter Property="BorderBrush" Value="#88C8F8"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Width" Value="200"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="Margin" Value="0,10"/>
+			<Setter Property="CornerRadius" Value="25"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+		</Style>
 	</Window.Styles>
 
-	<Grid>
-		<ScrollViewer>
-			<StackPanel Margin="10,10,20,10" Name="FormStackPanel">
-				<TextBlock Name="ProgramTitleTextBlock" Text="Пользовательская программа" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-			</StackPanel>
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="BackButton" Classes="nav-back" Content="←  Список"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Name="ProgramTitleTextBlock" Text="Пользовательская программа" Classes="nav-title"/>
+					<TextBlock Text="Заполнение пользовательской формы" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+		<ScrollViewer Grid.Row="1" Padding="0,0,4,0">
+			<StackPanel Margin="10,10,20,10" Name="FormStackPanel"/>
 		</ScrollViewer>
 	</Grid>
 </Window>

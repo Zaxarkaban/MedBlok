@@ -35,6 +35,9 @@ namespace DocumentGenerator
         public DynamicProgramWindow(IServiceProvider serviceProvider, UserProgramInfo info) : this()
         {
             _serviceProvider = serviceProvider;
+            AppWindowSetup.Configure(this, serviceProvider);
+            if (this.FindControl<Button>("BackButton") is Button backButton)
+                backButton.Click += Back_Click;
             _storage = _serviceProvider.GetRequiredService<IUserProgramStorage>();
             _pdfFiller = _serviceProvider.GetRequiredService<IPdfFormFiller>();
             _info = info;
@@ -50,8 +53,8 @@ namespace DocumentGenerator
             var stack = this.FindControl<StackPanel>("FormStackPanel");
             if (stack == null) return;
 
-            var title = this.FindControl<TextBlock>("ProgramTitleTextBlock");
-            if (title != null) title.Text = _definition.Name;
+            if (this.FindControl<TextBlock>("ProgramTitleTextBlock") is TextBlock title)
+                title.Text = _definition.Name;
 
             foreach (var field in _definition.Fields)
             {
@@ -77,12 +80,8 @@ namespace DocumentGenerator
             var save = new Button { Name = "SaveButton", Content = "Сохранить", Margin = new Avalonia.Thickness(10) };
             save.Click += Save_Click;
 
-            var back = new Button { Name = "BackButton", Content = "Назад", Margin = new Avalonia.Thickness(10) };
-            back.Click += Back_Click;
-
             stack.Children.Add(preview);
             stack.Children.Add(save);
-            stack.Children.Add(back);
         }
 
         private Control CreateInput(UserProgramFieldDefinition field)
@@ -158,6 +157,19 @@ namespace DocumentGenerator
                     ok = false;
             }
             return ok;
+        }
+
+        private string? GetValidationSummary()
+        {
+            ValidateAll();
+            var fields = new List<(string Label, string? Error)>();
+            foreach (var field in _definition.Fields)
+            {
+                if (_errorByKey.TryGetValue(field.Key, out var error) && !string.IsNullOrWhiteSpace(error.Text))
+                    fields.Add((field.Label ?? field.Key, error.Text));
+            }
+
+            return ValidationSummaryHelper.BuildMessage(fields);
         }
 
         private bool ValidateField(UserProgramFieldDefinition field)
@@ -237,9 +249,10 @@ namespace DocumentGenerator
 
         private async void Preview_Click(object? sender, RoutedEventArgs e)
         {
-            if (!ValidateAll())
+            var validationMessage = GetValidationSummary();
+            if (!string.IsNullOrEmpty(validationMessage))
             {
-                await SimpleMessageBox.Show(this, "Исправь ошибки в форме.", "Предупреждение");
+                await AppDialog.ShowAsync(this, validationMessage, "Заполните обязательные поля", AppDialogKind.Warning);
                 return;
             }
 
@@ -259,20 +272,21 @@ namespace DocumentGenerator
                 }
                 else
                 {
-                    await SimpleMessageBox.Show(this, "Не удалось создать файл предпросмотра.", "Ошибка");
+                    await AppDialog.ShowAsync(this, "Не удалось создать файл предпросмотра.", "Ошибка", AppDialogKind.Error);
                 }
             }
             catch (Exception ex)
             {
-                await SimpleMessageBox.Show(this, $"Ошибка предпросмотра: {ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(this, $"Ошибка предпросмотра: {ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
         private async void Save_Click(object? sender, RoutedEventArgs e)
         {
-            if (!ValidateAll())
+            var validationMessage = GetValidationSummary();
+            if (!string.IsNullOrEmpty(validationMessage))
             {
-                await SimpleMessageBox.Show(this, "Исправь ошибки в форме.", "Предупреждение");
+                await AppDialog.ShowAsync(this, validationMessage, "Заполните обязательные поля", AppDialogKind.Warning);
                 return;
             }
 
@@ -295,17 +309,18 @@ namespace DocumentGenerator
             {
                 var values = CollectValues();
                 _pdfFiller.FillToFile(_info.TemplatePdfPath, result, values);
-                await SimpleMessageBox.Show(this, "Файл успешно сохранён!", "Успех");
+                await AppDialog.ShowAsync(this, "Файл успешно сохранён!", "Успех", AppDialogKind.Success);
             }
             catch (Exception ex)
             {
-                await SimpleMessageBox.Show(this, $"Ошибка сохранения: {ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(this, $"Ошибка сохранения: {ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
         private void Back_Click(object? sender, RoutedEventArgs e)
         {
             var win = _serviceProvider.GetRequiredService<UserProgramsWindow>();
+            win.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             win.Show();
             Close();
         }

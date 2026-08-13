@@ -13,6 +13,8 @@ namespace DocumentGenerator
 {
     public partial class App : Application
     {
+        public static IServiceProvider? Services { get; private set; }
+
         public override void Initialize() { AvaloniaXamlLoader.Load(this); }
 
         public override void OnFrameworkInitializationCompleted()
@@ -22,31 +24,42 @@ namespace DocumentGenerator
             {
                 var services = new ServiceCollection();
 
-                // ˜˜˜˜˜˜˜˜˜˜˜ ViewModels
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ViewModels
                 services.AddTransient<MainWindowViewModel>();
                 services.AddTransient<NewFormViewModel>();
                 services.AddTransient<ExcelDataViewModel>();
 
-                // ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 services.AddTransient<DocumentService>();
                 services.AddTransient<NewFormPdfGenerator>();
                 services.AddSingleton<IUserProgramStorage, UserProgramStorage>();
+                services.AddSingleton<IThemeService, ThemeService>();
+                services.AddSingleton<IExportPathMemory, ExportPathMemory>();
                 services.AddTransient<IPdfFormFiller, PdfFormFiller>();
 
-                // ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 services.AddTransient<MainWindow>(provider => new MainWindow(provider));
                 services.AddTransient<NewForm>(provider => new NewForm(provider));
                 services.AddTransient<MenuWindow>(provider => new MenuWindow(provider));
                 services.AddTransient<AnalysisView>(provider => new AnalysisView(provider));
                 services.AddTransient<EditorWindow>(provider => new EditorWindow(provider));
                 services.AddTransient<UserProgramsWindow>(provider => new UserProgramsWindow(provider));
+                services.AddTransient<ThemeSettingsWindow>(provider => new ThemeSettingsWindow(provider.GetRequiredService<IThemeService>()));
 
-                // ˜˜˜˜˜˜˜˜˜˜˜ IServiceProvider
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IServiceProvider
                 services.AddSingleton<IServiceProvider>(sp => sp);
 
                 var serviceProvider = services.BuildServiceProvider();
+                Services = serviceProvider;
+                var themeService = serviceProvider.GetRequiredService<IThemeService>();
+                themeService.Load();
 
-                // ˜˜˜˜˜˜˜˜˜ MenuWindow ˜˜˜˜˜˜ MainWindow
+                ThemeFluentResources.Apply(Current!, themeService.CurrentTheme);
+                themeService.ThemeChanged += m => ThemeFluentResources.Apply(Current!, m);
+
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ MenuWindow ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ MainWindow
+                PdfFontHelper.Warmup();
+
                 desktop.MainWindow = serviceProvider.GetRequiredService<MenuWindow>();
             }
 

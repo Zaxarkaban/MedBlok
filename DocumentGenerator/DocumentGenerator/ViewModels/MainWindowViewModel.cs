@@ -211,7 +211,22 @@ namespace DocumentGenerator.ViewModels
         public string WorkExperienceYears
         {
             get => _workExperienceYears;
-            set => this.RaiseAndSetIfChanged(ref _workExperienceYears, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _workExperienceYears, value);
+                this.RaisePropertyChanged(nameof(WorkExperienceYearsSuffix));
+            }
+        }
+
+        public string WorkExperienceYearsSuffix
+        {
+            get
+            {
+                if (!int.TryParse(WorkExperienceYears?.Trim(), out int years))
+                    years = 0;
+
+                return PdfFormFieldHelper.GetYearsWord(years);
+            }
         }
 
         public string WorkExperienceMonths
@@ -258,9 +273,60 @@ namespace DocumentGenerator.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _orderClausesSearchText, value);
-                // Больше не фильтруем список, а только вызываем прокрутку
-                ScrollToMatchingItem();
+                ApplyOrderClausesFilter();
             }
+        }
+
+        private void ApplyOrderClausesFilter()
+        {
+            var q = OrderClauseSearch.Normalize(_orderClausesSearchText);
+            var selected = SelectedOrderClauses.ToList();
+            var selectedSet = selected.ToHashSet(StringComparer.Ordinal);
+
+            var next = new List<string>(selected);
+            foreach (var item in OrderClauseOptions)
+            {
+                if (selectedSet.Contains(item))
+                    continue;
+                if (OrderClauseSearch.Matches(item, q))
+                    next.Add(item);
+            }
+
+            // Обновляем коллекцию так, чтобы выбранные пункты не сбрасывались
+            for (int i = _filteredOrderClauseOptions.Count - 1; i >= 0; i--)
+            {
+                if (!next.Contains(_filteredOrderClauseOptions[i]))
+                    _filteredOrderClauseOptions.RemoveAt(i);
+            }
+
+            foreach (var item in next)
+            {
+                if (!_filteredOrderClauseOptions.Contains(item))
+                    _filteredOrderClauseOptions.Add(item);
+            }
+
+            // Восстанавливаем выбор на случай сброса при удалении из ItemsSource
+            foreach (var s in selected)
+            {
+                if (!SelectedOrderClauses.Contains(s))
+                    SelectedOrderClauses.Add(s);
+            }
+
+            if (!string.IsNullOrEmpty(q))
+            {
+                var firstMatch = next.FirstOrDefault(item =>
+                    !selectedSet.Contains(item) && OrderClauseSearch.Matches(item, q))
+                    ?? next.FirstOrDefault(item => OrderClauseSearch.Matches(item, q));
+
+                if (firstMatch != null)
+                {
+                    var index = _filteredOrderClauseOptions.IndexOf(firstMatch);
+                    if (index >= 0)
+                        ScrollToItemRequested?.Invoke(this, index);
+                }
+            }
+
+            ValidateSelectedOrderClauses();
         }
 
         // Свойства ошибок
@@ -460,35 +526,8 @@ namespace DocumentGenerator.ViewModels
             ServicePointError = string.IsNullOrWhiteSpace(ServicePoint) ? "Пункт обслуживания должен быть выбран" : "";
         }
 
-        // Метод для прокрутки к подходящему пункту
-        private void ScrollToMatchingItem()
-        {
-            if (string.IsNullOrWhiteSpace(OrderClausesSearchText))
-            {
-                return; // Если поиск пустой, не делаем ничего
-            }
-
-            // Находим первый подходящий пункт
-            var matchingItem = OrderClauseOptions
-                .FirstOrDefault(item => item.StartsWith(OrderClausesSearchText, StringComparison.OrdinalIgnoreCase));
-
-            if (matchingItem != null)
-            {
-                // Прокручиваем к этому пункту
-                var index = FilteredOrderClauseOptions.IndexOf(matchingItem);
-                if (index >= 0)
-                {
-                    // Мы вызовем прокрутку через событие в MainWindow.axaml.cs
-                    ScrollToItemRequested?.Invoke(this, index);
-                }
-            }
-
-            // Валидация, так как выбор мог измениться
-            ValidateSelectedOrderClauses();
-        }
-
-        // Событие для прокрутки (будет вызвано из MainWindow.axaml.cs)
-        public event EventHandler<int> ScrollToItemRequested;
+        // Событие для прокрутки (подписывается MainWindow один раз в конструкторе)
+        public event EventHandler<int>? ScrollToItemRequested;
 
         // Методы валидации
         public void ValidateFullName()
@@ -732,32 +771,13 @@ namespace DocumentGenerator.ViewModels
 
         public void ValidateWorkExperience()
         {
-            // Сбрасываем ошибки
             WorkExperienceYearsError = "";
             WorkExperienceMonthsError = "";
 
-            // Проверяем годы
-            if (!string.IsNullOrWhiteSpace(WorkExperienceYears))
+            if (!string.IsNullOrWhiteSpace(WorkExperienceYears)
+                && (!int.TryParse(WorkExperienceYears, out int years) || years < 0 || years > 80))
             {
-                if (!int.TryParse(WorkExperienceYears, out int years) || years < 0 || years > 80)
-                {
-                    WorkExperienceYearsError = "Годы должны быть числом от 0 до 80";
-                    return;
-                }
-            }
-
-            // Проверяем месяцы
-            if (!string.IsNullOrWhiteSpace(WorkExperienceMonths))
-            {
-                if (!int.TryParse(WorkExperienceMonths, out int months) || months < 0 || months > 11)
-                {
-                    WorkExperienceMonthsError = "Месяцы должны быть числом от 0 до 11";
-                    return;
-                }
-            }
-            else
-            {
-                WorkExperienceMonths = ""; // Если месяцы не указаны, ставим пустую строку
+                WorkExperienceYearsError = "Стаж должен быть числом от 0 до 80 лет";
             }
         }
 
@@ -807,9 +827,8 @@ namespace DocumentGenerator.ViewModels
                 : "";
         }
 
-        public void OnSave()
+        public string? GetValidationSummary()
         {
-            // Выполняем валидацию
             ValidateServicePoint();
             ValidateFullName();
             ValidatePosition();
@@ -832,19 +851,39 @@ namespace DocumentGenerator.ViewModels
             ValidateWorkAddress();
             ValidateDepartment();
 
-            // Проверяем, есть ли ошибки валидации
-            if (new[] { FullNameError, PositionError, DateOfBirthError, GenderError, SnilsError, PassportSeriesError,
-                PassportNumberError, PassportIssueDateError, PassportIssuedByError, MedicalPolicyError,
-                AddressError, PhoneError, MedicalOrganizationError, MedicalFacilityError, WorkplaceError,
-                OwnershipFormError, OkvedError, WorkExperienceYearsError, WorkExperienceMonthsError, SelectedOrderClausesError, WorkAddressError, DepartmentError, ServicePointError}
-                .Any(error => !string.IsNullOrEmpty(error)))
-            {
-                return; // Если есть ошибки, прерываем выполнение
-            }
+            return ValidationSummaryHelper.BuildMessage(
+                ("Пункт обслуживания", ServicePointError),
+                ("ФИО", FullNameError),
+                ("Должность", PositionError),
+                ("Дата рождения", DateOfBirthError),
+                ("Пол", GenderError),
+                ("СНИЛС", SnilsError),
+                ("Серия паспорта", PassportSeriesError),
+                ("Номер паспорта", PassportNumberError),
+                ("Дата выдачи паспорта", PassportIssueDateError),
+                ("Кем выдан паспорт", PassportIssuedByError),
+                ("Полис ОМС", MedicalPolicyError),
+                ("Адрес", AddressError),
+                ("Телефон", PhoneError),
+                ("Медицинская организация", MedicalOrganizationError),
+                ("ЛПУ", MedicalFacilityError),
+                ("Место работы", WorkplaceError),
+                ("Форма собственности", OwnershipFormError),
+                ("ОКВЭД", OkvedError),
+                ("Стаж работы", WorkExperienceYearsError),
+                ("Пункты вредности", SelectedOrderClausesError),
+                ("Адрес работы", WorkAddressError),
+                ("Структурное подразделение", DepartmentError));
+        }
+
+        public void OnSave()
+        {
+            if (GetValidationSummary() != null)
+                return;
 
             // Вычисляем возраст и проверяем пол
             int age = CalculateAge();
-            bool isFemale = Gender == "Женский";
+            bool isFemale = GenderHelper.IsFemale(Gender);
             bool isOver40 = age >= 40;
 
             // Собираем данные пользователя в словарь
@@ -867,7 +906,7 @@ namespace DocumentGenerator.ViewModels
                 { "Workplace", Workplace },
                 { "OwnershipForm", OwnershipForm },
                 { "Okved", Okved },
-                { "WorkExperience", $"{WorkExperienceYears} лет {WorkExperienceMonths} месяцев" },
+                { "WorkExperience", PdfFormFieldHelper.FormatWorkExperienceYears(WorkExperienceYears) },
                 { "OrderClause", string.Join(", ", SelectedOrderClauses) },
                 { "WorkAddress", WorkAddress },
                 { "Department", Department },

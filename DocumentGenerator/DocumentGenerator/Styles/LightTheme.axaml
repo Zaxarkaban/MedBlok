@@ -1,0 +1,236 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="Window.light-ui">
+    <Setter Property="Foreground" Value="#1E293B"/>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBlock">
+    <Setter Property="Foreground" Value="#334155"/>
+    <Setter Property="Effect" Value="{x:Null}"/>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBlock[Foreground=Red]">
+    <Setter Property="Foreground" Value="#DC2626"/>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBlock.title">
+    <Setter Property="Foreground" Value="#0F766E"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+  </Style>
+
+  <Style Selector="Window.light-ui StackPanel > Button">
+    <Setter Property="Margin" Value="0,10,0,6"/>
+  </Style>
+
+  <Style Selector="Window.light-ui StackPanel[Orientation=Horizontal] > Button">
+    <Setter Property="Margin" Value="0"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#2DD4BF" Offset="0"/>
+        <GradientStop Color="#0D9488" Offset="0.55"/>
+        <GradientStop Color="#0F766E" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="BorderBrush" Value="#5EEAD4"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="12"/>
+    <Setter Property="Padding" Value="14,10"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#0D9488" BlurRadius="14" OffsetX="0" OffsetY="4" Opacity="0.28"/>
+    </Setter>
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.22"/>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.18"/>
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.light-ui Button:pointerover">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#5EEAD4" Offset="0"/>
+        <GradientStop Color="#14B8A6" Offset="0.55"/>
+        <GradientStop Color="#0D9488" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="BorderBrush" Value="#99F6E4"/>
+    <Setter Property="Opacity" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button:pressed">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#0F766E" Offset="0"/>
+        <GradientStop Color="#115E59" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="Opacity" Value="0.94"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button.nav-back">
+    <Setter Property="Padding" Value="14,8"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="MinWidth" Value="108"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button.round-btn">
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Width" Value="52"/>
+    <Setter Property="Height" Value="52"/>
+    <Setter Property="MinWidth" Value="52"/>
+    <Setter Property="MinHeight" Value="52"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button.export-btn">
+    <Setter Property="Padding" Value="22,0"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="MinWidth" Value="200"/>
+    <Setter Property="Height" Value="52"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Button.remove-btn">
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Margin" Value="0,0,0,8"/>
+    <Setter Property="Width" Value="36"/>
+    <Setter Property="Height" Value="36"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBox">
+    <Setter Property="Background" Value="#F8FFFE"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="BorderBrush" Value="#A5F3FC"/>
+    <Setter Property="BorderThickness" Value="1.5"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Padding" Value="10,8"/>
+    <Setter Property="CaretBrush" Value="#0D9488"/>
+    <Setter Property="SelectionBrush" Value="#99F6E4"/>
+    <Setter Property="Effect" Value="{x:Null}"/>
+    <Setter Property="Opacity" Value="1"/>
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBox:pointerover">
+    <Setter Property="BorderBrush" Value="#67E8F9"/>
+    <Setter Property="Background" Value="#FFFFFF"/>
+  </Style>
+
+  <Style Selector="Window.light-ui TextBox:focus">
+    <Setter Property="BorderBrush" Value="#14B8A6"/>
+    <Setter Property="Background" Value="#FFFFFF"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ComboBox">
+    <Setter Property="Background" Value="#F8FFFE"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="BorderBrush" Value="#A5F3FC"/>
+    <Setter Property="BorderThickness" Value="1.5"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Padding" Value="10,8"/>
+    <Setter Property="Effect" Value="{x:Null}"/>
+    <Setter Property="Opacity" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ComboBox:pointerover">
+    <Setter Property="BorderBrush" Value="#67E8F9"/>
+    <Setter Property="Background" Value="#FFFFFF"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ListBox">
+    <Setter Property="Background" Value="#F0FDFA"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="BorderBrush" Value="#99F6E4"/>
+    <Setter Property="BorderThickness" Value="1.5"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="Effect" Value="{x:Null}"/>
+    <Setter Property="Opacity" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ListBoxItem">
+    <Setter Property="Padding" Value="8,5"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Margin" Value="2,1"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ListBoxItem:selected">
+    <Setter Property="Background" Value="#CCFBF1"/>
+    <Setter Property="Foreground" Value="#0F766E"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ListBoxItem:pointerover">
+    <Setter Property="Background" Value="#E6FFFA"/>
+  </Style>
+
+  <Style Selector="Window.light-ui CheckBox">
+    <Setter Property="Foreground" Value="#334155"/>
+  </Style>
+
+  <Style Selector="Window.light-ui RadioButton">
+    <Setter Property="Foreground" Value="#334155"/>
+  </Style>
+
+  <Style Selector="Window.light-ui ScrollViewer">
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+
+  <Style Selector="Window.light-ui DataGrid">
+    <Setter Property="Background" Value="#FFFFFF"/>
+    <Setter Property="Foreground" Value="#1E293B"/>
+    <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+    <Setter Property="HorizontalGridLinesBrush" Value="#E0F2FE"/>
+    <Setter Property="BorderBrush" Value="#BAE6FD"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="10"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.light-panel">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#F8FFFFFF" Offset="0"/>
+        <GradientStop Color="#E8FFFFFF" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="BorderBrush" Value="#BAE6FD"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="14"/>
+    <Setter Property="Padding" Value="14"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#38BDF8" BlurRadius="18" OffsetX="0" OffsetY="6" Opacity="0.18"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.holo-panel">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#F5FFFFFF" Offset="0"/>
+        <GradientStop Color="#E6FFFFFF" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="BorderBrush" Value="#7DD3FC"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="14"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#0EA5E9" BlurRadius="16" OffsetX="0" OffsetY="5" Opacity="0.2"/>
+    </Setter>
+  </Style>
+</Styles>

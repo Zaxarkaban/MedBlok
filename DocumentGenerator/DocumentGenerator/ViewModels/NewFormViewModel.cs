@@ -498,16 +498,13 @@ namespace DocumentGenerator.ViewModels
             DrivingCategoriesError = SelectedDrivingCategories.Any() ? "" : "Необходимо выбрать хотя бы одну категорию вождения";
         }
 
-        public void OnSave()
+        public string? GetValidationSummary()
         {
-            // Выполняем валидацию обязательных полей
             ValidateFullName();
             ValidateDateOfBirth();
             ValidateGender();
             ValidatePhone();
             ValidateDrivingCategories();
-
-            // Выполняем валидацию необязательных полей (только если они заполнены)
             ValidateMedicalSeries();
             ValidateMedicalNumber();
             ValidatePassportSeries();
@@ -521,15 +518,30 @@ namespace DocumentGenerator.ViewModels
             ValidateFluorography();
             ValidateGynecologist();
 
-            // Проверяем, есть ли ошибки валидации
-            if (new[] { FullNameError, DateOfBirthError, GenderError, PhoneError, DrivingCategoriesError,
-                        MedicalSeriesError, MedicalNumberError, PassportSeriesError, PassportNumberError,
-                        PassportIssuedByError, BloodGroupError, RhFactorError, AddressError, DrivingExperienceError,
-                        SnilsError, FluorographyError, GynecologistError }
-                .Any(error => !string.IsNullOrEmpty(error)))
-            {
-                return; // Если есть ошибки, прерываем выполнение
-            }
+            return ValidationSummaryHelper.BuildMessage(
+                ("ФИО", FullNameError),
+                ("Дата рождения", DateOfBirthError),
+                ("Пол", GenderError),
+                ("Телефон", PhoneError),
+                ("Категории вождения", DrivingCategoriesError),
+                ("Серия мед. справки", MedicalSeriesError),
+                ("Номер мед. справки", MedicalNumberError),
+                ("Серия паспорта", PassportSeriesError),
+                ("Номер паспорта", PassportNumberError),
+                ("Кем выдан паспорт", PassportIssuedByError),
+                ("Группа крови", BloodGroupError),
+                ("Резус-фактор", RhFactorError),
+                ("Адрес", AddressError),
+                ("Стаж вождения", DrivingExperienceError),
+                ("СНИЛС", SnilsError),
+                ("Флюорография", FluorographyError),
+                ("Гинеколог", GynecologistError));
+        }
+
+        public void OnSave()
+        {
+            if (GetValidationSummary() != null)
+                return;
 
             // Собираем данные пользователя в словарь
             var userData = new Dictionary<string, string>

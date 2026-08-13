@@ -1,107 +1,478 @@
 <Window xmlns="https://github.com/avaloniaui"
+
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
         x:Class="DocumentGenerator.AnalysisView"
+
+        x:Name="AnalysisRoot"
+
         Title="Расчет КП"
+
         xmlns:vm="using:DocumentGenerator.ViewModels"
-        Width="1000" Height="600"
+
+        Width="1100" Height="650"
+
+        MinWidth="900" MinHeight="520"
+
         WindowStartupLocation="CenterScreen"
+
         Background="#1a1a1a">
+
 	<Window.Styles>
-		<!-- Стили для кнопок -->
-		<Style Selector="Button">
+
+		<!-- Тёмная / базовая тема -->
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) Button.round-btn">
+
 			<Setter Property="Background">
+
 				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+
 					<GradientStop Color="#2ed1b5" Offset="0"/>
+
 					<GradientStop Color="#0a5c4e" Offset="1"/>
+
 				</LinearGradientBrush>
+
 			</Setter>
+
 			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontSize" Value="18"/>
-			<Setter Property="Width" Value="50"/>
-			<Setter Property="Height" Value="50"/>
-			<Setter Property="Margin" Value="10"/>
-			<Setter Property="CornerRadius" Value="25"/>
+
+			<Setter Property="FontSize" Value="22"/>
+
+			<Setter Property="FontWeight" Value="Bold"/>
+
+			<Setter Property="Width" Value="52"/>
+
+			<Setter Property="Height" Value="52"/>
+
+			<Setter Property="Padding" Value="0"/>
+
+			<Setter Property="CornerRadius" Value="26"/>
+
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+
 			<Setter Property="Effect">
-				<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="3" OffsetY="3" Opacity="0.5"/>
+
+				<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="2" OffsetY="3" Opacity="0.45"/>
+
 			</Setter>
-			<Setter Property="Transitions">
-				<Transitions>
-					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
-				</Transitions>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) Button.export-btn">
+
+			<Setter Property="Background">
+
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+
+					<GradientStop Color="#2ed1b5" Offset="0"/>
+
+					<GradientStop Color="#0a5c4e" Offset="1"/>
+
+				</LinearGradientBrush>
+
 			</Setter>
-		</Style>
-		<Style Selector="Button:pointerover /template/ ContentPresenter">
-			<Setter Property="RenderTransform" Value="scale(1.05)"/>
-		</Style>
-		<!-- Стиль для кнопки экспорта (чуть шире) -->
-		<Style Selector="Button#ExportToExcelButton">
-			<Setter Property="Width" Value="200"/>
-			<Setter Property="CornerRadius" Value="25"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-		</Style>
-		<!-- Стили для ListBox -->
-		<Style Selector="ListBox">
-			<Setter Property="Margin" Value="10"/>
-			<Setter Property="Width" Value="220"/>
-			<Setter Property="Height" Value="120"/>
-			<Setter Property="Background" Value="#2a2a2a"/>
+
 			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderBrush" Value="#2ed1b5"/>
-			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="FontSize" Value="15"/>
+
+			<Setter Property="FontWeight" Value="SemiBold"/>
+
+			<Setter Property="MinWidth" Value="200"/>
+
+			<Setter Property="Height" Value="52"/>
+
+			<Setter Property="Padding" Value="20,0"/>
+
+			<Setter Property="CornerRadius" Value="26"/>
+
+			<Setter Property="Effect">
+
+				<DropShadowEffect Color="Black" BlurRadius="10" OffsetX="2" OffsetY="3" Opacity="0.45"/>
+
+			</Setter>
+
 		</Style>
-		<!-- Стили для TextBox -->
-		<Style Selector="TextBox">
-			<Setter Property="Margin" Value="10"/>
-			<Setter Property="Width" Value="200"/>
-			<Setter Property="Background" Value="#2a2a2a"/>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) Button.remove-btn">
+
+			<Setter Property="Background">
+
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+
+					<GradientStop Color="#f87171" Offset="0"/>
+
+					<GradientStop Color="#b91c1c" Offset="1"/>
+
+				</LinearGradientBrush>
+
+			</Setter>
+
 			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderBrush" Value="#2ed1b5"/>
-			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="Width" Value="36"/>
+
+			<Setter Property="Height" Value="36"/>
+
+			<Setter Property="Padding" Value="0"/>
+
+			<Setter Property="CornerRadius" Value="18"/>
+
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+
+			<Setter Property="Margin" Value="0,0,0,8"/>
+
 		</Style>
-		<!-- Стили для TextBlock -->
-		<Style Selector="TextBlock.output">
-			<Setter Property="Margin" Value="10"/>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) Border.analysis-column">
+
+			<Setter Property="Background" Value="#242424"/>
+
+			<Setter Property="BorderBrush" Value="#2ed1b5"/>
+
+			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="CornerRadius" Value="12"/>
+
+			<Setter Property="Padding" Value="12"/>
+
+			<Setter Property="Margin" Value="0,0,14,0"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot ListBox">
+			<Setter Property="Width" Value="260"/>
+			<Setter Property="MinHeight" Value="220"/>
+			<Setter Property="MaxHeight" Value="340"/>
+			<Setter Property="Margin" Value="0,0,0,8"/>
+		</Style>
+
+		<Style Selector="#AnalysisRoot TextBox">
+			<Setter Property="Width" Value="260"/>
+			<Setter Property="Margin" Value="0,0,0,6"/>
+		</Style>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) ListBox">
+
+			<Setter Property="Width" Value="260"/>
+
+			<Setter Property="MinHeight" Value="220"/>
+
+			<Setter Property="MaxHeight" Value="340"/>
+
+			<Setter Property="Margin" Value="0,0,0,8"/>
+
+			<Setter Property="Background" Value="#2a2a2a"/>
+
+			<Setter Property="Foreground" Value="White"/>
+
+			<Setter Property="BorderBrush" Value="#2ed1b5"/>
+
+			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="CornerRadius" Value="8"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) TextBox">
+
+			<Setter Property="Width" Value="260"/>
+
+			<Setter Property="Margin" Value="0,0,0,6"/>
+
+			<Setter Property="Background" Value="#2a2a2a"/>
+
+			<Setter Property="Foreground" Value="White"/>
+
+			<Setter Property="BorderBrush" Value="#2ed1b5"/>
+
+			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="CornerRadius" Value="8"/>
+
+			<Setter Property="Padding" Value="8,6"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) TextBlock.output">
+
+			<Setter Property="Margin" Value="0,8,0,0"/>
+
 			<Setter Property="TextWrapping" Value="Wrap"/>
-			<Setter Property="Width" Value="200"/>
+
+			<Setter Property="Width" Value="240"/>
+
+			<Setter Property="Foreground" Value="#d9e1e8"/>
+
+			<Setter Property="FontSize" Value="12"/>
+
+			<Setter Property="LineHeight" Value="18"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot:not(.space-holo-ui):not(.light-ui) TextBlock.column-label">
+
+			<Setter Property="Foreground" Value="#2ed1b5"/>
+
+			<Setter Property="FontWeight" Value="SemiBold"/>
+
+			<Setter Property="Margin" Value="0,0,0,6"/>
+
+		</Style>
+
+
+
+		<!-- Светлая тема -->
+
+		<Style Selector="#AnalysisRoot.light-ui Button.round-btn">
+
+			<Setter Property="Width" Value="52"/>
+
+			<Setter Property="Height" Value="52"/>
+
+			<Setter Property="Padding" Value="0"/>
+
+			<Setter Property="FontSize" Value="22"/>
+
+			<Setter Property="FontWeight" Value="Bold"/>
+
+			<Setter Property="CornerRadius" Value="26"/>
+
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui Button.export-btn">
+
+			<Setter Property="MinWidth" Value="200"/>
+
+			<Setter Property="Height" Value="52"/>
+
+			<Setter Property="Padding" Value="22,0"/>
+
+			<Setter Property="FontSize" Value="15"/>
+
+			<Setter Property="CornerRadius" Value="26"/>
+
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui Button.remove-btn">
+
+			<Setter Property="Background">
+
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+
+					<GradientStop Color="#FCA5A5" Offset="0"/>
+
+					<GradientStop Color="#EF4444" Offset="1"/>
+
+				</LinearGradientBrush>
+
+			</Setter>
+
 			<Setter Property="Foreground" Value="White"/>
+
+			<Setter Property="Width" Value="36"/>
+
+			<Setter Property="Height" Value="36"/>
+
+			<Setter Property="Padding" Value="0"/>
+
+			<Setter Property="CornerRadius" Value="18"/>
+
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+
+			<Setter Property="Margin" Value="0,0,0,8"/>
+
+			<Setter Property="BorderBrush" Value="#FECACA"/>
+
+			<Setter Property="BorderThickness" Value="1"/>
+
 		</Style>
-		<!-- Стили для Ripple-эффекта -->
+
+		<Style Selector="#AnalysisRoot.light-ui Border.analysis-column">
+
+			<Setter Property="Background">
+
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+
+					<GradientStop Color="#FAFFFFFF" Offset="0"/>
+
+					<GradientStop Color="#EEFBFF" Offset="1"/>
+
+				</LinearGradientBrush>
+
+			</Setter>
+
+			<Setter Property="BorderBrush" Value="#7DD3FC"/>
+
+			<Setter Property="BorderThickness" Value="1"/>
+
+			<Setter Property="CornerRadius" Value="16"/>
+
+			<Setter Property="Padding" Value="14"/>
+
+			<Setter Property="Margin" Value="0,0,16,0"/>
+
+			<Setter Property="Effect">
+
+				<DropShadowEffect Color="#38BDF8" BlurRadius="20" OffsetX="0" OffsetY="8" Opacity="0.2"/>
+
+			</Setter>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui ListBox">
+
+			<Setter Property="Width" Value="260"/>
+
+			<Setter Property="MinHeight" Value="220"/>
+
+			<Setter Property="MaxHeight" Value="340"/>
+
+			<Setter Property="Margin" Value="0,0,0,8"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui TextBox">
+
+			<Setter Property="Width" Value="260"/>
+
+			<Setter Property="Margin" Value="0,0,0,6"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui TextBlock.output">
+
+			<Setter Property="Margin" Value="0,10,0,0"/>
+
+			<Setter Property="TextWrapping" Value="Wrap"/>
+
+			<Setter Property="Width" Value="240"/>
+
+			<Setter Property="Foreground" Value="#475569"/>
+
+			<Setter Property="FontSize" Value="12"/>
+
+			<Setter Property="LineHeight" Value="18"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui TextBlock.column-label">
+
+			<Setter Property="Foreground" Value="#0F766E"/>
+
+			<Setter Property="FontWeight" Value="SemiBold"/>
+
+			<Setter Property="Margin" Value="0,0,0,6"/>
+
+		</Style>
+
+		<Style Selector="#AnalysisRoot.light-ui TextBlock.page-title">
+
+			<Setter Property="Foreground" Value="#0F4C5C"/>
+
+			<Setter Property="FontSize" Value="24"/>
+
+			<Setter Property="FontWeight" Value="Bold"/>
+
+		</Style>
+
+
+
 		<Style Selector="Ellipse.ripple">
+
 			<Setter Property="Fill" Value="White"/>
+
 			<Setter Property="Opacity" Value="0.3"/>
+
 			<Setter Property="Width" Value="0"/>
+
 			<Setter Property="Height" Value="0"/>
+
 			<Setter Property="ZIndex" Value="-1"/>
+
 			<Setter Property="Transitions">
+
 				<Transitions>
+
 					<DoubleTransition Property="Width" Duration="0:0:0.5"/>
+
 					<DoubleTransition Property="Height" Duration="0:0:0.5"/>
+
 					<DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+
 				</Transitions>
+
 			</Setter>
+
 		</Style>
-		<!-- Стили для анимации столбцов -->
+
 		<Style Selector="StackPanel.column">
+
 			<Setter Property="Opacity" Value="0"/>
+
 			<Setter Property="Transitions">
+
 				<Transitions>
+
 					<DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+
 				</Transitions>
+
 			</Setter>
+
 		</Style>
+
 	</Window.Styles>
-	<ScrollViewer>
-		<StackPanel Margin="10">
-			<StackPanel Orientation="Horizontal">
-				<Button x:Name="AddColumnButton" Content="+"/>
-				<Button x:Name="ExportToExcelButton" Content="Экспорт в Excel"/>
+
+
+
+	<Grid RowDefinitions="Auto,*">
+
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*,Auto">
+				<Button x:Name="BackToMenuButton" Classes="nav-back" Content="←  Меню"/>
+				<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,0,0">
+					<TextBlock Classes="nav-title" Text="Расчёт коммерческого предложения"/>
+					<TextBlock Classes="nav-subtitle" Text="Анализ пунктов приказа и численности"/>
+				</StackPanel>
+				<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+					<Button x:Name="AddColumnButton" Classes="round-btn" Content="+" ToolTip.Tip="Добавить столбец"/>
+					<Button x:Name="ExportToExcelButton" Classes="export-btn" Content="Экспорт в Excel"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+
+
+
+		<ScrollViewer Grid.Row="1"
+
+					  HorizontalScrollBarVisibility="Auto"
+
+					  VerticalScrollBarVisibility="Auto"
+
+					  Padding="18,0,22,18">
+
+			<StackPanel Orientation="Horizontal" Spacing="0">
+
+				<Grid x:Name="AnalisGrid"/>
+
 			</StackPanel>
-			<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-				<Grid x:Name="AnalisGrid" ColumnDefinitions="Auto,Auto,Auto,Auto">
-					<!-- Столбцы добавляются динамически -->
-				</Grid>
-			</ScrollViewer>
-		</StackPanel>
-	</ScrollViewer>
+
+		</ScrollViewer>
+
+	</Grid>
+
 </Window>
+

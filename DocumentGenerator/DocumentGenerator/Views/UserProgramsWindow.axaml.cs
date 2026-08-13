@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using DocumentGenerator.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +23,7 @@ namespace DocumentGenerator
         {
             _serviceProvider = serviceProvider;
             _storage = _serviceProvider.GetRequiredService<IUserProgramStorage>();
+            AppWindowSetup.Configure(this, serviceProvider);
 
             WireUi();
         }
@@ -49,15 +49,9 @@ namespace DocumentGenerator
             if (listBox == null || status == null) return;
 
             await Task.Yield();
+            listBox.SelectedItem = null;
             var programs = _storage.ListPrograms();
             listBox.ItemsSource = programs;
-            listBox.ItemTemplate = new FuncDataTemplate<UserProgramInfo>((item, _) =>
-            {
-                return new TextBlock
-                {
-                    Text = item.Name
-                };
-            });
 
             status.Text = programs.Count == 0
                 ? $"Нет пользовательских программ. Папка: {_storage.RootFolderPath}"
@@ -67,6 +61,7 @@ namespace DocumentGenerator
         private void BackToMenu_Click(object? sender, RoutedEventArgs e)
         {
             var menuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+            menuWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             menuWindow.Show();
             Close();
         }
@@ -83,7 +78,7 @@ namespace DocumentGenerator
             var listBox = this.FindControl<ListBox>("ProgramsListBox");
             if (listBox?.SelectedItem is not UserProgramInfo info)
             {
-                await SimpleMessageBox.Show(this, "Выбери программу из списка.", "Предупреждение");
+                await AppDialog.ShowAsync(this, "Выбери программу из списка.", "Предупреждение", AppDialogKind.Warning);
                 return;
             }
 
@@ -97,7 +92,7 @@ namespace DocumentGenerator
             var listBox = this.FindControl<ListBox>("ProgramsListBox");
             if (listBox?.SelectedItem is not UserProgramInfo info)
             {
-                await SimpleMessageBox.Show(this, "Выбери программу из списка.", "Предупреждение");
+                await AppDialog.ShowAsync(this, "Выбери программу из списка.", "Предупреждение", AppDialogKind.Warning);
                 return;
             }
 
@@ -111,7 +106,7 @@ namespace DocumentGenerator
             var listBox = this.FindControl<ListBox>("ProgramsListBox");
             if (listBox?.SelectedItem is not UserProgramInfo info)
             {
-                await SimpleMessageBox.Show(this, "Выбери программу из списка.", "Предупреждение");
+                await AppDialog.ShowAsync(this, "Выбери программу из списка.", "Предупреждение", AppDialogKind.Warning);
                 return;
             }
 
@@ -132,11 +127,11 @@ namespace DocumentGenerator
             try
             {
                 _storage.ExportToZip(info, path);
-                await SimpleMessageBox.Show(this, "Экспорт завершён.", "Успех");
+                await AppDialog.ShowAsync(this, "Экспорт завершён.", "Успех", AppDialogKind.Success);
             }
             catch (Exception ex)
             {
-                await SimpleMessageBox.Show(this, $"Ошибка экспорта: {ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(this, $"Ошибка экспорта: {ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
@@ -159,11 +154,11 @@ namespace DocumentGenerator
             {
                 _storage.ImportFromZip(result[0]);
                 await ReloadAsync();
-                await SimpleMessageBox.Show(this, "Импорт завершён.", "Успех");
+                await AppDialog.ShowAsync(this, "Импорт завершён.", "Успех", AppDialogKind.Success);
             }
             catch (Exception ex)
             {
-                await SimpleMessageBox.Show(this, $"Ошибка импорта: {ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(this, $"Ошибка импорта: {ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
@@ -172,25 +167,26 @@ namespace DocumentGenerator
             var listBox = this.FindControl<ListBox>("ProgramsListBox");
             if (listBox?.SelectedItem is not UserProgramInfo info)
             {
-                await SimpleMessageBox.Show(this, "Выбери программу из списка.", "Предупреждение");
+                await AppDialog.ShowAsync(this, "Выбери программу из списка.", "Предупреждение", AppDialogKind.Warning);
                 return;
             }
 
             try
             {
+                listBox.SelectedItem = null;
                 _storage.DeleteProgram(info);
                 await ReloadAsync();
-                await SimpleMessageBox.Show(this, "Удалено.", "Успех");
+                await AppDialog.ShowAsync(this, "Удалено.", "Успех", AppDialogKind.Success);
             }
             catch (Exception ex)
             {
-                await SimpleMessageBox.Show(this, $"Ошибка удаления: {ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(this, $"Ошибка удаления: {ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
         private async void NotImplemented_Click(object? sender, RoutedEventArgs e)
         {
-            await SimpleMessageBox.Show(this, "Функция будет добавлена следующим шагом внедрения конструктора.", "В разработке");
+            await AppDialog.ShowAsync(this, "Функция будет добавлена следующим шагом внедрения конструктора.", "В разработке", AppDialogKind.Info);
         }
     }
 
@@ -206,46 +202,4 @@ namespace DocumentGenerator
         }
     }
 
-    internal static class SimpleMessageBox
-    {
-        public static Task Show(Window owner, string message, string title)
-        {
-            var dialog = new Window
-            {
-                Title = title,
-                Width = 420,
-                Height = 180,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                CanResize = false
-            };
-
-            var textBlock = new TextBlock
-            {
-                Text = message,
-                Margin = new Avalonia.Thickness(14),
-                TextWrapping = Avalonia.Media.TextWrapping.Wrap
-            };
-
-            var okButton = new Button
-            {
-                Content = "OK",
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                Width = 120,
-                Margin = new Avalonia.Thickness(0, 0, 0, 12)
-            };
-
-            okButton.Click += (_, _) => dialog.Close();
-
-            dialog.Content = new StackPanel
-            {
-                Children =
-                {
-                    textBlock,
-                    okButton
-                }
-            };
-
-            return dialog.ShowDialog(owner);
-        }
-    }
 }

@@ -2,23 +2,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.MainWindow"
+        x:Name="ProfosmotryRoot"
         x:DataType="vm:MainWindowViewModel"
-        Title="Профосмотры" Width="450" Height="700">
+        Title="Профосмотры" Width="450" Height="700"
+        WindowStartupLocation="CenterScreen">
 	<!-- Многослойный фон (без анимации, затемнённые цвета) -->
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
 			<GradientStop Color="#04261f" Offset="0"/>
-			<!-- Затемнённый #063d2c -->
 			<GradientStop Color="#0d3b31" Offset="0.5"/>
-			<!-- Затемнённый #125e47 -->
 			<GradientStop Color="#04261f" Offset="1"/>
-			<!-- Затемнённый #063d2c -->
 		</LinearGradientBrush>
 	</Window.Background>
 	<!-- Стили -->
 	<Window.Styles>
 		<!-- Стиль для TextBlock (метки) -->
-		<Style Selector="TextBlock">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) TextBlock">
 			<Setter Property="Foreground" Value="#d9e1e8"/>
 			<!-- Затемнённый #f0f4f8 -->
 			<Setter Property="FontSize" Value="14"/>
@@ -46,14 +45,12 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для TextBox -->
-		<Style Selector="TextBox">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) TextBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#1f8f7a" Offset="0"/>
-						<!-- Затемнённый #2ed1b5 -->
 						<GradientStop Color="#073f36" Offset="1"/>
-						<!-- Затемнённый #0a5c4e -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -82,28 +79,24 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для TextBox при наведении -->
-		<Style Selector="TextBox:pointerover">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) TextBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#2ab091" Offset="0"/>
-						<!-- Затемнённый #3ef7d2 -->
 						<GradientStop Color="#116d5a" Offset="1"/>
-						<!-- Затемнённый #1a9b82 -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для ComboBox -->
-		<Style Selector="ComboBox">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) ComboBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#1f8f7a" Offset="0"/>
-						<!-- Затемнённый #2ed1b5 -->
 						<GradientStop Color="#073f36" Offset="1"/>
-						<!-- Затемнённый #0a5c4e -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -132,28 +125,24 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для ComboBox при наведении -->
-		<Style Selector="ComboBox:pointerover">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) ComboBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#2ab091" Offset="0"/>
-						<!-- Затемнённый #3ef7d2 -->
 						<GradientStop Color="#116d5a" Offset="1"/>
-						<!-- Затемнённый #1a9b82 -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для ListBox -->
-		<Style Selector="ListBox">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) ListBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#1f8f7a" Offset="0"/>
-						<!-- Затемнённый #2ed1b5 -->
 						<GradientStop Color="#073f36" Offset="1"/>
-						<!-- Затемнённый #0a5c4e -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -182,28 +171,24 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для ListBox при наведении -->
-		<Style Selector="ListBox:pointerover">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) ListBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#2ab091" Offset="0"/>
-						<!-- Затемнённый #3ef7d2 -->
 						<GradientStop Color="#116d5a" Offset="1"/>
-						<!-- Затемнённый #1a9b82 -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для кнопок -->
-		<Style Selector="Button">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) Button">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#1f8f7a" Offset="0"/>
-						<!-- Затемнённый #2ed1b5 -->
 						<GradientStop Color="#073f36" Offset="1"/>
-						<!-- Затемнённый #0a5c4e -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -238,28 +223,24 @@
 			</Setter>
 		</Style>
 		<!-- Стиль при наведении -->
-		<Style Selector="Button:pointerover">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) Button:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#2ab091" Offset="0"/>
-						<!-- Затемнённый #3ef7d2 -->
 						<GradientStop Color="#116d5a" Offset="1"/>
-						<!-- Затемнённый #1a9b82 -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль при нажатии -->
-		<Style Selector="Button:pressed">
+		<Style Selector="#ProfosmotryRoot:not(.space-holo-ui):not(.light-ui) Button:pressed">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
 						<GradientStop Color="#0a584a" Offset="0"/>
-						<!-- Затемнённый #0f7a6b -->
 						<GradientStop Color="#04261f" Offset="1"/>
-						<!-- Затемнённый #063d2c -->
 					</LinearGradientBrush>
 				</Setter.Value>
 			</Setter>
@@ -270,7 +251,20 @@
 	<Design.DataContext>
 		<vm:MainWindowViewModel />
 	</Design.DataContext>
-	<ScrollViewer>
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="BackToMenuButton"
+						Classes="nav-back"
+						Content="←  Меню"
+						Click="BackToMenu_Click"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Text="Профосмотры" Classes="nav-title"/>
+					<TextBlock Text="Генерация документов профосмотра" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+	<ScrollViewer Grid.Row="1" Padding="0,0,4,0">
 		<StackPanel Margin="10,10,20,10" Name="MainStackPanel">
 			<TextBlock Text="Поликлиническое отделение" />
 			<ComboBox Name="ServicePointComboBox"
@@ -325,7 +319,6 @@
 			<TextBlock Text="Пункты вредности (Выбрать несколько crtl+ЛКМ)" />
 			<TextBox Name="OrderClausesSearchBox"
                      Text="{Binding OrderClausesSearchText, UpdateSourceTrigger=PropertyChanged}"
-                     TextChanged="HandleSearchTextChanged"
                      Watermark="Поиск пунктов..."
                      KeyDown="InputField_KeyDown"
                      TabIndex="5" />
@@ -497,19 +490,9 @@
                          Watermark="Годы"
                          Width="100"
                          TabIndex="22" />
-				<TextBlock Text=" лет " />
-				<TextBox Name="WorkExperienceMonthsTextBox"
-                         Text="{Binding WorkExperienceMonths, UpdateSourceTrigger=PropertyChanged}"
-                         TextChanged="HandleTextChanged"
-                         TextInput="RestrictInput"
-                         KeyDown="RestrictKeyDown"
-                         Watermark="Месяцы"
-                         Width="100"
-                         TabIndex="23" />
-				<TextBlock Text=" месяцев" />
+				<TextBlock Text="{Binding WorkExperienceYearsSuffix}" VerticalAlignment="Center" Margin="4,0,0,0" />
 			</StackPanel>
 			<TextBlock Text="{Binding WorkExperienceYearsError}" Foreground="Red" />
-			<TextBlock Text="{Binding WorkExperienceMonthsError}" Foreground="Red" />
 
 			<!-- Кнопки -->
 			<Button Name="PreviewButton"
@@ -531,12 +514,7 @@
                     HorizontalAlignment="Center"
                     Margin="10"
                     TabIndex="26" />
-			<Button Name="BackToMenuButton"
-                    Content="Назад в главное меню"
-                    Click="BackToMenu_Click"
-                    HorizontalAlignment="Center"
-                    Margin="10"
-                    TabIndex="27" />
 		</StackPanel>
 	</ScrollViewer>
+	</Grid>
 </Window>

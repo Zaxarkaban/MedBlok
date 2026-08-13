@@ -2,20 +2,13 @@
 using iText.Forms.Fields;
 using iText.Kernel.Pdf;
 using iText.Kernel.Font;
-using iText.IO.Font;
 using System;
 using System.IO;
 using DocumentGenerator.ViewModels;
 using System.Linq;
 using System.Collections.Generic;
-using iText.Kernel.Pdf.Canvas;
-using iText.Kernel.Geom;
-using iText.Layout.Element;
 using DocumentGenerator.Models;
-using iText.Layout;
-using iText.Layout.Renderer;
-using iText.Layout.Layout;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using DocumentGenerator.Services;
 
 namespace DocumentGenerator
 {
@@ -28,7 +21,7 @@ namespace DocumentGenerator
             _viewModel = viewModel;
         }
 
-        // Метод для получения списка исследований с прямым соответствием из таблицы
+        // Метод для получения списка исследований с прямым соответствием из таблицы (В этом году не используется из-за перехода на новые бланки)
         //private List<string> GetTestsWithDirectMatch()
         //{
         //    return new List<string>
@@ -70,18 +63,10 @@ namespace DocumentGenerator
                     var form = PdfAcroForm.GetAcroForm(pdf, true);
                     var fields = form.GetAllFormFields();
 
-                    // Загружаем шрифт Times New Roman из проекта
-                    string fontPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                    if (!File.Exists(fontPath))
-                    {
-                        throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
-                    }
-
                     PdfFont font;
                     try
                     {
-                        PdfFontFactory.Register(fontPath);
-                        font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+                        font = PdfFontHelper.CreateTimesFont();
                     }
                     catch (Exception ex)
                     {
@@ -90,7 +75,7 @@ namespace DocumentGenerator
 
                     // Вычисляем возраст и пол
                     int age = 0;
-                    bool isFemale = _viewModel.Gender == "Женский";
+                    bool isFemale = GenderHelper.IsFemale(_viewModel.Gender);
                     if (!string.IsNullOrEmpty(_viewModel.DateOfBirth) && DateTime.TryParseExact(_viewModel.DateOfBirth, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var dob))
                     {
                         var today = DateTime.Today;
@@ -119,7 +104,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "Workplace", _viewModel.Workplace, font);
                     SetFieldValue(fields, "OwnershipForm", _viewModel.OwnershipForm, font);
                     SetFieldValue(fields, "Okved", _viewModel.Okved, font);
-                    SetFieldValue(fields, "WorkExperience", $"{_viewModel.WorkExperienceYears} лет", font); //{_viewModel.WorkExperienceMonths} месяцев                                                                              // Форматируем пункты вредности с префиксом "п."
+                    SetFieldValue(fields, "WorkExperience", PdfFormFieldHelper.FormatWorkExperienceYears(_viewModel.WorkExperienceYears), font);
                     var formattedClauses = _viewModel.SelectedOrderClauses.Select(clause => $"п.{clause}");
                     SetFieldValue(fields, "OrderClause", string.Join(", ", formattedClauses), font);
                     SetFieldValue(fields, "WorkAddress", _viewModel.WorkAddress, font);
@@ -138,7 +123,7 @@ namespace DocumentGenerator
                     SetFieldValue(fields, "CurrentDate", currentDate, font);
 
                     //Вот тут бахнуть вычисление возраста
-                    SetFieldValue(fields, "normasDate", age.ToString(), font); // Заполняем поле возраста в годах
+                    SetFieldValue(fields, "Age", age.ToString(), font);
                     // Разбиваем ФИО на части
                     string fio = _viewModel.FullName ?? "";
                     string[] fioParts = fio.Split(' ');
@@ -209,39 +194,43 @@ namespace DocumentGenerator
 
                     allDoctors.Add("Профпатолог");
 
-                    // Заполняем врачей в поля Doctor_1 до Doctor_12
-                    for (int i = 0; i < allDoctors.Count && i < 12; i++)
+                    // Заполняем врачей в поля Doctor_1 до Doctor_11
+                    for (int i = 0; i < allDoctors.Count && i < 11; i++)
                     {
                         string fieldName = $"Doctor_{i + 1}";
                         SetFieldValue(fields, fieldName, allDoctors[i], font);
                     }
 
-                    if (allDoctors.Count > 12)
+                    if (allDoctors.Count > 11)
                     {
-                        Console.WriteLine($"Внимание: В списке {allDoctors.Count} врачей, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
+                        Console.WriteLine($"Внимание: В списке {allDoctors.Count} врачей, но шаблон поддерживает только 11. Лишние врачи проигнорированы.");
                     }
 
                     // Генерируем список исследований
                     var tests = GenerateTestsList(isOver40, isFemale);
 
-                    // Получаем список исследований с прямым соответствием
-                    //var testsWithDirectMatch = GetTestsWithDirectMatch();
+                    TestsListPdfService.DrawOnFirstPage(pdf, tests, font);
 
-                    // Сравниваем и устанавливаем галочки
-                    //foreach (var test in tests)
-                    //{
-                    //    if (testsWithDirectMatch.Contains(test))
-                    //    {
-                    //        string fieldName = $"test_{SanitizeFieldName(test)}";
-                    //        if (fields.ContainsKey(fieldName))
-                    //        {
-                    //            fields[fieldName].SetValue("V"); // Устанавливаем галочку
-                    //        }
-                    //    }
-                    //}
+                    var extraPatientData = ConditionalExtraPagesService.BuildPatientData(
+                        _viewModel.FullName,
+                        _viewModel.DateOfBirth,
+                        _viewModel.Gender,
+                        _viewModel.Position,
+                        _viewModel.Workplace,
+                        _viewModel.Address,
+                        _viewModel.Phone,
+                        _viewModel.PassportSeries,
+                        _viewModel.PassportNumber,
+                        PdfFormFieldHelper.FormatWorkExperienceYears(_viewModel.WorkExperienceYears),
+                        ConditionalExtraPagesService.FormatOrderClauses(_viewModel.SelectedOrderClauses));
+                    ConditionalExtraPagesService.Append(
+                        pdf,
+                        _viewModel.SelectedOrderClauses,
+                        isFemale,
+                        extraPatientData,
+                        font);
 
-                    // Добавляем новый лист с исследованиями на третью страницу
-                    AddTestsPage(pdf, tests, font);
+                    DoctorExamPagesService.AppendDoctorExamPages(pdf, allDoctors, extraPatientData);
 
                     // Сохраняем изменения
                     form.FlattenFields();
@@ -254,64 +243,9 @@ namespace DocumentGenerator
             }
         }
 
-        private string SanitizeFieldName(string name)
+        private static void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string? value, PdfFont font)
         {
-            // Удаляем недопустимые символы для имени поля в PDF
-            return name.Replace(" ", "_")
-                       .Replace("(", "")
-                       .Replace(")", "")
-                       .Replace(",", "")
-                       .Replace(".", "")
-                       .Replace(":", "")
-                       .Replace(";", "")
-                       .Replace("/", "_");
-        }
-
-        private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
-        {
-            if (fields.TryGetValue(fieldName, out var pdfField))
-            {
-                // Устанавливаем значение поля
-                pdfField.SetValue(value);
-
-                // Пропускаем динамическое изменение шрифта для CurrentYear (шрифт фиксированно 24)
-                if (fieldName == "CurrentYear")
-                {
-                    pdfField.SetFontAndSize(font, 24f);
-                    return;
-                }
-
-                // Начальный размер шрифта
-                float fontSize = 9f;
-                pdfField.SetFontAndSize(font, fontSize);
-
-                // Получаем размеры поля
-                var widget = pdfField.GetWidgets().FirstOrDefault();
-                if (widget == null) return;
-                var rect = widget.GetRectangle();
-                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
-
-                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
-                float textWidth;
-                float minFontSize = 4f; // Минимальный размер шрифта
-                do
-                {
-                    // Измеряем ширину текста с текущим размером шрифта
-                    textWidth = font.GetWidth(value, fontSize);
-
-                    if (textWidth > fieldWidth && fontSize > minFontSize)
-                    {
-                        fontSize -= 0.25f; // Уменьшаем шрифт на 0.5
-                    }
-                    else
-                    {
-                        break; // Текст влезает или достигнут минимальный шрифт
-                    }
-                } while (true);
-
-                // Устанавливаем финальный размер шрифта
-                pdfField.SetFontAndSize(font, fontSize);
-            }
+            PdfFormFieldHelper.SetFieldValue(fields, fieldName, value, font);
         }
 
         private List<string> GenerateTestsList(bool isOver40, bool isFemale)
@@ -359,45 +293,6 @@ namespace DocumentGenerator
             mandatoryTests.AddRange(testsFromClauses.Distinct().Except(mandatoryTests));
 
             return mandatoryTests;
-        }
-
-        private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
-        {
-            // Убедимся, что в документе есть как минимум 8 страниц
-            int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 7)
-            {
-                pdfDocument.AddNewPage();
-                currentPageCount++;
-            }
-
-            // Получаем 8-ю страницу
-            var page = pdfDocument.GetPage(7);
-            var pageSize = page.GetPageSize();
-
-            // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
-            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 450); // Отступы 36 пунктов со всех сторон
-
-            // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
-            var column = new PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, fullPage);
-
-            // Создаём параграф с текстом
-            var paragraph = new Paragraph()
-                .SetFont(font)
-                .SetFontSize(7);
-
-            paragraph.Add(new Text("Список исследований:\n\n"));
-            int testNumber = 1;
-            foreach (var test in tests)
-            {
-                paragraph.Add(new Text($"{testNumber}. {test}\n"));
-                testNumber++;
-            }
-
-            // Добавляем параграф на 8-ю страницу
-            columnText.Add(paragraph);
-            columnText.Close();
         }
     }
 }

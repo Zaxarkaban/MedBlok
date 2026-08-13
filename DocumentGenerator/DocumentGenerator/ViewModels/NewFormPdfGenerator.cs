@@ -25,18 +25,10 @@ namespace DocumentGenerator.Services
                         throw new InvalidOperationException("PDF-шаблон не содержит полей для заполнения.");
                     }
 
-                    string fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                    if (!File.Exists(fontPath))
-                    {
-
-                        throw new FileNotFoundException("Times New Roman font file not found.", fontPath);
-                    }
-
                     PdfFont font;
                     try
                     {
-                        PdfFontFactory.Register(fontPath);
-                        font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+                        font = PdfFontHelper.CreateTimesFont();
                     }
                     catch (Exception ex)
                     {

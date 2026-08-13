@@ -4,12 +4,7 @@ using System.Linq;
 using iText.Kernel.Pdf;
 using iText.Forms;
 using DocumentGenerator.Models;
-using iText.Kernel.Pdf.Canvas;
-using iText.Layout;
-using iText.Layout.Element;
 using iText.Kernel.Font;
-using iText.IO.Font;
-using iText.Kernel.Geom;
 using System.IO;
 
 namespace DocumentGenerator.Services
@@ -105,17 +100,10 @@ namespace DocumentGenerator.Services
                     var form = PdfAcroForm.GetAcroForm(pdfDocument, true);
                     var fields = form.GetAllFormFields();
 
-                    string fontPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                    if (!File.Exists(fontPath))
-                    {
-                        throw new FileNotFoundException("Times New Roman font file not found.", fontPath);
-                    }
-
                     PdfFont font;
                     try
                     {
-                        PdfFontFactory.Register(fontPath);
-                        font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+                        font = PdfFontHelper.CreateTimesFont();
                     }
                     catch (Exception ex)
                     {
@@ -124,22 +112,15 @@ namespace DocumentGenerator.Services
 
                     foreach (var data in userData)
                     {
-                        if (fields.TryGetValue(data.Key, out var field))
-                        {
-                            field.SetValue(data.Value);
-                            field.SetFontAndSize(font, 10);
-                            field.RegenerateField();
-                        }
+                        PdfFormFieldHelper.SetFieldValue(fields, data.Key, data.Value, font);
                     }
 
-                    for (int i = 0; i < doctors.Count && i < 12; i++)
+                    for (int i = 0; i < doctors.Count && i < 11; i++)
                     {
                         string fieldName = $"Doctor_{i + 1}";
-                        if (fields.TryGetValue(fieldName, out var doctorField))
+                        if (fields.ContainsKey(fieldName))
                         {
-                            doctorField.SetValue(doctors[i]);
-                            doctorField.SetFontAndSize(font, 10);
-                            doctorField.RegenerateField();
+                            PdfFormFieldHelper.SetFieldValue(fields, fieldName, doctors[i], font);
                         }
                         else
                         {
@@ -147,13 +128,13 @@ namespace DocumentGenerator.Services
                         }
                     }
 
-                    if (doctors.Count > 12)
+                    if (doctors.Count > 11)
                     {
-                        Console.WriteLine($"Внимание: В списке {doctors.Count} врачей, но шаблон поддерживает только 12. Лишние врачи проигнорированы.");
+                        Console.WriteLine($"Внимание: В списке {doctors.Count} врачей, но шаблон поддерживает только 11. Лишние врачи проигнорированы.");
                     }
 
                     int age = 0;
-                    bool isFemale = userData.TryGetValue("Gender", out var gender) && gender == "Женский";
+                    bool isFemale = userData.TryGetValue("Gender", out var gender) && GenderHelper.IsFemale(gender);
                     if (userData.TryGetValue("DateOfBirth", out var dob) && DateTime.TryParseExact(dob, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out var birthDate))
                     {
                         var today = DateTime.Today;
@@ -163,7 +144,43 @@ namespace DocumentGenerator.Services
                     bool isOver40 = age > 40;
 
                     var tests = GenerateTestsList(isOver40, isFemale, userData.TryGetValue("OrderClause", out var clauses) ? clauses.Split(", ").ToList() : new List<string>());
-                    AddTestsPage(pdfDocument, tests, font);
+                    TestsListPdfService.DrawOnFirstPage(pdfDocument, tests, font);
+
+                    userData.TryGetValue("FullName", out var fullName);
+                    userData.TryGetValue("DateOfBirth", out var dateOfBirth);
+                    userData.TryGetValue("Position", out var position);
+                    userData.TryGetValue("Workplace", out var workplace);
+                    userData.TryGetValue("Address", out var address);
+                    userData.TryGetValue("Phone", out var phone);
+                    userData.TryGetValue("PassportSeries", out var passportSeries);
+                    userData.TryGetValue("PassportNumber", out var passportNumber);
+
+                    userData.TryGetValue("WorkExperience", out var workExperience);
+
+                    var selectedClauses = userData.TryGetValue("OrderClause", out var orderClauseText)
+                        ? orderClauseText.Split(new[] { ", ", "," }, StringSplitOptions.RemoveEmptyEntries).ToList()
+                        : new List<string>();
+
+                    var extraPatientData = ConditionalExtraPagesService.BuildPatientData(
+                        fullName,
+                        dateOfBirth,
+                        gender,
+                        position,
+                        workplace,
+                        address,
+                        phone,
+                        passportSeries,
+                        passportNumber,
+                        workExperience,
+                        ConditionalExtraPagesService.FormatOrderClauses(selectedClauses));
+                    ConditionalExtraPagesService.Append(
+                        pdfDocument,
+                        selectedClauses,
+                        isFemale,
+                        extraPatientData,
+                        font);
+
+                    DoctorExamPagesService.AppendDoctorExamPages(pdfDocument, doctors, extraPatientData);
 
                     form.FlattenFields();
                     pdfDocument.Close();
@@ -175,39 +192,6 @@ namespace DocumentGenerator.Services
             {
                 Console.WriteLine($"Ошибка при заполнении PDF: {ex.Message}");
             }
-        }
-
-        private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
-        {
-            int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 2)
-            {
-                pdfDocument.AddNewPage();
-                currentPageCount++;
-            }
-
-            var page = pdfDocument.GetPage(2);
-            var pageSize = page.GetPageSize();
-
-            var leftHalf = new Rectangle(36, 36, 261.5f, pageSize.GetHeight() - 72);
-
-            var column = new PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, leftHalf);
-
-            var paragraph = new Paragraph()
-                .SetFont(font)
-                .SetFontSize(7);
-
-            paragraph.Add(new Text("Список исследований:\n\n"));
-            int testNumber = 1;
-            foreach (var test in tests)
-            {
-                paragraph.Add(new Text($"{testNumber}. {test}\n"));
-                testNumber++;
-            }
-
-            columnText.Add(paragraph);
-            columnText.Close();
         }
     }
 }

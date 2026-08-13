@@ -2,31 +2,57 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.ExcelDataWindow"
+        x:Name="ExcelDataRoot"
         x:DataType="vm:ExcelDataViewModel"
-        Title="Данные из Excel" Width="800" Height="600">
+        Title="Данные из Excel"
+        Width="900" Height="620"
+        MinWidth="720" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
 	<Design.DataContext>
 		<vm:ExcelDataViewModel />
 	</Design.DataContext>
-	<StackPanel Margin="20" Spacing="10">
-		<TextBlock Text="Данные из Excel" FontSize="18" FontWeight="Bold" />
-		<ScrollViewer MaxHeight="400">
-			<DataGrid ItemsSource="{Binding Records}" AutoGenerateColumns="False" CanUserSortColumns="True">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" />
-					<DataGridTextColumn Header="Должность" Binding="{Binding Position}" />
-					<DataGridTextColumn Header="Дата рождения" Binding="{Binding DateOfBirth}" />
-					<DataGridTextColumn Header="Возраст" Binding="{Binding Age}" />
-					<DataGridTextColumn Header="Пол" Binding="{Binding Gender}" />
-					<DataGridTextColumn Header="Пункты по приказу" Binding="{Binding OrderClause}" />
-					<DataGridTextColumn Header="СНИЛС" Binding="{Binding Snils}" />
-					<DataGridTextColumn Header="Полис ОМС" Binding="{Binding MedicalPolicy}" />
-					<DataGridTextColumn Header="Серия паспорта" Binding="{Binding PassportSeries}" />
-					<DataGridTextColumn Header="Номер паспорта" Binding="{Binding PassportNumber}" />
-					<DataGridTextColumn Header="Дата выдачи паспорта" Binding="{Binding PassportIssueDate}" />
-					<DataGridTextColumn Header="Кем выдан" Binding="{Binding PassportIssuedBy}" />
-				</DataGrid.Columns>
-			</DataGrid>
-		</ScrollViewer>
-		<Button Content="Сохранить в PDF" Click="SaveToPdf_Click" HorizontalAlignment="Center" Margin="10" />
-	</StackPanel>
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="CloseButton" Classes="nav-back" Content="←  Закрыть"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Text="Данные из Excel" Classes="nav-title"/>
+					<TextBlock Text="Проверьте загруженные записи перед сохранением в PDF" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+		<Grid Grid.Row="1" Margin="16" RowDefinitions="*,Auto">
+			<Border Classes="light-panel holo-panel" CornerRadius="12" Padding="8" Grid.Row="0">
+				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,6,0">
+					<DataGrid ItemsSource="{Binding Records}"
+							  AutoGenerateColumns="False"
+							  CanUserSortColumns="True"
+							  GridLinesVisibility="Horizontal"
+							  MinHeight="320">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="160"/>
+							<DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="140"/>
+							<DataGridTextColumn Header="Дата рождения" Binding="{Binding DateOfBirth}" Width="110"/>
+							<DataGridTextColumn Header="Возраст" Binding="{Binding Age}" Width="70"/>
+							<DataGridTextColumn Header="Пол" Binding="{Binding Gender}" Width="60"/>
+							<DataGridTextColumn Header="Пункты по приказу" Binding="{Binding OrderClause}" Width="180"/>
+							<DataGridTextColumn Header="СНИЛС" Binding="{Binding Snils}" Width="120"/>
+							<DataGridTextColumn Header="Полис ОМС" Binding="{Binding MedicalPolicy}" Width="120"/>
+							<DataGridTextColumn Header="Серия паспорта" Binding="{Binding PassportSeries}" Width="90"/>
+							<DataGridTextColumn Header="Номер паспорта" Binding="{Binding PassportNumber}" Width="100"/>
+							<DataGridTextColumn Header="Дата выдачи паспорта" Binding="{Binding PassportIssueDate}" Width="120"/>
+							<DataGridTextColumn Header="Кем выдан" Binding="{Binding PassportIssuedBy}" Width="180"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</ScrollViewer>
+			</Border>
+			<Button Grid.Row="1"
+					Content="Сохранить в PDF"
+					Click="SaveToPdf_Click"
+					HorizontalAlignment="Center"
+					Margin="0,14,0,4"
+					MinWidth="220"/>
+		</Grid>
+	</Grid>
 </Window>

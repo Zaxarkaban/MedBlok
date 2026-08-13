@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using DocumentGenerator.ViewModels;
@@ -14,7 +14,9 @@ using Avalonia.VisualTree;
 using DynamicData;
 using Avalonia.Layout;
 using Avalonia.Media;
+using DocumentGenerator.Services;
 using Avalonia;
+using Avalonia.Platform.Storage;
 
 namespace DocumentGenerator
 {
@@ -32,16 +34,20 @@ namespace DocumentGenerator
             DataContext = new MainWindowViewModel();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Для EPPlus
             _isPreviewing = false; // Инициализация флага
+            if (ViewModel != null)
+                ViewModel.ScrollToItemRequested += ScrollToItem;
         }
 
         public MainWindow(IServiceProvider serviceProvider) : this()
         {
             _serviceProvider = serviceProvider;
+            AppWindowSetup.Configure(this, serviceProvider, expandToWorkAreaHeight: true);
         }
 
         private void BackToMenu_Click(object sender, RoutedEventArgs e)
         {
             var menuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+            menuWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             menuWindow.Show();
             Close();
         }
@@ -71,14 +77,12 @@ namespace DocumentGenerator
                     FormatAndValidateOkved(text, textBox),
                 "WorkExperienceYearsTextBox" =>
                     FilterNumericInput(text, 2, textBox),
-                "WorkExperienceMonthsTextBox" =>
-                    FilterNumericInput(text, 2, textBox),
                 _ => (text, text.Length)
             };
 
             if (ViewModel != null)
             {
-                if (name == "WorkExperienceYearsTextBox" || name == "WorkExperienceMonthsTextBox")
+                if (name == "WorkExperienceYearsTextBox")
                 {
                     ViewModel.ValidateWorkExperience();
                 }
@@ -100,32 +104,12 @@ namespace DocumentGenerator
 
             if (name == "WorkExperienceYearsTextBox" && filteredText.Length == 2)
             {
-                var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
-                if (monthsTextBox != null)
-                {
-                    monthsTextBox.Focus();
-                }
-            }
-            else if (name == "WorkExperienceMonthsTextBox" && filteredText.Length == 2)
-            {
-                var saveButton = this.FindControl<Button>("SaveButton");
-                if (saveButton != null)
-                {
-                    saveButton.Focus();
-                }
+                var previewButton = this.FindControl<Button>("PreviewButton");
+                previewButton?.Focus();
             }
         }
 
-        private void HandleSearchTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (ViewModel != null)
-            {
-                ViewModel.ScrollToItemRequested -= ScrollToItem;
-                ViewModel.ScrollToItemRequested += ScrollToItem;
-            }
-        }
-
-        private void ScrollToItem(object sender, int index)
+        private void ScrollToItem(object? sender, int index)
         {
             var listBox = this.FindControl<ListBox>("OrderClausesListBox");
             if (listBox != null && index >= 0 && index < listBox.ItemCount)
@@ -134,24 +118,14 @@ namespace DocumentGenerator
             }
         }
 
-        private bool ValidateWorkExperienceInput(string currentText, string input, string fieldType)
+        private bool ValidateWorkExperienceInput(string currentText, string input)
         {
             if (!input.All(char.IsDigit)) return false;
 
             string digits = currentText + input;
-            int maxLength = fieldType == "Years" ? 2 : 2;
-            if (digits.Length > maxLength) return false;
+            if (digits.Length > 2) return false;
 
-            if (fieldType == "Months")
-            {
-                if (int.TryParse(digits, out int months) && months > 11) return false;
-            }
-            else if (fieldType == "Years")
-            {
-                if (int.TryParse(digits, out int years) && years > 80) return false;
-            }
-
-            return true;
+            return !(int.TryParse(digits, out int years) && years > 80);
         }
 
         private void RestrictInput(object sender, TextInputEventArgs e)
@@ -180,9 +154,7 @@ namespace DocumentGenerator
                 "OkvedTextBox" =>
                     ValidateOkvedInput(currentText, e.Text),
                 "WorkExperienceYearsTextBox" =>
-                    ValidateWorkExperienceInput(currentText, e.Text, "Years"),
-                "WorkExperienceMonthsTextBox" =>
-                    ValidateWorkExperienceInput(currentText, e.Text, "Months"),
+                    ValidateWorkExperienceInput(currentText, e.Text),
                 "OrderClausesSearchBox" => true,
                 _ => true
             };
@@ -201,23 +173,10 @@ namespace DocumentGenerator
                     string name = textBox.Name ?? throw new InvalidOperationException("TextBox must have a Name");
                     if (name == "WorkExperienceYearsTextBox")
                     {
-                        var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
-                        if (monthsTextBox != null)
+                        var previewButton = this.FindControl<Button>("PreviewButton");
+                        if (previewButton != null)
                         {
-                            monthsTextBox.Focus();
-                            e.Handled = true;
-                        }
-                    }
-                    else if (name == "WorkExperienceMonthsTextBox")
-                    {
-                        var saveButton = this.FindControl<Button>("SaveButton");
-                        if (saveButton != null)
-                        {
-                            saveButton.Focus();
-                            if (ViewModel != null)
-                            {
-                                ViewModel.OnSave();
-                            }
+                            previewButton.Focus();
                             e.Handled = true;
                         }
                     }
@@ -265,8 +224,6 @@ namespace DocumentGenerator
                         "OkvedTextBox" =>
                             FormatAndValidateOkved(new string(clipboardText.Where(c => char.IsDigit(c) || c == '.').ToArray()), textBox).filteredText,
                         "WorkExperienceYearsTextBox" =>
-                            new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
-                        "WorkExperienceMonthsTextBox" =>
                             new string(clipboardText.Where(char.IsDigit).Take(2).ToArray()),
                         "OrderClausesSearchBox" => clipboardText,
                         _ => clipboardText
@@ -571,14 +528,22 @@ namespace DocumentGenerator
 
             if (digits.Length > 2) digits = digits.Substring(0, 2);
 
-            int years;
+            int years = 0;
             if (int.TryParse(digits, out years))
             {
-                if (years > 80) digits = "80";
-                else if (years < 0) digits = "0";
+                if (years > 80)
+                {
+                    years = 80;
+                    digits = "80";
+                }
+                else if (years < 0)
+                {
+                    years = 0;
+                    digits = "0";
+                }
             }
 
-            string formatted = digits + " лет";
+            string formatted = digits + " " + PdfFormFieldHelper.GetYearsWord(years);
             return (formatted, formatted.Length);
         }
 
@@ -618,7 +583,6 @@ namespace DocumentGenerator
             "WorkplaceTextBox" => 1000,
             "OkvedTextBox" => 8,
             "WorkExperienceYearsTextBox" => 2,
-            "WorkExperienceMonthsTextBox" => 2,
             "WorkAddressTextBox" => 1000,
             "DepartmentTextBox" => 1000,
             _ => throw new ArgumentException($"Unknown TextBox name: {textBoxName}")
@@ -639,29 +603,13 @@ namespace DocumentGenerator
 
             try
             {
-                await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
+                string? validationMessage = null;
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    validationMessage = ViewModel.GetValidationSummary();
+                });
 
-                if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
-                    string.IsNullOrEmpty(ViewModel.PositionError) &&
-                    string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
-                    string.IsNullOrEmpty(ViewModel.GenderError) &&
-                    string.IsNullOrEmpty(ViewModel.SnilsError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportIssueDateError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
-                    string.IsNullOrEmpty(ViewModel.AddressError) &&
-                    string.IsNullOrEmpty(ViewModel.PhoneError) &&
-                    string.IsNullOrEmpty(ViewModel.MedicalOrganizationError) &&
-                    string.IsNullOrEmpty(ViewModel.MedicalPolicyError) &&
-                    string.IsNullOrEmpty(ViewModel.MedicalFacilityError) &&
-                    string.IsNullOrEmpty(ViewModel.WorkplaceError) &&
-                    string.IsNullOrEmpty(ViewModel.OwnershipFormError) &&
-                    string.IsNullOrEmpty(ViewModel.OkvedError) &&
-                    string.IsNullOrEmpty(ViewModel.WorkExperienceYearsError) &&
-                    string.IsNullOrEmpty(ViewModel.WorkExperienceMonthsError) &&
-                    string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError) &&
-                    string.IsNullOrEmpty(ViewModel.ServicePointError))
+                if (string.IsNullOrEmpty(validationMessage))
                 {
                     string tempPath = Path.Combine(Path.GetTempPath(), $"Preview_{Guid.NewGuid()}.pdf");
                     try
@@ -682,12 +630,12 @@ namespace DocumentGenerator
                         }
                         else
                         {
-                            await MessageBox.Show(this, "Не удалось создать файл для предпросмотра.", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                            await AppDialog.ShowAsync(this, "Не удалось создать файл для предпросмотра.", "Ошибка", AppDialogKind.Error);
                         }
                     }
                     catch (Exception ex)
                     {
-                        await MessageBox.Show(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                        await AppDialog.ShowAsync(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", AppDialogKind.Error);
                     }
                     finally
                     {
@@ -708,7 +656,7 @@ namespace DocumentGenerator
                 }
                 else
                 {
-                    await MessageBox.Show(this, "Пожалуйста, исправьте ошибки в данных перед предпросмотром.", "Предупреждение", MessageBox.MessageBoxButtons.Ok);
+                    await AppDialog.ShowAsync(this, validationMessage!, "Заполните обязательные поля", AppDialogKind.Warning);
                 }
             }
             finally
@@ -720,31 +668,19 @@ namespace DocumentGenerator
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
-
-            if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
-                string.IsNullOrEmpty(ViewModel.PositionError) &&
-                string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
-                string.IsNullOrEmpty(ViewModel.GenderError) &&
-                string.IsNullOrEmpty(ViewModel.SnilsError) &&
-                string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
-                string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
-                string.IsNullOrEmpty(ViewModel.PassportIssueDateError) &&
-                string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
-                string.IsNullOrEmpty(ViewModel.AddressError) &&
-                string.IsNullOrEmpty(ViewModel.PhoneError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalOrganizationError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalPolicyError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalFacilityError) &&
-                string.IsNullOrEmpty(ViewModel.WorkplaceError) &&
-                string.IsNullOrEmpty(ViewModel.OwnershipFormError) &&
-                string.IsNullOrEmpty(ViewModel.OkvedError) &&
-                string.IsNullOrEmpty(ViewModel.WorkExperienceYearsError) &&
-                string.IsNullOrEmpty(ViewModel.WorkExperienceMonthsError) &&
-                string.IsNullOrEmpty(ViewModel.SelectedOrderClausesError) &&
-                string.IsNullOrEmpty(ViewModel.ServicePointError))
+            string? validationMessage = null;
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                var saveFileDialog = new SaveFileDialog
+                validationMessage = ViewModel.GetValidationSummary();
+            });
+
+            if (!string.IsNullOrEmpty(validationMessage))
+            {
+                await AppDialog.ShowAsync(this, validationMessage, "Заполните обязательные поля", AppDialogKind.Warning);
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
                 {
                     Title = "Сохранить PDF-документ",
                     Filters = new List<FileDialogFilter>
@@ -763,18 +699,19 @@ namespace DocumentGenerator
                         var pdfGenerator = new PdfGenerator(ViewModel);
                         string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
                         pdfGenerator.GeneratePdf(result, templatePath);
-                        await MessageBox.Show(this, "Файл успешно сохранён!", "Успех", MessageBox.MessageBoxButtons.Ok);
+                        await AppDialog.ShowAsync(this, "Файл успешно сохранён!", "Успех", AppDialogKind.Success);
                     }
                     catch (Exception ex)
                     {
-                        await MessageBox.Show(this, $"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                        await AppDialog.ShowAsync(this, $"Ошибка при сохранении файла: {ex.Message}", "Ошибка", AppDialogKind.Error);
                     }
                 }
-            }
         }
 
         private async void LoadExcel_Click(object sender, RoutedEventArgs e)
         {
+            var pathMemory = _serviceProvider.GetRequiredService<IExportPathMemory>();
+
             var openFileDialog = new OpenFileDialog
             {
                 Title = "Выбрать Excel-файл",
@@ -785,17 +722,78 @@ namespace DocumentGenerator
                 }
             };
 
-            var result = await openFileDialog.ShowAsync(this);
-            if (result != null && result.Length > 0)
+            var lastExcel = pathMemory.LastExcelFilePath;
+            if (!string.IsNullOrWhiteSpace(lastExcel))
             {
-                var filePath = result[0];
-                var viewModel = new ExcelDataViewModel();
+                var lastDir = Path.GetDirectoryName(lastExcel);
+                if (!string.IsNullOrWhiteSpace(lastDir) && Directory.Exists(lastDir))
+                    openFileDialog.Directory = lastDir;
+                if (File.Exists(lastExcel))
+                    openFileDialog.InitialFileName = Path.GetFileName(lastExcel);
+            }
+
+            var result = await openFileDialog.ShowAsync(this);
+            if (result == null || result.Length == 0)
+                return;
+
+            var filePath = result[0];
+            pathMemory.RememberExcelFile(filePath);
+            var viewModel = new ExcelDataViewModel();
+
+            try
+            {
                 await viewModel.LoadFromExcel(filePath);
-                var excelWindow = new ExcelDataWindow
+            }
+            catch (Exception ex)
+            {
+                await AppDialog.ShowAsync(this, $"Ошибка при чтении Excel:\n{ex.Message}", "Ошибка", AppDialogKind.Error);
+                return;
+            }
+
+            if (viewModel.Records.Count == 0)
+            {
+                await AppDialog.ShowAsync(this, "В файле не найдено записей для обработки.", "Предупреждение", AppDialogKind.Warning);
+                return;
+            }
+
+            var storageProvider = StorageProvider;
+            IStorageFolder? suggestedFolder = null;
+            var lastFolder = pathMemory.LastExportFolderPath;
+            if (!string.IsNullOrWhiteSpace(lastFolder) && Directory.Exists(lastFolder))
+                suggestedFolder = await storageProvider.TryGetFolderFromPathAsync(lastFolder);
+
+            suggestedFolder ??= await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
+
+            var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Выберите папку для сохранения PDF-файлов",
+                SuggestedStartLocation = suggestedFolder
+            });
+
+            if (folder == null || folder.Count == 0)
+                return;
+
+            var folderPath = folder[0].Path.LocalPath;
+            pathMemory.RememberExportFolder(folderPath);
+
+            try
+            {
+                PdfFontHelper.Warmup();
+
+                await AppExportProgress.RunAsync(this, viewModel.Records.Count, async progress =>
                 {
-                    DataContext = viewModel
-                };
-                await excelWindow.ShowDialog(this);
+                    await viewModel.ExportToFolderAsync(folderPath, progress);
+                });
+
+                await AppDialog.ShowAsync(
+                    this,
+                    $"Все PDF-файлы сохранены в папке:\n{folderPath}\nСтатистика врачей и исследований — в Statistics.xlsx",
+                    "Успех",
+                    AppDialogKind.Success);
+            }
+            catch (Exception ex)
+            {
+                await AppDialog.ShowAsync(this, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка", AppDialogKind.Error);
             }
         }
 
@@ -849,23 +847,10 @@ namespace DocumentGenerator
             {
                 if (control.Name == "WorkExperienceYearsTextBox")
                 {
-                    var monthsTextBox = this.FindControl<TextBox>("WorkExperienceMonthsTextBox");
-                    if (monthsTextBox != null)
+                    var previewButton = this.FindControl<Button>("PreviewButton");
+                    if (previewButton != null)
                     {
-                        monthsTextBox.Focus();
-                        e.Handled = true;
-                    }
-                }
-                else if (control.Name == "WorkExperienceMonthsTextBox")
-                {
-                    var saveButton = this.FindControl<Button>("SaveButton");
-                    if (saveButton != null)
-                    {
-                        saveButton.Focus();
-                        if (ViewModel != null)
-                        {
-                            ViewModel.OnSave();
-                        }
+                        previewButton.Focus();
                         e.Handled = true;
                     }
                 }
@@ -939,49 +924,5 @@ namespace DocumentGenerator
             }
         }
 
-        public static class MessageBox
-        {
-            public enum MessageBoxButtons
-            {
-                Ok
-            }
-
-            public static async Task Show(Window parent, string text, string title, MessageBoxButtons buttons)
-            {
-                var messageBox = new Window
-                {
-                    Title = title,
-                    Width = 300,
-                    Height = 150,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    CanResize = false
-                };
-
-                var stackPanel = new StackPanel
-                {
-                    Margin = new Thickness(10)
-                };
-
-                stackPanel.Children.Add(new TextBlock
-                {
-                    Text = text,
-                    TextWrapping = TextWrapping.Wrap,
-                    Margin = new Thickness(0, 0, 0, 10)
-                });
-
-                var button = new Button
-                {
-                    Content = "OK",
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                    Width = 100
-                };
-
-                button.Click += (s, e) => messageBox.Close();
-                stackPanel.Children.Add(button);
-
-                messageBox.Content = stackPanel;
-                await messageBox.ShowDialog(parent);
-            }
-        }
     }
 }

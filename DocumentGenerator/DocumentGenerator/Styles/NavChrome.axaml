@@ -1,0 +1,123 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Навигационная панель — базовая тёмная тема -->
+  <Style Selector="Border.nav-header">
+    <Setter Property="Background" Value="#0A322A"/>
+    <Setter Property="BorderBrush" Value="#1F8F7A"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Padding" Value="12,10,16,10"/>
+  </Style>
+
+  <Style Selector="Border.nav-header TextBlock.nav-title">
+    <Setter Property="Foreground" Value="#F0F4F8"/>
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Border.nav-header TextBlock.nav-subtitle">
+    <Setter Property="Foreground" Value="#9BB5AD"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Margin" Value="0,2,0,0"/>
+  </Style>
+
+  <Style Selector="Border.nav-header Button.nav-back">
+    <Setter Property="Background" Value="#1A5C4E"/>
+    <Setter Property="Foreground" Value="#E8FFF8"/>
+    <Setter Property="BorderBrush" Value="#2ED1B5"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Padding" Value="14,8"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="MinWidth" Value="108"/>
+  </Style>
+
+  <Style Selector="Border.nav-header Button.nav-back:pointerover">
+    <Setter Property="Background" Value="#227A68"/>
+  </Style>
+
+  <!-- Светлая тема -->
+  <Style Selector="Window.light-ui Border.nav-header">
+    <Setter Property="Background">
+      <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#E0F7FA" Offset="0"/>
+        <GradientStop Color="#F0FDFA" Offset="0.55"/>
+        <GradientStop Color="#FFFBEB" Offset="1"/>
+      </LinearGradientBrush>
+    </Setter>
+    <Setter Property="BorderBrush" Value="#7DD3FC"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#38BDF8" BlurRadius="12" OffsetX="0" OffsetY="3" Opacity="0.15"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.nav-header TextBlock.nav-title">
+    <Setter Property="Foreground" Value="#0F4C5C"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.nav-header TextBlock.nav-subtitle">
+    <Setter Property="Foreground" Value="#475569"/>
+    <Setter Property="FontWeight" Value="Medium"/>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.nav-header Button.nav-back">
+    <Setter Property="Background" Value="#FFFFFF"/>
+    <Setter Property="Foreground" Value="#0F766E"/>
+    <Setter Property="BorderBrush" Value="#5EEAD4"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#0D9488" BlurRadius="8" OffsetX="0" OffsetY="2" Opacity="0.2"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.light-ui Border.nav-header Button.nav-back:pointerover">
+    <Setter Property="Background" Value="#F0FDFA"/>
+    <Setter Property="BorderBrush" Value="#14B8A6"/>
+  </Style>
+
+  <!-- Космическая тема -->
+  <Style Selector="Window.space-holo-ui Border.nav-header">
+    <Setter Property="Background" Value="#18203888"/>
+    <Setter Property="BorderBrush" Value="#6699CCE0"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Effect">
+      <DropShadowEffect Color="#4080C8" BlurRadius="14" OffsetX="0" OffsetY="4" Opacity="0.35"/>
+    </Setter>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Border.nav-header TextBlock.nav-title">
+    <Setter Property="Foreground" Value="#F0F8FF"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Border.nav-header TextBlock.nav-subtitle">
+    <Setter Property="Foreground" Value="#A8C0E8"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Border.nav-header Button.nav-back">
+    <Setter Property="Background" Value="#38487888"/>
+    <Setter Property="Foreground" Value="#F0F8FF"/>
+    <Setter Property="BorderBrush" Value="#88C8F8"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+
+  <Style Selector="Window.space-holo-ui Border.nav-header Button.nav-back:pointerover">
+    <Setter Property="BorderBrush" Value="#B0E0FF"/>
+    <Setter Property="Background" Value="#48588899"/>
+  </Style>
+
+  <!-- Панели контента — базовая тёмная тема (непрозрачный фон для читаемости) -->
+  <Style Selector="Window:not(.light-ui):not(.space-holo-ui) Border.holo-panel">
+    <Setter Property="Background" Value="#163830"/>
+    <Setter Property="BorderBrush" Value="#2A6B5C"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="12"/>
+  </Style>
+
+  <Style Selector="Window:not(.light-ui):not(.space-holo-ui) Border.light-panel">
+    <Setter Property="Background" Value="#163830"/>
+    <Setter Property="BorderBrush" Value="#2A6B5C"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="12"/>
+  </Style>
+</Styles>

@@ -1,9 +1,11 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:DocumentGenerator.ViewModels"
         x:Class="DocumentGenerator.NewForm"
+        x:Name="DriverCommissionRoot"
         x:DataType="vm:NewFormViewModel"
-        Title="Водительская комиссия" Width="450" Height="700">
+        Title="Водительская комиссия" Width="450" Height="700"
+        WindowStartupLocation="CenterScreen">
 	<!-- Многослойный фон -->
 	<Window.Background>
 		<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -15,7 +17,7 @@
 	<!-- Стили -->
 	<Window.Styles>
 		<!-- Стиль для TextBlock -->
-		<Style Selector="TextBlock">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) TextBlock">
 			<Setter Property="Foreground" Value="#d9e1e8"/>
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontWeight" Value="Medium"/>
@@ -38,7 +40,7 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для TextBox -->
-		<Style Selector="TextBox">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) TextBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -67,7 +69,7 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для TextBox при наведении -->
-		<Style Selector="TextBox:pointerover">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) TextBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -79,7 +81,7 @@
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для ComboBox -->
-		<Style Selector="ComboBox">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) ComboBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -108,7 +110,7 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для ComboBox при наведении -->
-		<Style Selector="ComboBox:pointerover">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) ComboBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -120,7 +122,7 @@
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для ListBox -->
-		<Style Selector="ListBox">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) ListBox">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -149,7 +151,7 @@
 			</Setter>
 		</Style>
 		<!-- Стиль для ListBox при наведении -->
-		<Style Selector="ListBox:pointerover">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) ListBox:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -161,7 +163,7 @@
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль для кнопок -->
-		<Style Selector="Button">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) Button">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -195,7 +197,7 @@
 			</Setter>
 		</Style>
 		<!-- Стиль при наведении -->
-		<Style Selector="Button:pointerover">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) Button:pointerover">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -207,7 +209,7 @@
 			<Setter Property="Opacity" Value="1"/>
 		</Style>
 		<!-- Стиль при нажатии -->
-		<Style Selector="Button:pressed">
+		<Style Selector="#DriverCommissionRoot:not(.space-holo-ui):not(.light-ui) Button:pressed">
 			<Setter Property="Background">
 				<Setter.Value>
 					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -223,8 +225,20 @@
 	<Design.DataContext>
 		<vm:NewFormViewModel />
 	</Design.DataContext>
-	<ScrollViewer>
-		<StackPanel Margin="10" Name="MainStackPanel">
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Classes="nav-header">
+			<Grid ColumnDefinitions="Auto,*">
+				<Button Name="BackButton"
+						Classes="nav-back"
+						Content="←  Меню"/>
+				<StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+					<TextBlock Text="Водительская комиссия" Classes="nav-title"/>
+					<TextBlock Text="Медицинское освидетельствование водителей" Classes="nav-subtitle"/>
+				</StackPanel>
+			</Grid>
+		</Border>
+	<ScrollViewer Grid.Row="1" Padding="0,0,4,0">
+		<StackPanel Margin="10,10,20,10" Name="MainStackPanel">
 			<TextBlock Text="Серия медицинского освидетельствования" />
 			<TextBox Name="MedicalSeriesTextBox" Text="{Binding MedicalSeries, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" />
 			<TextBlock Text="{Binding MedicalSeriesError}" Foreground="Red" />
@@ -282,8 +296,8 @@
 			<TextBlock Text="{Binding DrivingCategoriesError}" Foreground="Red" />
 
 			<Button Name="PreviewButton" Content="Предпросмотр" TabIndex="15" />
-			<Button Name="BackButton" Content="Вернуться в меню" TabIndex="16" />
 			<Button Name="SaveButton" Content="Сохранить" TabIndex="17" />
 		</StackPanel>
 	</ScrollViewer>
+	</Grid>
 </Window>

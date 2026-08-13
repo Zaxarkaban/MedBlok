@@ -5,18 +5,12 @@ using iText.Kernel.Pdf;
 using iText.Forms;
 using iText.Forms.Fields;
 using iText.Kernel.Font;
-using iText.IO.Font;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using System.Collections.Generic;
 using OfficeOpenXml;
 using DocumentGenerator.Services;
-using iText.Kernel.Pdf.Canvas;
-using iText.Kernel.Geom;
-using iText.Layout;
-using iText.Layout.Element;
 using System.Linq;
-using System.Data;
 using System.Text.RegularExpressions;
 
 namespace DocumentGenerator.ViewModels
@@ -137,8 +131,7 @@ namespace DocumentGenerator.ViewModels
                         }
 
                         var years = worksheet.Cells[row, 17].Text?.Trim() ?? "0";
-                        var months = worksheet.Cells[row, 18].Text?.Trim() ?? "0";
-                        var workExperience = $"{years} лет, {months} месяцев";
+                        var workExperience = PdfFormFieldHelper.FormatWorkExperienceYears(years);
 
                         var record = new Record
                         {
@@ -163,7 +156,7 @@ namespace DocumentGenerator.ViewModels
                             WorkAddress = worksheet.Cells[1, 7].Text?.Trim() ?? "", // СПб, Пушкин
                             Okved = worksheet.Cells[1, 16].Text?.Trim() ?? "", // 22.15.00
                             OwnershipForm = worksheet.Cells[1, 14].Text?.Trim() ?? "", // Государственная
-                            WorkExperience = workExperience, // Лет {лет}, Месяцев {месяцев}
+                            WorkExperience = workExperience,
                             ServicePoint = worksheet.Cells[2, 20].Text?.Trim() ?? "89" // Пункт обслуживания
                         };
 
@@ -211,11 +204,9 @@ namespace DocumentGenerator.ViewModels
                             record.PassportIssueDate = passportIssueDate.ToString("dd.MM.yyyy");
                         }
 
-                        // Нормализация пола
+                        // Нормализация пола (Ж, ж, Жен, Женский, М, мужской и т.п.)
                         if (!string.IsNullOrEmpty(record.Gender))
-                        {
-                            record.Gender = record.Gender.ToLower() == "ж" ? "Женский" : "Мужской";
-                        }
+                            record.Gender = GenderHelper.ToCanonical(record.Gender);
 
                         Records.Add(record);
                         Console.WriteLine($"Добавлена запись для строки {row}: ФИО = {record.FullName}, Дата рождения = {record.DateOfBirth}");
@@ -228,53 +219,25 @@ namespace DocumentGenerator.ViewModels
             }
         }
 
-        public async Task SaveToPdf(Window parentWindow)
+        public async Task ExportToFolderAsync(string folderPath, IProgress<ExportProgressInfo>? progress = null)
         {
-            if (_isProcessing)
+            string templatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException("Шаблон PDF не найден.", templatePath);
+
+            _doctorCounts.Clear();
+            _testCounts.Clear();
+
+            int total = Records.Count;
+            int recordNumber = 1;
+            foreach (var record in Records)
             {
-                await ShowMessageBox(parentWindow, "Обработка уже выполняется. Пожалуйста, подождите.", "Предупреждение");
-                return;
-            }
-
-            _isProcessing = true;
-
-            try
-            {
-                var storageProvider = parentWindow.StorageProvider;
-
-                var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                progress?.Report(new ExportProgressInfo
                 {
-                    Title = "Выберите папку для сохранения PDF-файлов",
-                    SuggestedStartLocation = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents)
+                    Message = $"Формируем документ: {record.FullName}",
+                    Current = recordNumber - 1,
+                    Total = total
                 });
-
-                if (folder == null || folder.Count == 0)
-                {
-                    await ShowMessageBox(parentWindow, "Выбор папки отменён.", "Информация");
-                    return;
-                }
-
-                var folderPath = folder[0].Path.LocalPath;
-                string templatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template.pdf");
-
-                if (!File.Exists(templatePath))
-                {
-                    await ShowMessageBox(parentWindow, "Шаблон PDF не найден.", "Ошибка");
-                    return;
-                }
-
-                string fontPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fonts", "times.ttf");
-                if (!File.Exists(fontPath))
-                {
-                    throw new FileNotFoundException("Times New Roman font file not found in the project.", fontPath);
-                }
-
-                _doctorCounts.Clear();
-                _testCounts.Clear();
-
-                int recordNumber = 1;
-                foreach (var record in Records)
-                {
                     string safeFileName = SanitizeFileName(record.FullName ?? $"Record_{recordNumber}");
                     string outputPath = System.IO.Path.Combine(folderPath, $"{safeFileName}.pdf");
 
@@ -292,11 +255,7 @@ namespace DocumentGenerator.ViewModels
                                 PdfFont font;
                                 try
                                 {
-                                    font = PdfFontFactory.CreateFont(fontPath, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
-                                    if (font == null)
-                                    {
-                                        throw new InvalidOperationException("Failed to create font from times.ttf.");
-                                    }
+                                    font = PdfFontHelper.CreateTimesFont();
                                 }
                                 catch (Exception ex)
                                 {
@@ -336,16 +295,11 @@ namespace DocumentGenerator.ViewModels
                                 SetFieldValue(fields, "WorkAddress", record.WorkAddress, font);
                                 SetFieldValue(fields, "Department", record.Department, font);
                                 SetFieldValue(fields, "OwnershipForm", record.OwnershipForm, font);
-                                SetFieldValue(fields, "normasDate", record.Age.ToString(), font); // Возраст в поле "полных лет"
+                                SetFieldValue(fields, "Age", record.Age.ToString(), font);
                                 //fields["обязательные_анализы"].SetValue("V");
 
                                 int currentYear = DateTime.Now.Year;
-                                if (fields.TryGetValue("CurrentYear", out var field))
-                                {
-                                    var pdfField = (PdfFormField)field;
-                                    pdfField.SetValue(currentYear.ToString());
-                                    pdfField.SetFontAndSize(font, 24);
-                                }
+                                SetFieldValue(fields, "CurrentYear", currentYear.ToString(), font);
                                 SetFieldValue(fields, "CurrentYear1", currentYear.ToString(), font);
 
                                 string currentDate = DateTime.Now.ToString("dd.MM.yyyy");
@@ -405,7 +359,7 @@ namespace DocumentGenerator.ViewModels
                                 var selectedClauses = record.OrderClause?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                     .Select(clause => clause.Trim())
                                     .ToList() ?? new List<string>();
-                                var doctors = _documentService.GenerateDoctorsList(selectedClauses, record.Age > 40, record.Gender == "Женский" || record.Gender == "ж");
+                                var doctors = _documentService.GenerateDoctorsList(selectedClauses, record.Age > 40, GenderHelper.IsFemale(record.Gender));
 
                                 var uniqueDoctors = doctors.Distinct().ToList();
 
@@ -421,28 +375,19 @@ namespace DocumentGenerator.ViewModels
                                     }
                                 }
 
-                                for (int i = 0; i < uniqueDoctors.Count && i < 12; i++)
+                                for (int i = 0; i < uniqueDoctors.Count && i < 11; i++)
                                 {
                                     string fieldName = $"Doctor_{i + 1}";
                                     SetFieldValue(fields, fieldName, uniqueDoctors[i], font);
                                 }
 
-                                var tests = _documentService.GenerateTestsList(record.Age > 40, record.Gender == "Женский" || record.Gender == "ж", selectedClauses);
+                                var tests = _documentService.GenerateTestsList(record.Age > 40, GenderHelper.IsFemale(record.Gender), selectedClauses);
 
-                                //var testsWithDirectMatch = GetTestsWithDirectMatch();
-                                //foreach (var test in tests)
-                                //{
-                                //    if (testsWithDirectMatch.Contains(test))
-                                //    {
-                                //        string fieldName = $"test_{SanitizeFieldName(test)}";
-                                //        if (fields.ContainsKey(fieldName))
-                                //        {
-                                //            fields[fieldName].SetValue("V");
-                                //        }
-                                //    }
-                                //}
-
-                                var uniqueTests = tests.Distinct().ToList();
+                                // В пакетной выгрузке из Excel не включаем исследования только для предварительного осмотра
+                                var uniqueTests = tests
+                                    .Where(t => !IsPreliminaryExamOnlyTest(t))
+                                    .Distinct()
+                                    .ToList();
 
                                 foreach (var test in uniqueTests)
                                 {
@@ -457,9 +402,28 @@ namespace DocumentGenerator.ViewModels
                                 }
 
                                 form.FlattenFields();
-                                AddTestsPage(pdf, uniqueTests, font);
+                                TestsListPdfService.DrawOnFirstPage(pdf, uniqueTests, font);
 
-                                pdf.Close();
+                                var extraPatientData = ConditionalExtraPagesService.BuildPatientData(
+                                    record.FullName,
+                                    record.DateOfBirth,
+                                    record.Gender,
+                                    record.Position,
+                                    record.Workplace,
+                                    record.Address,
+                                    record.Phone,
+                                    record.PassportSeries,
+                                    record.PassportNumber,
+                                    record.WorkExperience,
+                                    ConditionalExtraPagesService.FormatOrderClauses(selectedClauses));
+                                ConditionalExtraPagesService.Append(
+                                    pdf,
+                                    selectedClauses,
+                                    GenderHelper.IsFemale(record.Gender),
+                                    extraPatientData,
+                                    font);
+
+                                DoctorExamPagesService.AppendDoctorExamPages(pdf, uniqueDoctors, extraPatientData);
                             }
                         }
                     }
@@ -486,16 +450,65 @@ namespace DocumentGenerator.ViewModels
                         }
                     }
 
-                    recordNumber++;
+                recordNumber++;
+                await Task.Yield();
+            }
+
+            progress?.Report(new ExportProgressInfo
+            {
+                Message = "Сохраняем статистику в Excel...",
+                Current = total,
+                Total = total
+            });
+
+            await SaveStatisticsToExcel(folderPath);
+
+            progress?.Report(new ExportProgressInfo
+            {
+                Message = "Готово!",
+                Current = total,
+                Total = total
+            });
+        }
+
+        public async Task SaveToPdf(Window parentWindow)
+        {
+            if (_isProcessing)
+            {
+                await AppDialog.ShowAsync(parentWindow, "Обработка уже выполняется. Пожалуйста, подождите.", "Предупреждение", AppDialogKind.Warning);
+                return;
+            }
+
+            _isProcessing = true;
+
+            try
+            {
+                var storageProvider = parentWindow.StorageProvider;
+
+                var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                {
+                    Title = "Выберите папку для сохранения PDF-файлов",
+                    SuggestedStartLocation = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents)
+                });
+
+                if (folder == null || folder.Count == 0)
+                {
+                    await AppDialog.ShowAsync(parentWindow, "Выбор папки отменён.", "Информация", AppDialogKind.Info);
+                    return;
                 }
 
-                await SaveStatisticsToExcel(folderPath);
+                var folderPath = folder[0].Path.LocalPath;
 
-                await ShowMessageBox(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}\nСтатистика врачей и исследований сохранена в Statistics.xlsx", "Успех");
+                await AppExportProgress.RunAsync(parentWindow, Records.Count, async progress =>
+                {
+                    await ExportToFolderAsync(folderPath, progress);
+                });
+
+                await AppDialog.ShowAsync(parentWindow, $"Все PDF-файлы успешно сохранены в папке:\n{folderPath}\nСтатистика врачей и исследований сохранена в Statistics.xlsx", "Успех", AppDialogKind.Success);
             }
             catch (Exception ex)
             {
-                await ShowMessageBox(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка");
+                await AppDialog.ShowAsync(parentWindow, $"Ошибка при сохранении PDF:\n{ex.Message}", "Ошибка", AppDialogKind.Error);
             }
             finally
             {
@@ -585,88 +598,22 @@ namespace DocumentGenerator.ViewModels
             }
         }
 
-        private void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string value, PdfFont font)
+        /// <summary>
+        /// Исследования, помеченные как только для предварительного осмотра.
+        /// Исключаются только при пакетной выгрузке из Excel.
+        /// </summary>
+        private static bool IsPreliminaryExamOnlyTest(string? testName)
         {
-            if (fields.TryGetValue(fieldName, out var pdfField))
-            {
-                pdfField.SetValue(value ?? "");
+            if (string.IsNullOrWhiteSpace(testName))
+                return false;
 
-                if (fieldName == "CurrentYear")
-                {
-                    pdfField.SetFontAndSize(font, 24f);
-                    return;
-                }
-
-                // Начальный размер шрифта
-                float fontSize = 9f;
-                pdfField.SetFontAndSize(font, fontSize);
-
-                // Получаем размеры поля
-                var widget = pdfField.GetWidgets().FirstOrDefault();
-                if (widget == null) return;
-                var rect = widget.GetRectangle();
-                float fieldWidth = rect.GetAsNumber(2).FloatValue() - rect.GetAsNumber(0).FloatValue(); // Ширина поля
-
-                // Проверяем, влезает ли текст, уменьшаем шрифт при необходимости
-                float textWidth;
-                float minFontSize = 4f; // Минимальный размер шрифта
-                do
-                {
-                    // Измеряем ширину текста с текущим размером шрифта
-                    textWidth = font.GetWidth(value, fontSize);
-
-                    if (textWidth > fieldWidth && fontSize > minFontSize)
-                    {
-                        fontSize -= 0.25f; // Уменьшаем шрифт на 0.5
-                    }
-                    else
-                    {
-                        break; // Текст влезает или достигнут минимальный шрифт
-                    }
-                } while (true);
-
-                // Устанавливаем финальный размер шрифта
-                pdfField.SetFontAndSize(font, fontSize);
-            }
+            // Ловит и «(при предварительном осмотре)», и «(при предварительном медицинском осмотре…)»
+            return testName.Contains("при предварительном", StringComparison.OrdinalIgnoreCase);
         }
 
-        private void AddTestsPage(PdfDocument pdfDocument, List<string> tests, PdfFont font)
+        private static void SetFieldValue(IDictionary<string, PdfFormField> fields, string fieldName, string? value, PdfFont font)
         {
-            // Убедимся, что в документе есть как минимум 8 страниц
-            int currentPageCount = pdfDocument.GetNumberOfPages();
-            while (currentPageCount < 7)
-            {
-                pdfDocument.AddNewPage();
-                currentPageCount++;
-            }
-
-            // Получаем 8-ю страницу
-            var page = pdfDocument.GetPage(7);
-            var pageSize = page.GetPageSize();
-
-            // Определяем область для всей страницы с отступами (A4: ширина 595, высота 842)
-            var fullPage = new Rectangle(36, 36, pageSize.GetWidth() - 72, pageSize.GetHeight() - 450); // Отступы 36 пунктов со всех сторон
-
-            // Создаём PdfCanvas и iText.Layout.Canvas для управления позицией текста
-            var column = new PdfCanvas(page);
-            var columnText = new iText.Layout.Canvas(column, fullPage);
-
-            // Создаём параграф с текстом
-            var paragraph = new Paragraph()
-                .SetFont(font)
-                .SetFontSize(7);
-
-            paragraph.Add(new Text("Список исследований:\n\n"));
-            int testNumber = 1;
-            foreach (var test in tests)
-            {
-                paragraph.Add(new Text($"{testNumber}. {test}\n"));
-                testNumber++;
-            }
-
-            // Добавляем параграф на 8-ю страницу
-            columnText.Add(paragraph);
-            columnText.Close();
+            PdfFormFieldHelper.SetFieldValue(fields, fieldName, value, font);
         }
 
         private string SanitizeFileName(string fileName)
@@ -676,41 +623,5 @@ namespace DocumentGenerator.ViewModels
             return regex.Replace(fileName, "_").Trim();
         }
 
-        private async Task ShowMessageBox(Window parent, string message, string title)
-        {
-            var dialog = new Window
-            {
-                Title = title,
-                Width = 300,
-                Height = 150,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                CanResize = false,
-                Content = new StackPanel
-                {
-                    Margin = new Avalonia.Thickness(10),
-                    Spacing = 10,
-                    Children =
-                    {
-                        new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
-                        new Button
-                        {
-                            Content = "OK",
-                            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
-                        }
-                    }
-                }
-            };
-
-            var stackPanel = dialog.Content as StackPanel;
-            if (stackPanel != null)
-            {
-                var okButton = stackPanel.Children[1] as Button;
-                if (okButton != null)
-                {
-                    okButton.Click += (sender, e) => dialog.Close();
-                }
-            }
-            await dialog.ShowDialog(parent);
-        }
     }
 }

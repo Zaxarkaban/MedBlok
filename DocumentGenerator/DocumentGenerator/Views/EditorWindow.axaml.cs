@@ -42,6 +42,7 @@ namespace DocumentGenerator
         public EditorWindow(IServiceProvider serviceProvider) : this()
         {
             _serviceProvider = serviceProvider;
+            AppWindowSetup.Configure(this, serviceProvider);
             _storage = _serviceProvider.GetRequiredService<IUserProgramStorage>();
 
             WireUi();
@@ -52,6 +53,7 @@ namespace DocumentGenerator
         {
             _serviceProvider = serviceProvider;
             _storage = _serviceProvider.GetRequiredService<IUserProgramStorage>();
+            AppWindowSetup.Configure(this, serviceProvider);
 
             WireUi();
             LoadExistingProgram(existingProgram);
@@ -83,7 +85,7 @@ namespace DocumentGenerator
                     {
                         CornerRadius = new CornerRadius(10),
                         Background = Avalonia.Media.Brush.Parse("#0F000000"),
-                        BorderBrush = Avalonia.Media.Brush.Parse("#1f8f7a"),
+                        BorderBrush = Avalonia.Media.Brush.Parse("#8899CCE0"),
                         BorderThickness = new Thickness(1),
                         Padding = new Thickness(10, 8),
                         Margin = new Thickness(0, 0, 0, 8)
@@ -115,7 +117,7 @@ namespace DocumentGenerator
                     {
                         CornerRadius = new CornerRadius(12),
                         Background = Avalonia.Media.Brush.Parse("#0F000000"),
-                        BorderBrush = Avalonia.Media.Brush.Parse("#2ed1b5"),
+                        BorderBrush = Avalonia.Media.Brush.Parse("#88D4F0"),
                         BorderThickness = new Thickness(1),
                         Padding = new Thickness(10, 8),
                         Margin = new Thickness(0, 0, 0, 10)
@@ -257,6 +259,7 @@ namespace DocumentGenerator
         private void BackToMenu_Click(object? sender, RoutedEventArgs e)
         {
             var menuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+            menuWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             menuWindow.Show();
             Close();
         }
@@ -280,7 +283,7 @@ namespace DocumentGenerator
             var templateBox = this.FindControl<TextBox>("TemplatePathTextBox");
             if (templateBox != null) templateBox.Text = _templateSourcePath;
 
-            SetStatus("Шаблон выбран. Добавляй поля и нажимай «Запечь».");
+            SetStatus("Шаблон выбран. Добавляй поля и нажимай «Сохраить».");
         }
 
         private void AddField(UserProgramFieldType type, int? insertIndex)
@@ -480,11 +483,11 @@ namespace DocumentGenerator
             var errors = ValidateDefinitionForPublish();
             if (errors.Count > 0)
             {
-                await SimpleMessageBox.Show(
+                await AppDialog.ShowAsync(
                     this,
                     "Есть недоделанные блоки. Заполни их и попробуй снова.\n\n" + string.Join(Environment.NewLine, errors),
-                    "Не получилось запечь"
-                );
+                    "Не получилось сохранить",
+                    AppDialogKind.Warning);
                 return;
             }
 
@@ -498,11 +501,11 @@ namespace DocumentGenerator
             }
             catch (IOException ex)
             {
-                await SimpleMessageBox.Show(
+                await AppDialog.ShowAsync(
                     this,
-                    "Не удалось записать template.pdf: файл занят другой программой (часто это просмотрщик PDF). Закрой шаблон и нажми «Запечь» снова.\n\n" + ex.Message,
-                    "Файл занят"
-                );
+                    "Не удалось записать template.pdf: файл занят другой программой (часто это просмотрщик PDF). Закрой шаблон и нажми «Сохранить» снова.\n\n" + ex.Message,
+                    "Файл занят",
+                    AppDialogKind.Error);
                 return;
             }
 
@@ -608,10 +611,26 @@ namespace DocumentGenerator
             if (sender is not ListBox palette) return;
             if (!e.GetCurrentPoint(palette).Properties.IsLeftButtonPressed) return;
 
+            if (ResolvePaletteFieldType(palette, e) is not UserProgramFieldType fieldType)
+                return;
+
+            palette.SelectedItem = fieldType;
             _dragStartPoint = e.GetPosition(palette);
             _dragSource = DragSource.Palette;
-            _dragFieldType = palette.SelectedItem as UserProgramFieldType?;
+            _dragFieldType = fieldType;
             _dragFieldKey = null;
+        }
+
+        private static UserProgramFieldType? ResolvePaletteFieldType(ListBox palette, PointerEventArgs e)
+        {
+            if (e.Source is Visual visual)
+            {
+                var item = visual.GetSelfAndVisualAncestors().OfType<ListBoxItem>().FirstOrDefault();
+                if (item?.DataContext is UserProgramFieldType type)
+                    return type;
+            }
+
+            return palette.SelectedItem as UserProgramFieldType?;
         }
 
         private void FieldsList_PointerPressed(object? sender, PointerPressedEventArgs e)

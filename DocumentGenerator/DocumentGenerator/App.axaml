@@ -11,5 +11,9 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://DocumentGenerator/Styles/LightTheme.axaml" />
+        <StyleInclude Source="avares://DocumentGenerator/Styles/SpaceHoloTheme.axaml" />
+        <StyleInclude Source="avares://DocumentGenerator/Styles/AppDialogTheme.axaml" />
+        <StyleInclude Source="avares://DocumentGenerator/Styles/NavChrome.axaml" />
     </Application.Styles>
 </Application>

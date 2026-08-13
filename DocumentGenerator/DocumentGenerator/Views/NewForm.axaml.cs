@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using DocumentGenerator.ViewModels;
@@ -30,6 +30,7 @@ namespace DocumentGenerator
         {
             InitializeComponent();
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            AppWindowSetup.Configure(this, _serviceProvider);
             DataContext = new NewFormViewModel(
                 new NewFormPdfGenerator(),
                 _serviceProvider
@@ -559,25 +560,13 @@ namespace DocumentGenerator
 
             try
             {
-                await Dispatcher.UIThread.InvokeAsync(() => ViewModel.OnSave());
+                string? validationMessage = null;
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    validationMessage = ViewModel.GetValidationSummary();
+                });
 
-                if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
-                    string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
-                    string.IsNullOrEmpty(ViewModel.GenderError) &&
-                    string.IsNullOrEmpty(ViewModel.PhoneError) &&
-                    string.IsNullOrEmpty(ViewModel.DrivingCategoriesError) &&
-                    string.IsNullOrEmpty(ViewModel.MedicalSeriesError) &&
-                    string.IsNullOrEmpty(ViewModel.MedicalNumberError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
-                    string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
-                    string.IsNullOrEmpty(ViewModel.BloodGroupError) &&
-                    string.IsNullOrEmpty(ViewModel.RhFactorError) &&
-                    string.IsNullOrEmpty(ViewModel.AddressError) &&
-                    string.IsNullOrEmpty(ViewModel.DrivingExperienceError) &&
-                    string.IsNullOrEmpty(ViewModel.SnilsError) &&
-                    string.IsNullOrEmpty(ViewModel.FluorographyError) &&
-                    string.IsNullOrEmpty(ViewModel.GynecologistError))
+                if (string.IsNullOrEmpty(validationMessage))
                 {
                     string tempPath = Path.Combine(Path.GetTempPath(), $"Preview_{Guid.NewGuid()}.pdf");
                     try
@@ -633,12 +622,12 @@ namespace DocumentGenerator
                         }
                         else
                         {
-                            await MessageBox.Show(this, "Не удалось создать файл для предпросмотра.", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                            await AppDialog.ShowAsync(this, "Не удалось создать файл для предпросмотра.", "Ошибка", AppDialogKind.Error);
                         }
                     }
                     catch (Exception ex)
                     {
-                        await MessageBox.Show(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", MessageBox.MessageBoxButtons.Ok);
+                        await AppDialog.ShowAsync(this, $"Ошибка при открытии предпросмотра: {ex.Message}", "Ошибка", AppDialogKind.Error);
                     }
                     finally
                     {
@@ -659,7 +648,7 @@ namespace DocumentGenerator
                 }
                 else
                 {
-                    await MessageBox.Show(this, "Пожалуйста, исправьте ошибки в данных перед предпросмотром.", "Предупреждение", MessageBox.MessageBoxButtons.Ok);
+                    await AppDialog.ShowAsync(this, validationMessage!, "Заполните обязательные поля", AppDialogKind.Warning);
                 }
             }
             finally
@@ -671,27 +660,14 @@ namespace DocumentGenerator
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.OnSave();
-
-            if (string.IsNullOrEmpty(ViewModel.FullNameError) &&
-                string.IsNullOrEmpty(ViewModel.DateOfBirthError) &&
-                string.IsNullOrEmpty(ViewModel.GenderError) &&
-                string.IsNullOrEmpty(ViewModel.PhoneError) &&
-                string.IsNullOrEmpty(ViewModel.DrivingCategoriesError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalSeriesError) &&
-                string.IsNullOrEmpty(ViewModel.MedicalNumberError) &&
-                string.IsNullOrEmpty(ViewModel.PassportSeriesError) &&
-                string.IsNullOrEmpty(ViewModel.PassportNumberError) &&
-                string.IsNullOrEmpty(ViewModel.PassportIssuedByError) &&
-                string.IsNullOrEmpty(ViewModel.BloodGroupError) &&
-                string.IsNullOrEmpty(ViewModel.RhFactorError) &&
-                string.IsNullOrEmpty(ViewModel.AddressError) &&
-                string.IsNullOrEmpty(ViewModel.DrivingExperienceError) &&
-                string.IsNullOrEmpty(ViewModel.SnilsError) &&
-                string.IsNullOrEmpty(ViewModel.FluorographyError) &&
-                string.IsNullOrEmpty(ViewModel.GynecologistError))
+            var validationMessage = ViewModel.GetValidationSummary();
+            if (!string.IsNullOrEmpty(validationMessage))
             {
-                var saveFileDialog = new SaveFileDialog
+                await AppDialog.ShowAsync(this, validationMessage, "Заполните обязательные поля", AppDialogKind.Warning);
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
                 {
                     Title = "Сохранить PDF-документ",
                     Filters = new List<FileDialogFilter>
@@ -765,23 +741,13 @@ namespace DocumentGenerator
 
                     Close();
                 }
-            }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            // Находим MenuWindow и показываем его
-            if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                var menuWindow = desktop.MainWindow as MenuWindow;
-                if (menuWindow != null)
-                {
-                    var MenuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
-                    MenuWindow.Show();
-                    Close();
-                }
-            }
-
+            var menuWindow = _serviceProvider.GetRequiredService<MenuWindow>();
+            menuWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            menuWindow.Show();
             Close();
         }
 
@@ -916,49 +882,5 @@ namespace DocumentGenerator
             }
         }
 
-        public static class MessageBox
-        {
-            public enum MessageBoxButtons
-            {
-                Ok
-            }
-
-            public static async Task Show(Window parent, string text, string title, MessageBoxButtons buttons)
-            {
-                var messageBox = new Window
-                {
-                    Title = title,
-                    Width = 300,
-                    Height = 150,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    CanResize = false
-                };
-
-                var stackPanel = new StackPanel
-                {
-                    Margin = new Thickness(10)
-                };
-
-                stackPanel.Children.Add(new TextBlock
-                {
-                    Text = text,
-                    TextWrapping = TextWrapping.Wrap,
-                    Margin = new Thickness(0, 0, 0, 10)
-                });
-
-                var button = new Button
-                {
-                    Content = "OK",
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                    Width = 100
-                };
-
-                button.Click += (s, e) => messageBox.Close();
-                stackPanel.Children.Add(button);
-
-                messageBox.Content = stackPanel;
-                await messageBox.ShowDialog(parent);
-            }
-        }
     }
 }
